@@ -26,29 +26,9 @@ Collider-Agent enables AI coding agents (such as Claude Code, Cursor, Windsurf, 
 
 ### Architecture
 
-```
-User Prompt (Paper + Target Figure)
-        │
-        ▼
-┌───────────────────────────────────┐
-│     Pheno Pipeline Orchestrator   │
-│         (Main Coordinator)        │
-└───────────────────────────────────┘
-        │
-        ├──────────────────┬──────────────────┐
-        ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│   Model     │    │  Collider   │    │   Event     │
-│  Generator  │    │  Simulator  │    │  Analyzer   │
-└─────────────┘    └─────────────┘    └─────────────┘
-        │                  │                  │
-        ▼                  ▼                  ▼
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ FeynRules   │    │ MadGraph5   │    │ MadAnalysis │
-│ + UFO       │    │ + Pythia8   │    │             │
-│             │    │ + Delphes   │    │             │
-└─────────────┘    └─────────────┘    └─────────────┘
-```
+<p align="center">
+  <img src="images/architecture.png" alt="Collider-Agent Architecture" width="800"/>
+</p>
 
 ## Installation
 
