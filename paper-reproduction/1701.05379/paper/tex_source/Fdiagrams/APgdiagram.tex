@@ -1,0 +1,20 @@
+\begin{fmffile}{Fdiagrams/APgdiag}
+\parbox[c][4cm]{4cm}{
+\begin{fmfgraph*}(80,30)
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{fermion}{i1,v1}
+  \fmf{fermion}{v1,i3}
+  \fmf{boson,lab=$W$}{v1,v2}
+  \fmf{boson}{v2,o3}
+  \fmf{dashes}{v2,o1}
+  \fmf{boson}{v2,o2}
+  
+\fmfv{lab=$W$,l.angle=0}{o3}
+\fmfv{lab=$a$}{o1}
+\fmfv{lab=$\gamma$}{o2}
+\fmfv{lab=$q$}{i1}
+\fmfv{lab=$q^\prime$}{i3}
+\end{fmfgraph*}
+}
+\end{fmffile}

@@ -1,0 +1,12 @@
+
+\begin{fmffile}{aqqcoupl}
+\begin{fmfgraph*}(50,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{boson}{i2,v1}
+  \fmf{fermion,label=$U(D)$}{o1,v1,o3}
+  
+\fmfv{lab=$A_\mu$}{i2}
+\end{fmfgraph*}
+\end{fmffile}

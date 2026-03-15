@@ -1,0 +1,10 @@
+
+\begin{fmffile}{qprop}
+\begin{fmfgraph*}(80,50)
+
+\fmfleft{i1}
+\fmfright{o1}
+  \fmf{fermion,label=$U(D)$}{i1,o1}
+  
+\end{fmfgraph*}
+\end{fmffile}

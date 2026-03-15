@@ -1,0 +1,67 @@
+\documentclass[12pt]{article}
+\pdfoutput=1
+%
+%%%%%%%%%%%
+%
+\usepackage[DIV13]{typearea}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{slashed}
+\usepackage{multicol}
+\setlength{\columnseprule}{0.5pt}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{cite}
+\RequirePackage[colorlinks=true,urlcolor=blue,anchorcolor=blue,citecolor=blue,filecolor=blue,
+               linkcolor=blue,menucolor=blue,linktocpage=true,pdfproducer=medialab]{hyperref}
+\usepackage{cancel}
+\usepackage{feynmp}
+\usepackage{lscape}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{pdfpages}% http://ctan.org/pkg/pdfpages
+\usepackage{fancyhdr}% http://ctan.org/pkg/fancyhdr
+\usepackage{pifont}
+
+
+%\usepackage{units,pifont,,graphicx}
+%\usepackage{slashed,,colortbl,framed,}
+
+
+\usepackage[left=.9in, right=.9in]{geometry}
+%\usepackage[utf8]{inputenc}
+%\usepackage[english]{babel}
+%\usepackage{amsmath,amsfonts,amssymb,units,pifont,feynmp,graphicx}
+%\usepackage{slashed,array,multirow,abstract,colortbl,framed,lscape}
+%\usepackage[usenames,dvipsnames]{xcolor}
+%\usepackage{cancel}
+%\renewcommand{\CancelColor}{\color{red}}
+%
+\DeclareGraphicsRule{*}{mps}{*}{} %switched off for mac
+\begin{document}
+ 
+
+
+\begin{fmffile}{hhhhcoupl}
+\begin{fmfgraph*}(50,50)
+
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{dashes,label=$p_{h1}$}{i2,v1}
+  \fmf{dashes,label=$p_{h2}$}{i1,v1}
+  \fmf{dashes,label=$p_{h3}$,l.side=right}{v1,o1}
+  \fmf{dashes,label=$p_{h4}$,l.side=right}{v1,o2}
+  
+\fmfv{lab=$h$,l.angle=0}{o1}
+\fmfv{lab=$h$,l.angle=0}{o2}
+\fmfv{lab=$h$,l.angle=180}{i1}
+\fmfv{lab=$h$,l.angle=180}{i2}
+\end{fmfgraph*}
+\end{fmffile}
+\end{document}

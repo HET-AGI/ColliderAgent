@@ -1,0 +1,963 @@
+\providecommand{\href}[2]{#2}\begingroup\raggedright\begin{thebibliography}{100}
+
+\bibitem{Delahaye:2019omf}
+J.~P. Delahaye, M.~Diemoz, K.~Long, B.~Mansouli\'e, N.~Pastrone, L.~Rivkin,
+  D.~Schulte, A.~Skrinsky, and A.~Wulzer, ``{Muon Colliders},''
+  \href{http://arxiv.org/abs/1901.06150}{{\ttfamily arXiv:1901.06150
+  [physics.acc-ph]}}.
+
+\bibitem{Shiltsev:2019rfl}
+V.~Shiltsev and F.~Zimmermann, ``{Modern and Future Colliders},''
+  \href{http://arxiv.org/abs/2003.09084}{{\ttfamily arXiv:2003.09084
+  [physics.acc-ph]}}.
+
+\bibitem{Shiltsev:2017tjx}
+V.~Shiltsev,
+  \href{http://dx.doi.org/10.18429/JACoW-NAPAC2016-TUPOB07}{``{Considerations
+  On Energy Frontier Colliders After LHC},''} in {\em {2nd North American
+  Particle Accelerator Conference}}, p.~TUPOB07.
+\newblock 2017.
+\newblock \href{http://arxiv.org/abs/1705.02011}{{\ttfamily arXiv:1705.02011
+  [physics.acc-ph]}}.
+
+\bibitem{Budker:1969cd}
+G.~I. Budker, ``{Accelerators and colliding beams},'' {\em Conf. Proc. C}
+  {\bfseries 690827} (1969) 33--39.
+
+\bibitem{Ankenbrandt:1999cta}
+C.~M. Ankenbrandt {\em et~al.}, ``{Status of muon collider research and
+  development and future plans},''
+  \href{http://dx.doi.org/10.1103/PhysRevSTAB.2.081001}{{\em Phys. Rev. ST
+  Accel. Beams} {\bfseries 2} (1999) 081001},
+  \href{http://arxiv.org/abs/physics/9901022}{{\ttfamily
+  arXiv:physics/9901022}}.
+
+\bibitem{Palmer:2014nza}
+R.~B. Palmer, ``{Muon Colliders},''
+  \href{http://dx.doi.org/10.1142/S1793626814300072}{{\em Rev. Accel. Sci.
+  Tech.} {\bfseries 7} (2014) 137--159}.
+
+\bibitem{Wang:2015yyh}
+M.-H. Wang, Y.~Nosochkov, Y.~Cai, and M.~Palmer, ``{Design of a 6 TeV Muon
+  Collider},'' \href{http://dx.doi.org/10.1088/1748-0221/11/09/P09003}{{\em
+  JINST} {\bfseries 11} no.~09, (2016) P09003}.
+
+\bibitem{Alexahin:2018svu}
+Y.~Alexahin, E.~Gianfelice-Wendt, and V.~Kapin, ``{Muon Collider Lattice
+  Concepts},'' \href{http://dx.doi.org/10.1088/1748-0221/13/11/P11002}{{\em
+  JINST} {\bfseries 13} no.~11, (2018) P11002},
+  \href{http://arxiv.org/abs/1806.08717}{{\ttfamily arXiv:1806.08717
+  [physics.acc-ph]}}.
+
+\bibitem{Boscolo:2018ytm}
+M.~Boscolo, J.-P. Delahaye, and M.~Palmer, ``{The future prospects of muon
+  colliders and neutrino factories},''
+  \href{http://dx.doi.org/10.1142/9789811209604_0010}{{\em Rev. Accel. Sci.
+  Tech.} {\bfseries 10} no.~01, (2019) 189--214},
+  \href{http://arxiv.org/abs/1808.01858}{{\ttfamily arXiv:1808.01858
+  [physics.acc-ph]}}.
+
+\bibitem{Neuffer:2018yof}
+D.~Neuffer and V.~Shiltsev, ``{On the feasibility of a pulsed 14 TeV c.m.e.
+  muon collider in the LHC tunnel},''
+  \href{http://dx.doi.org/10.1088/1748-0221/13/10/T10003}{{\em JINST}
+  {\bfseries 13} no.~10, (2018) T10003},
+  \href{http://arxiv.org/abs/1811.10694}{{\ttfamily arXiv:1811.10694
+  [physics.acc-ph]}}.
+
+\bibitem{Parkhomchuk:1983ua}
+V.~V. Parkhomchuk and A.~N. Skrinsky, ``{Ionization Cooling: Physics and
+  Applications},'' \href{http://dx.doi.org/10.1063/1.49355}{{\em Conf. Proc. C}
+  {\bfseries 830811} (1983) 485--487}.
+
+\bibitem{Neuffer:1983jr}
+D.~Neuffer, ``{Principles and Applications of Muon Cooling},''
+  \href{http://dx.doi.org/10.2172/1156195}{{\em Part. Accel.} {\bfseries 14}
+  (1983) 75--90}.
+
+\bibitem{Neuffer:1986dg}
+D.~Neuffer, ``{Multi-TeV muon colliders},''
+  \href{http://dx.doi.org/10.1063/1.36456}{{\em AIP Conf. Proc.} {\bfseries
+  156} (1987) 201--208}.
+
+\bibitem{Kaplan:2014xda}
+{\bfseries MAP, MICE} Collaboration, D.~M. Kaplan, ``{Muon Colliders and
+  Neutrino Factories},''
+  \href{http://dx.doi.org/10.1051/epjconf/20159503019}{{\em EPJ Web Conf.}
+  {\bfseries 95} (2015) 03019},
+  \href{http://arxiv.org/abs/1412.3487}{{\ttfamily arXiv:1412.3487
+  [physics.acc-ph]}}.
+
+\bibitem{Adey:2015iha}
+D.~Adey, R.~Bayes, A.~Bross, and P.~Snopok, ``{nuSTORM and A Path to a Muon
+  Collider},'' \href{http://dx.doi.org/10.1146/annurev-nucl-102014-021930}{{\em
+  Ann. Rev. Nucl. Part. Sci.} {\bfseries 65} (2015) 145--175}.
+
+\bibitem{Bogomilov:2019kfj}
+{\bfseries MICE} Collaboration, M.~Bogomilov {\em et~al.}, ``{Demonstration of
+  cooling by the Muon Ionization Cooling Experiment},''
+  \href{http://dx.doi.org/10.1038/s41586-020-1958-9}{{\em Nature} {\bfseries
+  578} no.~7793, (2020) 53--59},
+  \href{http://arxiv.org/abs/1907.08562}{{\ttfamily arXiv:1907.08562
+  [physics.acc-ph]}}.
+
+\bibitem{Bonesini:2019dyo}
+{\bfseries MICE} Collaboration, M.~Bonesini, ``{Emittance exchange in MICE},''
+  \href{http://dx.doi.org/10.22323/1.364.0025}{{\em PoS} {\bfseries
+  EPS-HEP2019} (2020) 025}.
+
+\bibitem{Long:2020wfp}
+K.~Long, D.~Lucchesi, M.~Palmer, N.~Pastrone, D.~Schulte, and V.~Shiltsev,
+  ``{Muon colliders to expand frontiers of particle physics},''
+  \href{http://arxiv.org/abs/2007.15684}{{\ttfamily arXiv:2007.15684
+  [physics.acc-ph]}}.
+
+\bibitem{Young:2020wcv}
+{\bfseries MICE} Collaboration, A.~R. Young and J.~C. Nugent, ``{Recent Results
+  from MICE on Multiple Coulomb Scattering and Energy Loss},''
+  \href{http://dx.doi.org/10.22323/1.364.0021}{{\em PoS} {\bfseries
+  EPS-HEP2019} (2020) 021}.
+
+\bibitem{Antonelli:2019uoe}
+D.~Alesini {\em et~al.}, ``{Positron driven muon source for a muon collider},''
+  \href{http://arxiv.org/abs/1905.05747}{{\ttfamily arXiv:1905.05747
+  [physics.acc-ph]}}.
+
+\bibitem{Antonelli:2015nla}
+M.~Antonelli, M.~Boscolo, R.~Di~Nardo, and P.~Raimondi, ``{Novel proposal for a
+  low emittance muon beam using positron beam on target},''
+  \href{http://dx.doi.org/10.1016/j.nima.2015.10.097}{{\em Nucl. Instrum. Meth.
+  A} {\bfseries 807} (2016) 101--107},
+  \href{http://arxiv.org/abs/1509.04454}{{\ttfamily arXiv:1509.04454
+  [physics.acc-ph]}}.
+
+\bibitem{Boscolo:2018tlu}
+M.~Boscolo, M.~Antonelli, O.~R. Blanco-Garcia, S.~Guiducci, S.~Liuzzo,
+  P.~Raimondi, and F.~Collamati, ``{Low emittance muon accelerator studies with
+  production from positrons on target},''
+  \href{http://dx.doi.org/10.1103/PhysRevAccelBeams.21.061005}{{\em Phys. Rev.
+  Accel. Beams} {\bfseries 21} no.~6, (2018) 061005},
+  \href{http://arxiv.org/abs/1803.06696}{{\ttfamily arXiv:1803.06696
+  [physics.acc-ph]}}.
+
+\bibitem{Cummings:2011zz}
+M.~A.~C. Cummings, S.~Kahn, A.~Morris, D.~Hedin, and J.~Kozminski,
+  ``{G4beamline and MARS Comparison for Muon Collider Backgrounds},'' {\em
+  Conf. Proc. C} {\bfseries 110328} (2011) 2297--2299.
+
+\bibitem{Kahn:2011zz}
+S.~A. Kahn, M.~A.~C. Cummings, T.~J. Roberts, A.~O. Morris, D.~Hedin, and
+  J.~Kozminski, ``{Beam Induced Detector Backgrounds at a Muon Collider},''
+  {\em Conf. Proc. C} {\bfseries 110328} (2011) 2300--2302.
+
+\bibitem{Mokhov:2011zzd}
+N.~V. Mokhov and S.~I. Striganov, ``{Detector Background at Muon Colliders},''
+  \href{http://dx.doi.org/10.1016/j.phpro.2012.03.761}{{\em Phys. Procedia}
+  {\bfseries 37} (2012) 2015--2022},
+  \href{http://arxiv.org/abs/1204.6721}{{\ttfamily arXiv:1204.6721
+  [physics.ins-det]}}.
+
+\bibitem{Mokhov:2014hza}
+N.~V. Mokhov, S.~I. Striganov, and I.~S. Tropin,
+  \href{http://dx.doi.org/10.18429/JACoW-IPAC2014-TUPRO029}{``{Reducing
+  Backgrounds in the Higgs Factory Muon Collider Detector},''} in {\em {5th
+  International Particle Accelerator Conference}}, pp.~1081--1083.
+\newblock 6, 2014.
+\newblock \href{http://arxiv.org/abs/1409.1939}{{\ttfamily arXiv:1409.1939
+  [physics.ins-det]}}.
+
+\bibitem{DiBenedetto:2018cpy}
+V.~Di~Benedetto, C.~Gatto, A.~Mazzacane, N.~V. Mokhov, S.~I. Striganov, and
+  N.~K. Terentiev, ``{A Study of Muon Collider Background Rejection Criteria in
+  Silicon Vertex and Tracker Detectors},''
+  \href{http://dx.doi.org/10.1088/1748-0221/13/09/P09004}{{\em JINST}
+  {\bfseries 13} (2018) P09004},
+  \href{http://arxiv.org/abs/1807.00074}{{\ttfamily arXiv:1807.00074
+  [physics.ins-det]}}.
+
+\bibitem{Bartosik:2019dzq}
+N.~Bartosik {\em et~al.}, ``{Preliminary Report on the Study of Beam-Induced
+  Background Effects at a Muon Collider},''
+  \href{http://arxiv.org/abs/1905.03725}{{\ttfamily arXiv:1905.03725
+  [hep-ex]}}.
+
+\bibitem{Bartosik:2020xwr}
+N.~Bartosik {\em et~al.}, ``{Detector and Physics Performance at a Muon
+  Collider},'' \href{http://dx.doi.org/10.1088/1748-0221/15/05/P05001}{{\em
+  JINST} {\bfseries 15} no.~05, (2020) P05001},
+  \href{http://arxiv.org/abs/2001.04431}{{\ttfamily arXiv:2001.04431
+  [hep-ex]}}.
+
+\bibitem{Lucchesi:2020dku}
+D.~Lucchesi {\em et~al.}, ``{Detector Performances Studies at Muon Collider},''
+  \href{http://dx.doi.org/10.22323/1.364.0118}{{\em PoS} {\bfseries
+  EPS-HEP2019} (2020) 118}.
+
+\bibitem{Ali:2021xlw}
+H.~A. Ali {\em et~al.}, ``{The Muon Smasher's Guide},''
+  \href{http://arxiv.org/abs/2103.14043}{{\ttfamily arXiv:2103.14043
+  [hep-ph]}}.
+
+\bibitem{Han:2020uid}
+T.~Han, Y.~Ma, and K.~Xie, ``{High energy leptonic collisions and electroweak
+  parton distribution functions},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.103.L031301}{{\em Phys. Rev. D}
+  {\bfseries 103} no.~3, (2021) L031301},
+  \href{http://arxiv.org/abs/2007.14300}{{\ttfamily arXiv:2007.14300
+  [hep-ph]}}.
+
+\bibitem{Han:2021kes}
+T.~Han, Y.~Ma, and K.~Xie, ``{Quark and Gluon Contents of a Lepton at High
+  Energies},'' \href{http://arxiv.org/abs/2103.09844}{{\ttfamily
+  arXiv:2103.09844 [hep-ph]}}.
+
+\bibitem{Chiesa:2020awd}
+M.~Chiesa, F.~Maltoni, L.~Mantani, B.~Mele, F.~Piccinini, and X.~Zhao,
+  ``{Measuring the quartic Higgs self-coupling at a multi-TeV muon collider},''
+  \href{http://dx.doi.org/10.1007/JHEP09(2020)098}{{\em JHEP} {\bfseries 09}
+  (2020) 098}, \href{http://arxiv.org/abs/2003.13628}{{\ttfamily
+  arXiv:2003.13628 [hep-ph]}}.
+
+\bibitem{Costantini:2020stv}
+A.~Costantini, F.~De~Lillo, F.~Maltoni, L.~Mantani, O.~Mattelaer, R.~Ruiz, and
+  X.~Zhao, ``{Vector boson fusion at multi-TeV muon colliders},''
+  \href{http://dx.doi.org/10.1007/JHEP09(2020)080}{{\em JHEP} {\bfseries 09}
+  (2020) 080}, \href{http://arxiv.org/abs/2005.10289}{{\ttfamily
+  arXiv:2005.10289 [hep-ph]}}.
+
+\bibitem{Han:2020pif}
+T.~Han, D.~Liu, I.~Low, and X.~Wang, ``{Electroweak couplings of the Higgs
+  boson at a multi-TeV muon collider},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.103.013002}{{\em Phys. Rev. D}
+  {\bfseries 103} no.~1, (2021) 013002},
+  \href{http://arxiv.org/abs/2008.12204}{{\ttfamily arXiv:2008.12204
+  [hep-ph]}}.
+
+\bibitem{Eichten:2013ckl}
+E.~Eichten and A.~Martin, ``{The Muon Collider as a $H/A$ Factory},''
+  \href{http://dx.doi.org/10.1016/j.physletb.2013.11.035}{{\em Phys. Lett. B}
+  {\bfseries 728} (2014) 125--130},
+  \href{http://arxiv.org/abs/1306.2609}{{\ttfamily arXiv:1306.2609 [hep-ph]}}.
+
+\bibitem{Chakrabarty:2014pja}
+N.~Chakrabarty, T.~Han, Z.~Liu, and B.~Mukhopadhyaya, ``{Radiative Return for
+  Heavy Higgs Boson at a Muon Collider},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.91.015008}{{\em Phys. Rev. D}
+  {\bfseries 91} no.~1, (2015) 015008},
+  \href{http://arxiv.org/abs/1408.5912}{{\ttfamily arXiv:1408.5912 [hep-ph]}}.
+
+\bibitem{Buttazzo:2018qqp}
+D.~Buttazzo, D.~Redigolo, F.~Sala, and A.~Tesi, ``{Fusing Vectors into Scalars
+  at High Energy Lepton Colliders},''
+  \href{http://dx.doi.org/10.1007/JHEP11(2018)144}{{\em JHEP} {\bfseries 11}
+  (2018) 144}, \href{http://arxiv.org/abs/1807.04743}{{\ttfamily
+  arXiv:1807.04743 [hep-ph]}}.
+
+\bibitem{Bandyopadhyay:2020otm}
+P.~Bandyopadhyay and A.~Costantini, ``{Obscure Higgs boson at Colliders},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.103.015025}{{\em Phys. Rev. D}
+  {\bfseries 103} no.~1, (2021) 015025},
+  \href{http://arxiv.org/abs/2010.02597}{{\ttfamily arXiv:2010.02597
+  [hep-ph]}}.
+
+\bibitem{Han:2021udl}
+T.~Han, S.~Li, S.~Su, W.~Su, and Y.~Wu, ``{Heavy Higgs Bosons in 2HDM at a Muon
+  Collider},'' \href{http://arxiv.org/abs/2102.08386}{{\ttfamily
+  arXiv:2102.08386 [hep-ph]}}.
+
+\bibitem{Liu:2021jyc}
+W.~Liu and K.-P. Xie, ``{Probing electroweak phase transition with multi-TeV
+  muon colliders and gravitational waves},''
+  \href{http://arxiv.org/abs/2101.10469}{{\ttfamily arXiv:2101.10469
+  [hep-ph]}}.
+
+\bibitem{Han:2020uak}
+T.~Han, Z.~Liu, L.-T. Wang, and X.~Wang, ``{WIMPs at High Energy Muon
+  Colliders},'' \href{http://arxiv.org/abs/2009.11287}{{\ttfamily
+  arXiv:2009.11287 [hep-ph]}}.
+
+\bibitem{Capdevilla:2021fmj}
+R.~Capdevilla, F.~Meloni, R.~Simoniello, and J.~Zurita, ``{Hunting wino and
+  higgsino dark matter at the muon collider with disappearing tracks},''
+  \href{http://arxiv.org/abs/2102.11292}{{\ttfamily arXiv:2102.11292
+  [hep-ph]}}.
+
+\bibitem{Bottaro:2021srh}
+S.~Bottaro, A.~Strumia, and N.~Vignaroli, ``{Minimal Dark Matter bound states
+  at future colliders},'' \href{http://arxiv.org/abs/2103.12766}{{\ttfamily
+  arXiv:2103.12766 [hep-ph]}}.
+
+\bibitem{Capdevilla:2020qel}
+R.~Capdevilla, D.~Curtin, Y.~Kahn, and G.~Krnjaic, ``{A Guaranteed Discovery at
+  Future Muon Colliders},'' \href{http://arxiv.org/abs/2006.16277}{{\ttfamily
+  arXiv:2006.16277 [hep-ph]}}.
+
+\bibitem{Buttazzo:2020eyl}
+D.~Buttazzo and P.~Paradisi, ``{Probing the muon g-2 anomaly at a Muon
+  Collider},'' \href{http://arxiv.org/abs/2012.02769}{{\ttfamily
+  arXiv:2012.02769 [hep-ph]}}.
+
+\bibitem{Capdevilla:2021rwo}
+R.~Capdevilla, D.~Curtin, Y.~Kahn, and G.~Krnjaic, ``{A No-Lose Theorem for
+  Discovering the New Physics of $(g-2)_\mu$ at Muon Colliders},''
+  \href{http://arxiv.org/abs/2101.10334}{{\ttfamily arXiv:2101.10334
+  [hep-ph]}}.
+
+\bibitem{Chen:2021rnl}
+N.~Chen, B.~Wang, and C.-Y. Yao, ``{The collider tests of a leptophilic scalar
+  for the anomalous magnetic moments},''
+  \href{http://arxiv.org/abs/2102.05619}{{\ttfamily arXiv:2102.05619
+  [hep-ph]}}.
+
+\bibitem{Yin:2020afe}
+W.~Yin and M.~Yamaguchi, ``{Muon $g-2$ at multi-TeV muon collider},''
+  \href{http://arxiv.org/abs/2012.03928}{{\ttfamily arXiv:2012.03928
+  [hep-ph]}}.
+
+\bibitem{Huang:2021nkl}
+G.-y. Huang, F.~S. Queiroz, and W.~Rodejohann, ``{Gauged
+  $L^{}_{\mu}{-}L^{}_{\tau}$ at a muon collider},''
+  \href{http://arxiv.org/abs/2101.04956}{{\ttfamily arXiv:2101.04956
+  [hep-ph]}}.
+
+\bibitem{Huang:2021biu}
+G.-y. Huang, S.~Jana, F.~S. Queiroz, and W.~Rodejohann, ``{Probing the
+  $R_{K^{(*)}}$ Anomaly at a Muon Collider},''
+  \href{http://arxiv.org/abs/2103.01617}{{\ttfamily arXiv:2103.01617
+  [hep-ph]}}.
+
+\bibitem{DiLuzio:2018jwd}
+L.~Di~Luzio, R.~Gr\"ober, and G.~Panico, ``{Probing new electroweak states via
+  precision measurements at the LHC and future colliders},''
+  \href{http://dx.doi.org/10.1007/JHEP01(2019)011}{{\em JHEP} {\bfseries 01}
+  (2019) 011}, \href{http://arxiv.org/abs/1810.10993}{{\ttfamily
+  arXiv:1810.10993 [hep-ph]}}.
+
+\bibitem{Buttazzo:2020uzc}
+D.~Buttazzo, R.~Franceschini, and A.~Wulzer, ``{Two Paths Towards Precision at
+  a Very High Energy Lepton Collider},''
+  \href{http://arxiv.org/abs/2012.11555}{{\ttfamily arXiv:2012.11555
+  [hep-ph]}}.
+
+\bibitem{Pati:1973uk}
+J.~C. Pati and A.~Salam, ``{Unified Lepton-Hadron Symmetry and a Gauge Theory
+  of the Basic Interactions},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.8.1240}{{\em Phys. Rev. D}
+  {\bfseries 8} (1973) 1240--1251}.
+
+\bibitem{Pati:1974yy}
+J.~C. Pati and A.~Salam, ``{Lepton Number as the Fourth Color},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.10.275}{{\em Phys. Rev. D}
+  {\bfseries 10} (1974) 275--289}. [Erratum: Phys.Rev.D 11, 703--703 (1975)].
+
+\bibitem{Georgi:1974sy}
+H.~Georgi and S.~L. Glashow, ``{Unity of All Elementary Particle Forces},''
+  \href{http://dx.doi.org/10.1103/PhysRevLett.32.438}{{\em Phys. Rev. Lett.}
+  {\bfseries 32} (1974) 438--441}.
+
+\bibitem{Ibanez:2012zz}
+L.~E. Ibanez and A.~M. Uranga, {\em {String theory and particle physics: An
+  introduction to string phenomenology}}.
+\newblock Cambridge University Press, 2, 2012.
+
+\bibitem{Bandyopadhyay:2016oif}
+P.~Bandyopadhyay and R.~Mandal, ``{Vacuum stability in an extended standard
+  model with a leptoquark},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.95.035007}{{\em Phys. Rev. D}
+  {\bfseries 95} no.~3, (2017) 035007},
+  \href{http://arxiv.org/abs/1609.03561}{{\ttfamily arXiv:1609.03561
+  [hep-ph]}}.
+
+\bibitem{Dey:2017ede}
+U.~K. Dey, D.~Kar, M.~Mitra, M.~Spannowsky, and A.~C. Vincent, ``{Searching for
+  Leptoquarks at IceCube and the LHC},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.98.035014}{{\em Phys. Rev. D}
+  {\bfseries 98} no.~3, (2018) 035014},
+  \href{http://arxiv.org/abs/1709.02009}{{\ttfamily arXiv:1709.02009
+  [hep-ph]}}.
+
+\bibitem{Bandyopadhyay:2018syt}
+P.~Bandyopadhyay and R.~Mandal, ``{Revisiting scalar leptoquark at the LHC},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-018-5959-x}{{\em Eur. Phys. J. C}
+  {\bfseries 78} (2018) 491}, \href{http://arxiv.org/abs/1801.04253}{{\ttfamily
+  arXiv:1801.04253 [hep-ph]}}.
+
+\bibitem{Roy:2018nwc}
+J.~Roy, ``{Probing leptoquark chirality via top polarization at the
+  Colliders},'' \href{http://arxiv.org/abs/1811.12058}{{\ttfamily
+  arXiv:1811.12058 [hep-ph]}}.
+
+\bibitem{Mandal:2018czf}
+R.~Mandal, ``{Fermionic dark matter in leptoquark portal},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-018-6192-3}{{\em Eur. Phys. J. C}
+  {\bfseries 78} no.~9, (2018) 726},
+  \href{http://arxiv.org/abs/1808.07844}{{\ttfamily arXiv:1808.07844
+  [hep-ph]}}.
+
+\bibitem{Chandak:2019iwj}
+K.~Chandak, T.~Mandal, and S.~Mitra, ``{Hunting for scalar leptoquarks with
+  boosted tops and light leptons},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.100.075019}{{\em Phys. Rev. D}
+  {\bfseries 100} no.~7, (2019) 075019},
+  \href{http://arxiv.org/abs/1907.11194}{{\ttfamily arXiv:1907.11194
+  [hep-ph]}}.
+
+\bibitem{Padhan:2019dcp}
+R.~Padhan, S.~Mandal, M.~Mitra, and N.~Sinha, ``{Signatures of $\tilde{R}_2$
+  class of Leptoquarks at the upcoming $ep$ colliders},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.101.075037}{{\em Phys. Rev. D}
+  {\bfseries 101} no.~7, (2020) 075037},
+  \href{http://arxiv.org/abs/1912.07236}{{\ttfamily arXiv:1912.07236
+  [hep-ph]}}.
+
+\bibitem{Bhaskar:2020kdr}
+A.~Bhaskar, D.~Das, B.~De, and S.~Mitra, ``{Enhancing scalar productions with
+  leptoquarks at the LHC},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.102.035002}{{\em Phys. Rev. D}
+  {\bfseries 102} no.~3, (2020) 035002},
+  \href{http://arxiv.org/abs/2002.12571}{{\ttfamily arXiv:2002.12571
+  [hep-ph]}}.
+
+\bibitem{Buonocore:2020erb}
+L.~Buonocore, U.~Haisch, P.~Nason, F.~Tramontano, and G.~Zanderighi,
+  ``{Lepton-Quark Collisions at the Large Hadron Collider},''
+  \href{http://dx.doi.org/10.1103/PhysRevLett.125.231804}{{\em Phys. Rev.
+  Lett.} {\bfseries 125} no.~23, (2020) 231804},
+  \href{http://arxiv.org/abs/2005.06475}{{\ttfamily arXiv:2005.06475
+  [hep-ph]}}.
+
+\bibitem{Greljo:2020tgv}
+A.~Greljo and N.~Selimovic, ``{Lepton-Quark Fusion at Hadron Colliders,
+  precisely},'' \href{http://arxiv.org/abs/2012.02092}{{\ttfamily
+  arXiv:2012.02092 [hep-ph]}}.
+
+\bibitem{Bandyopadhyay:2020jez}
+P.~Bandyopadhyay, S.~Dutta, and A.~Karan, ``{Zeros of Amplitude in the
+  Associated Production of Photon and Leptoquark at $e$-$p$ Collider},''
+  \href{http://arxiv.org/abs/2012.13644}{{\ttfamily arXiv:2012.13644
+  [hep-ph]}}.
+
+\bibitem{Crivellin:2021egp}
+A.~Crivellin, D.~M\"uller, and L.~Schnell, ``{Combined Constraints on First
+  Generation Leptoquarks},'' \href{http://arxiv.org/abs/2101.07811}{{\ttfamily
+  arXiv:2101.07811 [hep-ph]}}.
+
+\bibitem{Barbieri:2011ci}
+R.~Barbieri, G.~Isidori, J.~Jones-Perez, P.~Lodone, and D.~M. Straub, ``{$U(2)$
+  and Minimal Flavour Violation in Supersymmetry},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-011-1725-z}{{\em Eur. Phys. J. C}
+  {\bfseries 71} (2011) 1725}, \href{http://arxiv.org/abs/1105.2296}{{\ttfamily
+  arXiv:1105.2296 [hep-ph]}}.
+
+\bibitem{Barbieri:2015yvd}
+R.~Barbieri, G.~Isidori, A.~Pattori, and F.~Senia, ``{Anomalies in $B$-decays
+  and $U(2)$ flavour symmetry},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-016-3905-3}{{\em Eur. Phys. J. C}
+  {\bfseries 76} no.~2, (2016) 67},
+  \href{http://arxiv.org/abs/1512.01560}{{\ttfamily arXiv:1512.01560
+  [hep-ph]}}.
+
+\bibitem{Fajfer:2015ycq}
+S.~Fajfer and N.~Ko\v{s}nik, ``{Vector leptoquark resolution of $R_K$ and
+  $R_{D^{(*)}}$ puzzles},''
+  \href{http://dx.doi.org/10.1016/j.physletb.2016.02.018}{{\em Phys. Lett. B}
+  {\bfseries 755} (2016) 270--274},
+  \href{http://arxiv.org/abs/1511.06024}{{\ttfamily arXiv:1511.06024
+  [hep-ph]}}.
+
+\bibitem{Bauer:2015knc}
+M.~Bauer and M.~Neubert, ``{Minimal Leptoquark Explanation for the
+  R$_{D^{(*)}}$ , R$_K$ , and $(g-2)_g$ Anomalies},''
+  \href{http://dx.doi.org/10.1103/PhysRevLett.116.141802}{{\em Phys. Rev.
+  Lett.} {\bfseries 116} no.~14, (2016) 141802},
+  \href{http://arxiv.org/abs/1511.01900}{{\ttfamily arXiv:1511.01900
+  [hep-ph]}}.
+
+\bibitem{Aydemir:2018cbb}
+U.~Aydemir, D.~Minic, C.~Sun, and T.~Takeuchi, ``{$B$-decay anomalies and
+  scalar leptoquarks in unified Pati-Salam models from noncommutative
+  geometry},'' \href{http://dx.doi.org/10.1007/JHEP09(2018)117}{{\em JHEP}
+  {\bfseries 09} (2018) 117}, \href{http://arxiv.org/abs/1804.05844}{{\ttfamily
+  arXiv:1804.05844 [hep-ph]}}.
+
+\bibitem{Biswas:2018snp}
+A.~Biswas, D.~Kumar~Ghosh, N.~Ghosh, A.~Shaw, and A.~K. Swain, ``{Collider
+  signature of $U_1$ Leptoquark and constraints from $b \to c$ observables},''
+  \href{http://dx.doi.org/10.1088/1361-6471/ab6948}{{\em J. Phys. G} {\bfseries
+  47} no.~4, (2020) 045005}, \href{http://arxiv.org/abs/1808.04169}{{\ttfamily
+  arXiv:1808.04169 [hep-ph]}}.
+
+\bibitem{Biswas:2018iak}
+A.~Biswas, A.~Shaw, and A.~K. Swain, ``{Collider signature of $V_2$ Leptoquark
+  with $b\to s$ flavour observables},''
+  \href{http://dx.doi.org/10.31526/LHEP.2.2019.126}{{\em LHEP} {\bfseries 2}
+  (2019) 126}, \href{http://arxiv.org/abs/1811.08887}{{\ttfamily
+  arXiv:1811.08887 [hep-ph]}}.
+
+\bibitem{Aydemir:2019ynb}
+U.~Aydemir, T.~Mandal, and S.~Mitra, ``{Addressing the ${\mathbf R_{D^{(*)}}}$
+  anomalies with an ${\mathbf S_1}$ leptoquark from $\mathbf{SO(10)}$ grand
+  unification},'' \href{http://dx.doi.org/10.1103/PhysRevD.101.015011}{{\em
+  Phys. Rev. D} {\bfseries 101} no.~1, (2020) 015011},
+  \href{http://arxiv.org/abs/1902.08108}{{\ttfamily arXiv:1902.08108
+  [hep-ph]}}.
+
+\bibitem{Hou:2019wiu}
+W.-S. Hou, T.~Modak, and G.-G. Wong, ``{Scalar leptoquark effects on $B
+  \rightarrow \mu \bar{\nu }$ decay},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-019-7490-0}{{\em Eur. Phys. J. C}
+  {\bfseries 79} no.~11, (2019) 964},
+  \href{http://arxiv.org/abs/1909.00403}{{\ttfamily arXiv:1909.00403
+  [hep-ph]}}.
+
+\bibitem{Bandyopadhyay:2020klr}
+P.~Bandyopadhyay, S.~Dutta, and A.~Karan, ``{Investigating the Production of
+  Leptoquarks by Means of Zeros of Amplitude at Photon Electron Collider},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-020-8083-7}{{\em Eur. Phys. J. C}
+  {\bfseries 80} no.~6, (2020) 573},
+  \href{http://arxiv.org/abs/2003.11751}{{\ttfamily arXiv:2003.11751
+  [hep-ph]}}.
+
+\bibitem{Haisch:2020xjd}
+U.~Haisch and G.~Polesello, ``{Resonant third-generation leptoquark signatures
+  at the Large Hadron Collider},''
+  \href{http://arxiv.org/abs/2012.11474}{{\ttfamily arXiv:2012.11474
+  [hep-ph]}}.
+
+\bibitem{Cornella:2021sby}
+C.~Cornella, D.~A. Faroughy, J.~Fuentes-Mart\'\i{}n, G.~Isidori, and
+  M.~Neubert, ``{Reading the footprints of the B-meson flavor anomalies},''
+  \href{http://arxiv.org/abs/2103.16558}{{\ttfamily arXiv:2103.16558
+  [hep-ph]}}.
+
+\bibitem{Dawson:1985vr}
+S.~Dawson, ``{R-Parity Breaking in Supersymmetric Theories},''
+  \href{http://dx.doi.org/10.1016/0550-3213(85)90577-2}{{\em Nucl. Phys. B}
+  {\bfseries 261} (1985) 297--318}.
+
+\bibitem{Schrempp:1984nj}
+B.~Schrempp and F.~Schrempp, ``{Light Leptoquarks},''
+  \href{http://dx.doi.org/10.1016/0370-2693(85)91450-9}{{\em Phys. Lett. B}
+  {\bfseries 153} (1985) 101--107}.
+
+\bibitem{Frampton:1991ay}
+P.~H. Frampton, ``{Light leptoquarks as possible signature of strong
+  electroweak unification},''
+  \href{http://dx.doi.org/10.1142/S0217732392000525}{{\em Mod. Phys. Lett. A}
+  {\bfseries 7} (1992) 559--562}.
+
+\bibitem{Dorsner:2016wpm}
+I.~Dor\v{s}ner, S.~Fajfer, A.~Greljo, J.~Kamenik, and N.~Ko\v{s}nik, ``{Physics
+  of leptoquarks in precision experiments and at particle colliders},''
+  \href{http://dx.doi.org/10.1016/j.physrep.2016.06.001}{{\em Phys. Rept.}
+  {\bfseries 641} (2016) 1--68},
+  \href{http://arxiv.org/abs/1603.04993}{{\ttfamily arXiv:1603.04993
+  [hep-ph]}}.
+
+\bibitem{Aaboud:2016qeg}
+{\bfseries ATLAS} Collaboration, M.~Aaboud {\em et~al.}, ``{Search for scalar
+  leptoquarks in pp collisions at $\sqrt{s}$ = 13 TeV with the ATLAS
+  experiment},'' \href{http://dx.doi.org/10.1088/1367-2630/18/9/093016}{{\em
+  New J. Phys.} {\bfseries 18} no.~9, (2016) 093016},
+  \href{http://arxiv.org/abs/1605.06035}{{\ttfamily arXiv:1605.06035
+  [hep-ex]}}.
+
+\bibitem{Sirunyan:2017yrk}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for
+  third-generation scalar leptoquarks and heavy right-handed neutrinos in final
+  states with two tau leptons and two jets in proton-proton collisions at $
+  \sqrt{s}=13 $ TeV},'' \href{http://dx.doi.org/10.1007/JHEP07(2017)121}{{\em
+  JHEP} {\bfseries 07} (2017) 121},
+  \href{http://arxiv.org/abs/1703.03995}{{\ttfamily arXiv:1703.03995
+  [hep-ex]}}.
+
+\bibitem{Sirunyan:2018jdk}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for a
+  singly produced third-generation scalar leptoquark decaying to a $\tau$
+  lepton and a bottom quark in proton-proton collisions at $\sqrt{s} =$ 13
+  TeV},'' \href{http://dx.doi.org/10.1007/JHEP07(2018)115}{{\em JHEP}
+  {\bfseries 07} (2018) 115}, \href{http://arxiv.org/abs/1806.03472}{{\ttfamily
+  arXiv:1806.03472 [hep-ex]}}.
+
+\bibitem{Sirunyan:2018ryt}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for pair
+  production of second-generation leptoquarks at $\sqrt{s}=$ 13 TeV},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.99.032014}{{\em Phys. Rev. D}
+  {\bfseries 99} no.~3, (2019) 032014},
+  \href{http://arxiv.org/abs/1808.05082}{{\ttfamily arXiv:1808.05082
+  [hep-ex]}}.
+
+\bibitem{Sirunyan:2018vhk}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for heavy
+  neutrinos and third-generation leptoquarks in hadronic states of two $\tau$
+  leptons and two jets in proton-proton collisions at $\sqrt{s} =$ 13 TeV},''
+  \href{http://dx.doi.org/10.1007/JHEP03(2019)170}{{\em JHEP} {\bfseries 03}
+  (2019) 170}, \href{http://arxiv.org/abs/1811.00806}{{\ttfamily
+  arXiv:1811.00806 [hep-ex]}}.
+
+\bibitem{Sirunyan:2018btu}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for pair
+  production of first-generation scalar leptoquarks at $\sqrt{s} =$ 13 TeV},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.99.052002}{{\em Phys. Rev. D}
+  {\bfseries 99} no.~5, (2019) 052002},
+  \href{http://arxiv.org/abs/1811.01197}{{\ttfamily arXiv:1811.01197
+  [hep-ex]}}.
+
+\bibitem{Sirunyan:2018xtm}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for dark
+  matter in events with a leptoquark and missing transverse momentum in
+  proton-proton collisions at 13 TeV},''
+  \href{http://dx.doi.org/10.1016/j.physletb.2019.05.046}{{\em Phys. Lett. B}
+  {\bfseries 795} (2019) 76--99},
+  \href{http://arxiv.org/abs/1811.10151}{{\ttfamily arXiv:1811.10151
+  [hep-ex]}}.
+
+\bibitem{Aaboud:2019jcc}
+{\bfseries ATLAS} Collaboration, M.~Aaboud {\em et~al.}, ``{Searches for scalar
+  leptoquarks and differential cross-section measurements in dilepton-dijet
+  events in proton-proton collisions at a centre-of-mass energy of $\sqrt{s}$ =
+  13 TeV with the ATLAS experiment},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-019-7181-x}{{\em Eur. Phys. J. C}
+  {\bfseries 79} no.~9, (2019) 733},
+  \href{http://arxiv.org/abs/1902.00377}{{\ttfamily arXiv:1902.00377
+  [hep-ex]}}.
+
+\bibitem{Aaboud:2019bye}
+{\bfseries ATLAS} Collaboration, M.~Aaboud {\em et~al.}, ``{Searches for
+  third-generation scalar leptoquarks in $\sqrt{s}$ = 13 TeV pp collisions with
+  the ATLAS detector},'' \href{http://dx.doi.org/10.1007/JHEP06(2019)144}{{\em
+  JHEP} {\bfseries 06} (2019) 144},
+  \href{http://arxiv.org/abs/1902.08103}{{\ttfamily arXiv:1902.08103
+  [hep-ex]}}.
+
+\bibitem{Aad:2020sgw}
+{\bfseries ATLAS} Collaboration, G.~Aad {\em et~al.}, ``{Search for a scalar
+  partner of the top quark in the all-hadronic $t{\bar{t}}$ plus missing
+  transverse momentum final state at $\sqrt{s}=13$ TeV with the ATLAS
+  detector},'' \href{http://dx.doi.org/10.1140/epjc/s10052-020-8102-8}{{\em
+  Eur. Phys. J. C} {\bfseries 80} no.~8, (2020) 737},
+  \href{http://arxiv.org/abs/2004.14060}{{\ttfamily arXiv:2004.14060
+  [hep-ex]}}.
+
+\bibitem{Aad:2020iuy}
+{\bfseries ATLAS} Collaboration, G.~Aad {\em et~al.}, ``{Search for pairs of
+  scalar leptoquarks decaying into quarks and electrons or muons in $ \sqrt{s}
+  $ = 13 TeV $pp$ collisions with the ATLAS detector},''
+  \href{http://dx.doi.org/10.1007/JHEP10(2020)112}{{\em JHEP} {\bfseries 10}
+  (2020) 112}, \href{http://arxiv.org/abs/2006.05872}{{\ttfamily
+  arXiv:2006.05872 [hep-ex]}}.
+
+\bibitem{Aad:2020jmj}
+{\bfseries ATLAS} Collaboration, G.~Aad {\em et~al.}, ``{Search for pair
+  production of scalar leptoquarks decaying into first- or second-generation
+  leptons and top quarks in proton-proton collisions at $\sqrt{s}$ = 13 TeV
+  with the ATLAS detector},'' \href{http://arxiv.org/abs/2010.02098}{{\ttfamily
+  arXiv:2010.02098 [hep-ex]}}.
+
+\bibitem{Sirunyan:2020zbk}
+{\bfseries CMS} Collaboration, A.~M. Sirunyan {\em et~al.}, ``{Search for
+  singly and pair-produced leptoquarks coupling to third-generation fermions in
+  proton-proton collisions at $\sqrt{s} =$ 13 TeV},''
+  \href{http://arxiv.org/abs/2012.04178}{{\ttfamily arXiv:2012.04178
+  [hep-ex]}}.
+
+\bibitem{Aad:2021rrh}
+{\bfseries ATLAS} Collaboration, G.~Aad {\em et~al.}, ``{Search for pair
+  production of third-generation scalar leptoquarks decaying into a top quark
+  and a $\tau$-lepton in $pp$ collisions at $\sqrt{s}=13$ TeV with the ATLAS
+  detector},'' \href{http://arxiv.org/abs/2101.11582}{{\ttfamily
+  arXiv:2101.11582 [hep-ex]}}.
+
+\bibitem{Aad:2021jmg}
+{\bfseries ATLAS} Collaboration, G.~Aad {\em et~al.}, ``{Search for new
+  phenomena in final states with $b$-jets and missing transverse momentum in
+  $\sqrt{s}=13$ TeV $pp$ collisions with the ATLAS detector},''
+  \href{http://arxiv.org/abs/2101.12527}{{\ttfamily arXiv:2101.12527
+  [hep-ex]}}.
+
+\bibitem{Diaz:2017lit}
+B.~Diaz, M.~Schmaltz, and Y.-M. Zhong, ``{The leptoquark
+  Hunter\textquoteright{}s guide: Pair production},''
+  \href{http://dx.doi.org/10.1007/JHEP10(2017)097}{{\em JHEP} {\bfseries 10}
+  (2017) 097}, \href{http://arxiv.org/abs/1706.05033}{{\ttfamily
+  arXiv:1706.05033 [hep-ph]}}.
+
+\bibitem{Bansal:2018eha}
+S.~Bansal, R.~M. Capdevilla, A.~Delgado, C.~Kolda, A.~Martin, and N.~Raj,
+  ``{Hunting leptoquarks in monolepton searches},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.98.015037}{{\em Phys. Rev. D}
+  {\bfseries 98} no.~1, (2018) 015037},
+  \href{http://arxiv.org/abs/1806.02370}{{\ttfamily arXiv:1806.02370
+  [hep-ph]}}.
+
+\bibitem{Angelescu:2018tyl}
+A.~Angelescu, D.~Be\v{c}irevi\'c, D.~A. Faroughy, and O.~Sumensari, ``{Closing
+  the window on single leptoquark solutions to the $B$-physics anomalies},''
+  \href{http://dx.doi.org/10.1007/JHEP10(2018)183}{{\em JHEP} {\bfseries 10}
+  (2018) 183}, \href{http://arxiv.org/abs/1808.08179}{{\ttfamily
+  arXiv:1808.08179 [hep-ph]}}.
+
+\bibitem{Schmaltz:2018nls}
+M.~Schmaltz and Y.-M. Zhong, ``{The leptoquark Hunter\textquoteright{}s guide:
+  large coupling},'' \href{http://dx.doi.org/10.1007/JHEP01(2019)132}{{\em
+  JHEP} {\bfseries 01} (2019) 132},
+  \href{http://arxiv.org/abs/1810.10017}{{\ttfamily arXiv:1810.10017
+  [hep-ph]}}.
+
+\bibitem{Bansal:2018nwp}
+S.~Bansal, R.~M. Capdevilla, and C.~Kolda, ``{Constraining the minimal flavor
+  violating leptoquark explanation of the $R_{D^{(*)}}$ anomaly},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.99.035047}{{\em Phys. Rev. D}
+  {\bfseries 99} no.~3, (2019) 035047},
+  \href{http://arxiv.org/abs/1810.11588}{{\ttfamily arXiv:1810.11588
+  [hep-ph]}}.
+
+\bibitem{Buchmuller:1986zs}
+W.~Buchmuller, R.~Ruckl, and D.~Wyler, ``{Leptoquarks in Lepton - Quark
+  Collisions},'' \href{http://dx.doi.org/10.1016/0370-2693(87)90637-X}{{\em
+  Phys. Lett. B} {\bfseries 191} (1987) 442--448}. [Erratum: Phys.Lett.B 448,
+  320--320 (1999)].
+
+\bibitem{DiLuzio:2017vat}
+L.~Di~Luzio, A.~Greljo, and M.~Nardecchia, ``{Gauge leptoquark as the origin of
+  B-physics anomalies},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.96.115011}{{\em Phys. Rev. D}
+  {\bfseries 96} no.~11, (2017) 115011},
+  \href{http://arxiv.org/abs/1708.08450}{{\ttfamily arXiv:1708.08450
+  [hep-ph]}}.
+
+\bibitem{Assad:2017iib}
+N.~Assad, B.~Fornal, and B.~Grinstein, ``{Baryon Number and Lepton Universality
+  Violation in Leptoquark and Diquark Models},''
+  \href{http://dx.doi.org/10.1016/j.physletb.2017.12.042}{{\em Phys. Lett. B}
+  {\bfseries 777} (2018) 324--331},
+  \href{http://arxiv.org/abs/1708.06350}{{\ttfamily arXiv:1708.06350
+  [hep-ph]}}.
+
+\bibitem{Calibbi:2017qbu}
+L.~Calibbi, A.~Crivellin, and T.~Li, ``{Model of vector leptoquarks in view of
+  the $B$-physics anomalies},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.98.115002}{{\em Phys. Rev. D}
+  {\bfseries 98} no.~11, (2018) 115002},
+  \href{http://arxiv.org/abs/1709.00692}{{\ttfamily arXiv:1709.00692
+  [hep-ph]}}.
+
+\bibitem{Bordone:2017bld}
+M.~Bordone, C.~Cornella, J.~Fuentes-Martin, and G.~Isidori, ``{A three-site
+  gauge model for flavor hierarchies and flavor anomalies},''
+  \href{http://dx.doi.org/10.1016/j.physletb.2018.02.011}{{\em Phys. Lett. B}
+  {\bfseries 779} (2018) 317--323},
+  \href{http://arxiv.org/abs/1712.01368}{{\ttfamily arXiv:1712.01368
+  [hep-ph]}}.
+
+\bibitem{Barbieri:2017tuq}
+R.~Barbieri and A.~Tesi, ``{$B$-decay anomalies in Pati-Salam SU(4)},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-018-5680-9}{{\em Eur. Phys. J. C}
+  {\bfseries 78} no.~3, (2018) 193},
+  \href{http://arxiv.org/abs/1712.06844}{{\ttfamily arXiv:1712.06844
+  [hep-ph]}}.
+
+\bibitem{Blanke:2018sro}
+M.~Blanke and A.~Crivellin, ``{$B$ Meson Anomalies in a Pati-Salam Model within
+  the Randall-Sundrum Background},''
+  \href{http://dx.doi.org/10.1103/PhysRevLett.121.011801}{{\em Phys. Rev.
+  Lett.} {\bfseries 121} no.~1, (2018) 011801},
+  \href{http://arxiv.org/abs/1801.07256}{{\ttfamily arXiv:1801.07256
+  [hep-ph]}}.
+
+\bibitem{Baker:2019sli}
+M.~J. Baker, J.~Fuentes-Mart\'\i{}n, G.~Isidori, and M.~K\"onig, ``{High- $p_T$
+  signatures in vector\textendash{}leptoquark models},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-019-6853-x}{{\em Eur. Phys. J. C}
+  {\bfseries 79} no.~4, (2019) 334},
+  \href{http://arxiv.org/abs/1901.10480}{{\ttfamily arXiv:1901.10480
+  [hep-ph]}}.
+
+\bibitem{Rizzo:1996ry}
+T.~G. Rizzo, ``{Searches for scalar and vector leptoquarks at future hadron
+  colliders},'' {\em eConf} {\bfseries C960625} (1996) NEW151,
+  \href{http://arxiv.org/abs/hep-ph/9609267}{{\ttfamily arXiv:hep-ph/9609267}}.
+
+\bibitem{CiezaMontalvo:1992bs}
+J.~E. Cieza~Montalvo and O.~J.~P. Eboli, ``{Composite vector leptoquarks in e+
+  e-, gamma e and gamma gamma colliders},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.47.837}{{\em Phys. Rev. D}
+  {\bfseries 47} (1993) 837--843},
+  \href{http://arxiv.org/abs/hep-ph/9208242}{{\ttfamily arXiv:hep-ph/9208242}}.
+
+\bibitem{Blumlein:1992ej}
+J.~Blumlein and R.~Ruckl, ``{Production of scalar and vector leptoquarks in e+
+  e- annihilation},''
+  \href{http://dx.doi.org/10.1016/0370-2693(93)90306-3}{{\em Phys. Lett. B}
+  {\bfseries 304} (1993) 337--346}.
+
+\bibitem{Hiller:2018wbv}
+G.~Hiller, D.~Loose, and I.~Ni\v{s}and\v{z}i\'c, ``{Flavorful leptoquarks at
+  hadron colliders},'' \href{http://dx.doi.org/10.1103/PhysRevD.97.075004}{{\em
+  Phys. Rev. D} {\bfseries 97} no.~7, (2018) 075004},
+  \href{http://arxiv.org/abs/1801.09399}{{\ttfamily arXiv:1801.09399
+  [hep-ph]}}.
+
+\bibitem{Raj:2016aky}
+N.~Raj, ``{Anticipating nonresonant new physics in dilepton angular spectra at
+  the LHC},'' \href{http://dx.doi.org/10.1103/PhysRevD.95.015011}{{\em Phys.
+  Rev. D} {\bfseries 95} no.~1, (2017) 015011},
+  \href{http://arxiv.org/abs/1610.03795}{{\ttfamily arXiv:1610.03795
+  [hep-ph]}}.
+
+\bibitem{Alwall:2011uj}
+J.~Alwall, M.~Herquet, F.~Maltoni, O.~Mattelaer, and T.~Stelzer, ``{MadGraph 5
+  : Going Beyond},'' \href{http://dx.doi.org/10.1007/JHEP06(2011)128}{{\em
+  JHEP} {\bfseries 06} (2011) 128},
+  \href{http://arxiv.org/abs/1106.0522}{{\ttfamily arXiv:1106.0522 [hep-ph]}}.
+
+\bibitem{Asadi:2017qon}
+P.~Asadi, M.~R. Buckley, A.~DiFranzo, A.~Monteux, and D.~Shih, ``{Digging
+  Deeper for New Physics in the LHC Data},''
+  \href{http://dx.doi.org/10.1007/JHEP11(2017)194}{{\em JHEP} {\bfseries 11}
+  (2017) 194}, \href{http://arxiv.org/abs/1707.05783}{{\ttfamily
+  arXiv:1707.05783 [hep-ph]}}.
+
+\bibitem{Perelstein:2009}
+M.~Perelstein, ``Physics 7661: Collider physics madgraph notebook.''
+  Https://www.classe.cornell.edu/~maxim/p661/, 2009.
+
+\bibitem{Cowan:1998ji}
+G.~Cowan, {\em {Statistical data analysis}}.
+\newblock 1998.
+
+\bibitem{Cowan:2010js}
+G.~Cowan, K.~Cranmer, E.~Gross, and O.~Vitells, ``{Asymptotic formulae for
+  likelihood-based tests of new physics},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-011-1554-0}{{\em Eur. Phys. J. C}
+  {\bfseries 71} (2011) 1554}, \href{http://arxiv.org/abs/1007.1727}{{\ttfamily
+  arXiv:1007.1727 [physics.data-an]}}. [Erratum: Eur.Phys.J.C 73, 2501 (2013)].
+
+\bibitem{Frixione:1993yw}
+S.~Frixione, M.~L. Mangano, P.~Nason, and G.~Ridolfi, ``{Improving the
+  Weizsacker-Williams approximation in electron - proton collisions},''
+  \href{http://dx.doi.org/10.1016/0370-2693(93)90823-Z}{{\em Phys. Lett. B}
+  {\bfseries 319} (1993) 339--345},
+  \href{http://arxiv.org/abs/hep-ph/9310350}{{\ttfamily arXiv:hep-ph/9310350}}.
+
+\bibitem{Allanach:2017bta}
+B.~C. Allanach, B.~Gripaios, and T.~You, ``{The case for future hadron
+  colliders from $B \to K^{(*)} \mu^+ \mu^-$ decays},''
+  \href{http://dx.doi.org/10.1007/JHEP03(2018)021}{{\em JHEP} {\bfseries 03}
+  (2018) 021}, \href{http://arxiv.org/abs/1710.06363}{{\ttfamily
+  arXiv:1710.06363 [hep-ph]}}.
+
+\bibitem{Allanach:2019zfr}
+B.~C. Allanach, T.~Corbett, and M.~Madigan, ``{Sensitivity of Future Hadron
+  Colliders to Leptoquark Pair Production in the Di-Muon Di-Jets Channel},''
+  \href{http://dx.doi.org/10.1140/epjc/s10052-020-7722-3}{{\em Eur. Phys. J. C}
+  {\bfseries 80} no.~2, (2020) 170},
+  \href{http://arxiv.org/abs/1911.04455}{{\ttfamily arXiv:1911.04455
+  [hep-ph]}}.
+
+\bibitem{Abi:2021gix}
+{\bfseries Muon g-2} Collaboration, B.~Abi {\em et~al.}, ``{Measurement of the
+  Positive Muon Anomalous Magnetic Moment to 0.46 ppm},''
+  \href{http://dx.doi.org/10.1103/PhysRevLett.126.141801}{{\em Phys. Rev.
+  Lett.} {\bfseries 126} (4, 2021) 2021},
+  \href{http://arxiv.org/abs/2104.03281}{{\ttfamily arXiv:2104.03281
+  [hep-ex]}}.
+
+\bibitem{Aoyama:2020ynm}
+T.~Aoyama {\em et~al.}, ``{The anomalous magnetic moment of the muon in the
+  Standard Model},''
+  \href{http://dx.doi.org/10.1016/j.physrep.2020.07.006}{{\em Phys. Rept.}
+  {\bfseries 887} (2020) 1--166},
+  \href{http://arxiv.org/abs/2006.04822}{{\ttfamily arXiv:2006.04822
+  [hep-ph]}}.
+
+\bibitem{Kowalska:2018ulj}
+K.~Kowalska, E.~M. Sessolo, and Y.~Yamamoto, ``{Constraints on charmphilic
+  solutions to the muon g-2 with leptoquarks},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.99.055007}{{\em Phys. Rev. D}
+  {\bfseries 99} no.~5, (2019) 055007},
+  \href{http://arxiv.org/abs/1812.06851}{{\ttfamily arXiv:1812.06851
+  [hep-ph]}}.
+
+\bibitem{Aaij:2021vac}
+{\bfseries LHCb} Collaboration, R.~Aaij {\em et~al.}, ``{Test of lepton
+  universality in beauty-quark decays},''
+  \href{http://arxiv.org/abs/2103.11769}{{\ttfamily arXiv:2103.11769
+  [hep-ex]}}.
+
+\bibitem{Aaij:2017vbb}
+{\bfseries LHCb} Collaboration, R.~Aaij {\em et~al.}, ``{Test of lepton
+  universality with $B^{0} \rightarrow K^{*0}\ell^{+}\ell^{-}$ decays},''
+  \href{http://dx.doi.org/10.1007/JHEP08(2017)055}{{\em JHEP} {\bfseries 08}
+  (2017) 055}, \href{http://arxiv.org/abs/1705.05802}{{\ttfamily
+  arXiv:1705.05802 [hep-ex]}}.
+
+\bibitem{Bobeth:2013uxa}
+C.~Bobeth, M.~Gorbahn, T.~Hermann, M.~Misiak, E.~Stamou, and M.~Steinhauser,
+  ``{$B_{s,d} \to l^+ l^-$ in the Standard Model with Reduced Theoretical
+  Uncertainty},'' \href{http://dx.doi.org/10.1103/PhysRevLett.112.101801}{{\em
+  Phys. Rev. Lett.} {\bfseries 112} (2014) 101801},
+  \href{http://arxiv.org/abs/1311.0903}{{\ttfamily arXiv:1311.0903 [hep-ph]}}.
+
+\bibitem{LHCb:2020zud}
+{\bfseries LHCb} Collaboration, ``{Combination of the ATLAS, CMS and LHCb
+  results on the $B^0_{(s)} \to \mu^+ \mu^-$ decays},''.
+
+\bibitem{Santimaria:2021}
+L.~C. Marco~Santimaria, ``New results on theoretically clean observables in
+  rare b-meson decays from lhcb.'' LHCb Seminar, 2021.
+
+\bibitem{Altmannshofer:2021qrr}
+W.~Altmannshofer and P.~Stangl, ``{New Physics in Rare B Decays after Moriond
+  2021},'' \href{http://arxiv.org/abs/2103.13370}{{\ttfamily arXiv:2103.13370
+  [hep-ph]}}.
+
+\bibitem{Amhis:2019ckw}
+{\bfseries HFLAV} Collaboration, Y.~S. Amhis {\em et~al.}, ``{Averages of
+  $b$-hadron, $c$-hadron, and $\tau$-lepton properties as of 2018},''
+  \href{http://arxiv.org/abs/1909.12524}{{\ttfamily arXiv:1909.12524
+  [hep-ex]}}. updated results available at https://hflav.web.cern.ch.
+
+\bibitem{Glattauer:2015teq}
+{\bfseries Belle} Collaboration, R.~Glattauer {\em et~al.}, ``{Measurement of
+  the decay $B\to D\ell\nu_\ell$ in fully reconstructed events and
+  determination of the Cabibbo-Kobayashi-Maskawa matrix element $|V_{cb}|$},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.93.032006}{{\em Phys. Rev. D}
+  {\bfseries 93} no.~3, (2016) 032006},
+  \href{http://arxiv.org/abs/1510.03657}{{\ttfamily arXiv:1510.03657
+  [hep-ex]}}.
+
+\bibitem{Crivellin:2018qmi}
+A.~Crivellin, M.~Hoferichter, and P.~Schmidt-Wellenburg, ``{Combined
+  explanations of $(g-2)_{\mu,e}$ and implications for a large muon EDM},''
+  \href{http://dx.doi.org/10.1103/PhysRevD.98.113002}{{\em Phys. Rev. D}
+  {\bfseries 98} no.~11, (2018) 113002},
+  \href{http://arxiv.org/abs/1807.11484}{{\ttfamily arXiv:1807.11484
+  [hep-ph]}}.
+
+\bibitem{Feruglio:2017rjo}
+F.~Feruglio, P.~Paradisi, and A.~Pattori, ``{On the Importance of Electroweak
+  Corrections for B Anomalies},''
+  \href{http://dx.doi.org/10.1007/JHEP09(2017)061}{{\em JHEP} {\bfseries 09}
+  (2017) 061}, \href{http://arxiv.org/abs/1705.00929}{{\ttfamily
+  arXiv:1705.00929 [hep-ph]}}.
+
+\bibitem{Zyla:2020zbs}
+{\bfseries Particle Data Group} Collaboration, P.~A. Zyla {\em et~al.},
+  ``{Review of Particle Physics},''
+  \href{http://dx.doi.org/10.1093/ptep/ptaa104}{{\em PTEP} {\bfseries 2020}
+  no.~8, (2020) 083C01}.
+
+\bibitem{Abdesselam:2019wac}
+{\bfseries Belle} Collaboration, A.~Abdesselam {\em et~al.}, ``{Test of lepton
+  flavor universality in ${B\to K^\ast\ell^+\ell^-}$ decays at Belle},''
+  \href{http://arxiv.org/abs/1904.02440}{{\ttfamily arXiv:1904.02440
+  [hep-ex]}}.
+
+\bibitem{Wilks:1938dza}
+S.~S. Wilks, ``{The Large-Sample Distribution of the Likelihood Ratio for
+  Testing Composite Hypotheses},''
+  \href{http://dx.doi.org/10.1214/aoms/1177732360}{{\em Annals Math. Statist.}
+  {\bfseries 9} no.~1, (1938) 60--62}.
+
+\end{thebibliography}\endgroup

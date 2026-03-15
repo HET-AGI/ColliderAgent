@@ -1,0 +1,686 @@
+\documentclass[reprint,prl,twocolumn,superscriptaddress,showpacs,nofootinbib,floatfix,preprintnumbers]{revtex4-1}
+\usepackage{color}              
+%\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx, bm}
+\def\lsim{\mathrel{\rlap{\lower4pt\hbox{\hskip1pt$\sim$}}
+    \raise1pt\hbox{$<$}}}  % less than or approx. symbol
+\def\gsim{\mathrel{\rlap{\lower4pt\hbox{\hskip1pt$\sim$}}
+    \raise1pt\hbox{$>$}}}                % greater than or approx. symbol  
+\newcommand{\col}{\textcolor{blue}}
+\def\mET{E_T \hspace{-1.2em}/\;\:}
+\begin{document}
+\preprint{MAN/HEP/2013/15, %}
+%\preprint{
+CERN-PH-TH/2013-192} 
+\title {\bf \Large New Production Mechanism for Heavy Neutrinos at the LHC} 
+\author {P. S. Bhupal Dev}
+\affiliation{Consortium for Fundamental Physics, School of Physics and
+  Astronomy, University of Manchester, Manchester, M13 9PL, United
+  Kingdom}  
+\author{Apostolos Pilaftsis} 
+\affiliation{Consortium for Fundamental Physics, School of Physics and
+  Astronomy, University of Manchester, Manchester, M13 9PL, United
+  Kingdom}
+\affiliation{CERN, Department of Physics, Theory Division, CH-1211
+  Geneva 23, Switzerland} 
+\author{Un-ki Yang} 
+\affiliation{Department of Physics and Astronomy, Seoul National
+  University, Seoul 151-747, Korea}
+\vspace{1cm}
+
+\begin{abstract}
+We study  a new production mechanism  for heavy neutrinos  at the LHC,
+which dominates  over the usually  considered $s$-channel $W$-exchange
+diagram for  heavy-neutrino masses larger than  100--200~GeV.  The new
+mechanism   is  infrared-enhanced   by   $t$-channel  $W\gamma$-fusion
+processes. This  has important implications for  experimental tests of
+the seesaw  mechanism of neutrino  masses, and in particular, for the
+ongoing heavy neutrino searches at the LHC.  We find that
+the direct  collider limits on the light-to-heavy  neutrino mixing can
+be significantly improved, when this new production
+channel  is  properly taken  into  account.   The  scope of  this  new
+mechanism can equally well be extended to other exotic searches at the
+LHC.
+\end{abstract}
+
+\date{January 10, 2014}
+
+\maketitle
+
+The discovery  of nonzero neutrino  masses and mixing  from neutrino
+oscillation  data provides  the  first (and  so  far only)  conclusive
+experimental  evidence of  the  existence of  new  physics beyond  the
+Standard Model (SM). A simple paradigm for understanding the smallness
+of   neutrino    masses   in   a    natural   way   is    the   seesaw
+mechanism~\cite{review1}.    Its   simplest   realization~\cite{type1}
+(known as the type-I seesaw) requires  the existence of a set of heavy
+SM-singlet   Majorana  fermions   $N$,   which   break  the
+$(B-L)$-symmetry  of the  theory by  two  units. The  seesaw scale  is
+synonymous with  the typical Majorana mass  $M_N$ of these heavy 
+neutrinos,    whose   origin    must    be   connected    with   some    new
+physics~\cite{review1}. In the flavor basis $\{(\nu_{L})^C, N\}$, the
+seesaw  mass   matrix  has  the   following  general
+structure~\cite{type1, valle}:
+\begin{eqnarray}
+{\cal M}_\nu\ =\ 
+\left(\begin{array}{cc}0 & M_D\\ M^{\sf T}_D & M_N\end{array}\right)\;, 
+\label{eq1}
+\end{eqnarray}
+where $M_D$ is  the Dirac mass term which mixes  the light~($\nu_L$) and
+heavy ($N$)  states. %, and $M_N$ is  the Majorana mass term  for $N$. 
+In
+the usual  seesaw approximation: $||\xi  || \ll 1$, where  $\xi \equiv
+M_D M^{-1}_N$  and $||\xi || \equiv  \sqrt{{\rm Tr} (\xi^\dagger \xi)}$,
+this leads to the observed light neutrino mass matrix of the form
+\begin{eqnarray}
+  \label{eq:1}
+M_\nu\ \simeq\ -M_D M_N^{-1} M_D^{\sf T}
+\end{eqnarray}
+and  to the light-to-heavy neutrino  mixing of  order $\xi$~\cite{valle}.
+We note  that the smallness of  $M_\nu$ could be attributed  to a very
+high  value   for  $M_N$,  or   to  a  particular   flavor  structure
+in~(\ref{eq:1}),  or  both.  Without  specifying  the  details of  the
+model, we  generically call this minimal realization the `SM
+seesaw'.
+
+As mentioned above, there are two key aspects of the
+seesaw  mechanism  that can  be  probed  experimentally: the  Majorana
+mass $M_N$  of  the heavy  neutrinos,  and  the mixing  $\xi$
+between the  heavy and  light neutrinos.  The  Majorana nature  of the
+light and heavy neutrinos can  in principle be tested via neutrinoless    
+double          beta          decay
+($0\nu\beta\beta$)~\cite{0v2breview}. 
+%, \col{which would imply lepton  number 
+%violation  (LNV) by two units}.    
+However,    this   does   not
+necessarily  probe the mixing $\xi$ whose 
+effects may be sub-dominant, compared to 
+purely   left-(or right-)handed contributions to   the
+$0\nu\beta\beta$ process.   Alternatively, a non-negligible  
+value for~$\xi$ could  be inferred from  non-unitarity of  the  light
+neutrino mixing matrix~\cite{unitarity}, in neutrino oscillation data,
+as well as in observables for lepton flavor violation (LFV)~\cite{lfv}.  
+However,
+these low-energy  observables by themselves do not  prove the Majorana
+nature  of heavy  neutrinos since models with pseudo-Dirac heavy  
+neutrinos can also yield large non-unitarity 
+and LFV effects~\cite{invunitarity}.
+
+In the  SM seesaw, the  Majorana nature of  possible electroweak-scale
+heavy neutrinos as well as their mixing with the light neutrinos 
+can  be {\it simultaneously} unraveled via their distinctive like-sign
+dilepton   signatures   at   colliders~\cite{atre}.  
+The  usually considered production  channel for heavy
+Majorana neutrinos  at the LHC is  $pp\to W^\pm \to  \ell^\pm N$ (Fig.~\ref{fig1}), 
+with $N$ subsequently  decaying to $\ell^\pm W$, followed  by the $W$-decay
+to hadronic final  states.  For $M_N>M_W$, 
+the  $W$-boson produced  from the  $pp$  collision is
+off-shell, whereas that  coming from the $N$-decay  is on-shell. For a
+Majorana  neutrino  $N$,  this  leads to  the  `smoking-gun'  collider
+signature of same-sign dileptons plus  two jets with no missing energy
+($\ell^\pm\ell^\pm  jj$).   This was  first  pointed  out
+ in the context of Left-Right models~\cite{KS}, and        was        
+subsequently        analyzed
+in~\cite{APZPC,datta,theory-LL,BLP}    within     the    SM    seesaw.
+Experimental searches based on this channel have been performed 
+%by the
+%CMS~\cite{CMS-LL} and  ATLAS~\cite{ATLAS-LL} collaborations, 
+using the $\sqrt s=7$ TeV LHC data for  the di-muon case
+~\cite{ATLAS-LL, CMS-LL} (and also for the  di-electron case~\cite{CMS-LL}).  
+No  excess above the
+expected SM background  has been observed so far,  and upper limits on
+the light-to-heavy  neutrino mixing parameter  squared, $|V_{\mu N}|^2
+\approx (\xi\, \xi^\dagger)_{\mu  \mu}=10^{-2}$ -- $10^{-1}$, have been
+derived for heavy neutrino masses $M_N = 100$ -- 300~GeV.
+
+For collider tests of the SM seesaw to be effective,
+the  mixing  parameter  $V_{\ell  N}  \approx \xi_{\ell  N}$  must  be
+significant,  since this  is  the  only way  the heavy  neutrino
+communicates to  the observable SM  sector.  This requires  that apart
+from  $M_N$  being   small  (in  the  sub-TeV  to   TeV  range  to  be
+kinematically accessible), $M_D$ must be  large (in the few GeV range)
+simultaneously.   In the traditional  ``vanilla" seesaw  mechanism, we
+expect   the   light-to-heavy    neutrino   mixing   $V_{\ell   N}\sim
+\sqrt{m_\nu/M_N}\lsim 10^{-7}$  for  $M_N \sim
+1$~TeV, due to the smallness  of light neutrino mass $m_\nu\lsim 
+0.1$    eV~\cite{Planck},   thus    making   the    collider   signal
+unobservable. However, if the Dirac and Majorana mass matrices 
+in (\ref{eq:1}) have specific  textures  
+which  can be enforced by some symmetries~\cite{APZPC,cancel}, 
+$V_{\ell N}$ can be naturally large while the light neutrinos remain 
+massless at the tree-level. The observed non-zero neutrino masses and 
+mixing can 
+be generated by approximately breaking the underlying symmetry structure 
+via radiative effects and/or higher-dimensional operators. 
+Such models allow the possibility of having ${\cal O}$(100) GeV 
+heavy Majorana neutrinos with a significant $V_{\ell N}$, and hence, 
+observable lepton number violation (LNV)  at the LHC~\cite{ft1}, 
+without being in conflict with the neutrino oscillation data. 
+We will generically assume this for our subsequent  discussion, 
+without referring to any particular 
+texture or model-building aspects, and  so treat  $M_N$ and
+$V_{\ell N}$ as free phenomenological parameters.
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=3.2cm]{fig1.pdf}
+\end{center}
+\caption{The usually considered heavy neutrino production channel 
+in the SM seesaw at the LHC.}
+\label{fig1}
+\end{figure}
+
+
+In  this Letter  we explicitly  demonstrate the  existence of  a novel
+production mechanism  for heavy neutrinos  at the LHC  which dominates
+over the previously  considered $s$-channel $W$-exchange diagram shown
+in Fig.~\ref{fig1}.   Within the SM seesaw,  there exist
+many reactions  at parton  level listed  in~\cite{datta}, which
+give  rise   to  same-sign  dileptons   with  $n\geq  2$   jets.   The
+contributions  of most  of  these additional  diagrams are  negligible
+compared to the that in Fig.~\ref{fig1}, and have therefore been
+neglected  in  all previous  collider  analyses.   As  we show  below,
+however,  diagrams involving  virtual  photons in  the $t$-channel  as
+shown  in Fig.~\ref{fig2}  give rise  to {\it  diffractive} processes,
+such as
+\begin{eqnarray}
+pp\ \to\ W^*\gamma^* jj\ \to\ \ell^\pm N jj\; ,
+\label{proc2}
+\end{eqnarray}
+which are {\it  not} negligible, but infrared enhanced.   In fact, the
+inclusive cross  section of  these processes is  divergent due  to the
+collinear singularity caused by  the photon propagator. As we increase
+the virtuality of the photon  by giving a large transverse momentum to
+the   associated   jet    ($p_T^j$),   the   cross   section   becomes
+finite. Following the Weizs\"{a}cker-Williams
+equivalent photon approximation (EPA) for electrons~\cite{ww}, we may analogously write
+down the  cross section as a  convolution of the  probability that the
+proton radiates off a real photon, 
+by absorbing the collinear divergence of
+the low-$p_T^j$ regime into an effective photon structure function for
+the proton~\cite{epa, epa2}.
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=3.2cm]{fig2a.pdf}
+\includegraphics[width=3.2cm]{fig2d.pdf}\\
+\includegraphics[width=3.2cm]{fig2b.pdf}
+\includegraphics[width=3.2cm]{fig2c.pdf}
+\end{center}
+\caption{New heavy neutrino production channels at the LHC.
+Mirror-symmetric and $Z$-mediated graphs are not shown.} 
+\label{fig2}
+\end{figure}
+
+To  establish the importance  of the  diagrams in  Fig.~\ref{fig2}, we
+compare the inclusive  cross section for $N\ell^\pm jj$ 
+with  the  previously  considered $N\ell^\pm$  in Fig.~\ref{fig1}.   
+Note  that   the $pp\to N\ell^\pm jj$  process  receives
+contributions  from  both  hadronic  and electroweak  processes.   The
+hadronic channels  mediated by virtual  gluons and quarks  give ${\cal
+  O}(\alpha_s)$  corrections  to   the  production  channel  in
+Fig.~\ref{fig1} and  drop at  the same rate  as the  $pp\to N\ell^\pm$
+cross  section,  as the  heavy  neutrino  mass  increases.   The
+electroweak contributions come from the
+virtual $\gamma$-exchange diagrams  shown in Fig.~\ref{fig2}, and also
+from additional  $W^\pm Z$-mediated graphs not shown  here.  All these
+Feynman  graphs  must  be  taken  into  account, in  order  to  get  a
+gauge-invariant  result.   It turns  out  that  the total  electroweak
+contribution drops at  a rate slower than the  $pp\to N\ell^\pm$ cross
+section with increasing heavy neutrino mass.  This is mainly due
+to  the  infrared-enhanced  cross  section  of  the  $\gamma$-mediated
+processes in~\ref{proc2},  which have a significantly milder
+dependence   on  $M_N$.    As   a  result,   the  production   channel
+(\ref{proc2}) dominates over  the earlier considered $pp\to N\ell^\pm$
+channel  with increasing  $M_N$.  Similar  behavior is  also expected
+with  increasing  center  of   mass  energy  $\sqrt{s}$  in  the  $pp$
+collisions,  as verified  by  our numerical  simulations given  below.
+Thus,  the process~(\ref{proc2})  becomes  increasingly important  for
+heavy neutrino searches at the LHC, for higher energies $\sqrt{s}$ and
+also larger $M_N$ values.  Consequently, it must be taken into account
+in present and future analyses of the LHC data.
+
+\begin{figure*}[t]
+\begin{center}
+\includegraphics[width=5cm]{inc7.pdf}
+\hspace{0.2cm}
+\includegraphics[width=5cm]{inc8.pdf}
+\hspace{0.2cm}
+\includegraphics[width=5cm]{inc14.pdf}
+\end{center}
+\caption{Comparison of the inclusive  cross sections 
+%normalized to the
+%  squared  light-to-heavy  neutrino mixing  $|V_{\ell  N}|^2$ 
+for  the heavy  neutrino production  channels $pp\to N\ell^\pm$ and $pp\to
+  N\ell^\pm jj$  at LHC energies of $\sqrt s=7,8$ and 14 TeV. }
+\label{fig3}
+\end{figure*}
+Our numerical  results are shown in Fig.~\ref{fig3}  for the inclusive
+production cross sections normalized to the mixing parameter $|V_{\ell
+  N}|^2=1$. For  the process $pp\to N\ell^\pm jj$, we  obtain the `inclusive'
+cross   section   by   applying   a   minimal   jet   $p_T$   cut   of
+$p_T^j>(p_T^j)_{\rm min}$ to  avoid the collinear singularity, whereas
+the infrared  part is approximated  by the inclusive cross  section of
+the process $p\gamma  \to N\ell^\pm j$, where the photon comes from a
+proton.  The  latter process  was calculated with EPA 
+using the improved Weizs\"{a}cker-Williams formula
+~\cite{epa} for   a  fixed
+factorization scale of $\mu_F=(p_T^j)_{\rm min}$. For concreteness, we
+have   chosen   $(p_T^j)_{\rm  min}=10$~GeV (the lowest detection 
+threshold for ATLAS) and   used  the  equivalent photon
+distribution functions  as implemented in  {\tt MadGraph5}~\cite{mg5},
+whereas the quark and gluon  distribution functions of the proton were
+taken  from~{\tt  CTEQ6L}~\cite{cteq6l}.  The  renormalization  scale
+was chosen for each event depending on the maximum final-state
+mass ($M_N$ in our case). Note that the total cross section which is a
+sum of  the $pp\to  N\ell^\pm jj$ and  $p\gamma\to N\ell^\pm  j$ cross
+sections  should be independent  of the $p_T^j$ cut, as long  as the
+collinear  part of the  $pp\to N\ell^\pm  jj$ process  is consistently
+absorbed  into the  photon  distribution function. 
+%It should also be independent of the choice of 
+%factorization scale.  
+We observed  some
+discrepancy from this  general expectation, which could be due to the fact 
+that the accuracy of EPA, while being excellent for elastic scattering 
+processes~\cite{kniehl}, is scale-dependent 
+for inelastic channels~\cite{pisano}, and moreover, the choice of the factorization scale 
+is %somewhat ambiguous, typical of all leading logarithmic approximations 
+not unique due to higher order effects in perturbative QCD. 
+%Hence, we find it rather difficult to settle this 
+%scale-dependence issue in our new production mode. 
+For an alternative model of EPA as currently implemented in {\tt CalcHEP3.4}~\cite{calchep}, 
+we get similar results as above 
+for the $p\gamma\to N\ell^\pm j$ cross sections within 10-20\% accuracy.  
+However, since the
+dominant contribution  results from the process  $pp\to N\ell^\pm jj$ 
+in the current mass range of interest, 
+this point will not affect the main results of the analysis presented here. 
+%, but 
+%should be properly addressed in order to get a better estimate of the theoretical 
+%cross sections.  
+%with the range of $M_N$ extended 
+%beyond 500 GeV or so.  
+% and believe that  this has to
+%do  with  an  erroneous  implementation  of  the  EPA~for  $p\gamma\to
+%N\ell^\pm j$ in~{\tt MadGraph5}  (the same discrepancy was found using
+%the  EPA implementation in  {\tt CalcHEP}~\cite{calchep}). 
+
+From  Fig.~\ref{fig3} we  see  that the  $N\ell^\pm$  production
+channel is dominant only in the  low mass regime, whilst the new
+$N\ell^\pm   jj$   channel   starts   becoming   dominant   for   $M_N
+\gsim 300$~GeV at $\sqrt s=7$~TeV LHC.  This crossover point  shifts towards lower values of $M_N$,
+with  increasing  $\sqrt s$.   It  is  interesting  to note  that  the
+existing  heavy neutrino  searches~\cite{CMS-LL,  ATLAS-LL} have  only
+explored  up to  $M_N=300$~GeV  with $\sqrt  s=7$ TeV LHC  data, 
+but plan to extend up to $M_N=500$ GeV
+with  $\sqrt  s=8$~TeV data.  Hence,  the  new production
+channel  proposed here  must be  taken into  account in
+{\em all} current and future LHC analyses.
+
+
+An  important consequence of  the new  production mechanism  for heavy
+neutrinos is  that the current LHC sensitivity  for the light-to-heavy
+neutrino mixing  parameter $V_{\mu  N}$ can be  improved significantly
+for the whole heavy neutrino  mass range of interest, i.e.~$M_N = 100$
+- 300~GeV. In order to derive the  new limits on $V_{\mu N}$, we first
+calculate  the efficiency  of  the new  signal  proposed here:  $pp\to
+N\mu^\pm  jj\to  \mu^\pm  \mu^\pm  4j$, after  implementing  the  same
+selection criteria as used for  the $\mu^\pm\mu^\pm jj$ channel in the
+$\sqrt s=7$ TeV ATLAS analysis~\cite{ATLAS-LL}:
+\begin{eqnarray}
+&&p_T^j>20~{\rm GeV},~p_T^\mu >20~{\rm GeV},~
+p_T^{\mu,{\rm leading}}>25~{\rm GeV},\nonumber\\
+&& |\eta^j|<2.8,~|\eta^\mu|<2.5, ~\Delta R^{jj}>0.4, ~\Delta R^{\mu
+  j} > 0.4, \label{select}\\ 
+&& m_{\mu\mu} > 15~{\rm GeV}, ~E_T^{\rm miss}<35~{\rm GeV}, ~m_{jj} \in
+[55,120]~{\rm GeV}, \nonumber 
+\end{eqnarray}
+and for $\Delta R^{\mu  j}<0.4$, we require  $p_T^\mu>80$~GeV to
+retain muons  close to jets  from event topologies with  boosted heavy
+neutrinos.   After  generating  the  parton  level  events  with  {\tt
+  MadGraph5}~\cite{mg5},   the   showering   and  hadronization   were
+performed  with  {\tt  Pythia6.4}~\cite{pythia}  and a  fast  detector
+simulation was done using {\tt DELPHES2.0.5}~\cite{delphes}.  Jets are
+reconstructed  using the  anti-$k_T$ jet  clustering algorithm  with 
+$R=0.4$ as  implemented in {\tt FastJet2}~\cite{fastjet}. We
+find  that the  total  selection efficiency  for the  $\mu^\pm\mu^\pm$
+signal remains  almost the  same as before~\cite{ATLAS-LL},  since the
+additional two jets  coming from the new channel  are usually lost due
+to the  stringent selection criteria given in  (\ref{select}).  Regarding 
+the  SM background  for these  processes,  we expect the background for
+di-muon+$n$  jets (with $n\geq  2$) to  be the  same as  that reported
+in~\cite{ATLAS-LL} for the  selection criteria in (\ref{select}). 
+Note that the SM backgrounds for the $\mu^\pm\mu^\pm 4j$ 
+signal reported here mainly come from $t\bar t+V$ (where $V=W,Z$) and $WW$ production, which are small compared to the $WZ$ background 
+for the $\mu^\pm\mu^\pm jj$ signal~\cite{ATLAS-LL}. 
+%only come from mis-measurement of the charge of muons, whose rate is found to be negligible. 
+A separate dedicated set of selection criteria and
+background reduction methods must  be designed in order to distinguish
+the new $\mu^\pm\mu^\pm 4j$  signal from the usual $\mu^\pm\mu^\pm jj$
+signal,  and this  will be  studied  elsewhere.  A  similar
+analysis can  also be performed  for the di-electron signal $e^\pm  e^\pm nj$ 
+(with $n\geq 2$). Although  the   limits  on  $|V_{eN}|^2$   derived  from
+$0\nu\beta\beta$    constraints   are    much   more
+stringent~\cite{atre}, models  with  quasi-degenerate heavy
+Majorana neutrinos  may naturally evade  these constraints, while 
+giving rise to sizable LNV signals at the LHC~\cite{BLP}.
+For  the  corresponding  limits  on  $|V_{\tau  N}|^2$,  the
+identification  of  same-sign  di-tau  events  at  the  LHC  is  quite
+difficult, thus making a realistic collider simulation for this case rather involved.
+
+Following a rather conservative approach  to our analysis here, we use
+the  current 95\%   confidence  level  upper  limits  on   the  cross  section
+$\sigma(pp\to  \mu^\pm\mu^\pm jj)$~\cite{ATLAS-LL}, derived from the $\sqrt  s=7$  TeV  LHC data 
+with 4.7 fb$^{-1}$ luminosity, and  translate them
+into upper limits on the  mixing parameter $|V_{\mu N}|^2$ as shown in Fig.~\ref{fig4} 
+by dividing the cross section limits by the total inclusive cross section 
+$\sigma(pp\to \mu^\pm\mu^\pm nj)$ (with $n\geq 2$).   
+%For  simplicity,  we  assume that  only  one  heavy
+%neutrino~$N$ contributes to the signal cross section for a given heavy
+%neutrino  mass~$M_N$. 
+We  find that  the  existing  ATLAS limits~\cite{ATLAS-LL} are  
+improved  by  almost 50\%  with  the
+inclusion of  the new production  mechanism.  For comparison,  we also
+show the corresponding CMS  limits~\cite{CMS-LL} which are much weaker
+compared to  those by  ATLAS, mainly due  to their  large backgrounds.
+The  horizontal  line  shows  the  current  best limit  on
+$|V_{\mu   N}|^2$  derived   indirectly  from   electroweak  precision
+data~\cite{del} which is independent of the heavy neutrino mass
+for $M_N>M_Z$. Note that the LFV processes (such as rare lepton 
+decays~\cite{IP} and $\mu-e$ conversion~\cite{conv}) put stringent constraints   
+on the product $|V_{\ell N}V^*_{\ell'N}|$ (with $\ell\neq \ell'$)~\cite{lfv}, thereby 
+limiting the LHC sensitivity for LFV signals of the type $e^\pm\mu^\pm jj$; however, 
+they do not restrict the individual mixing parameters $|V_{\ell N}|^2$. 
+In  order to compare the direct  search limits with the
+indirect one, we also derive our expected upper limits for $\sqrt s=8$
+and 14 TeV  LHC by assuming that the  corresponding experimental upper
+limits on  the signal cross  section will be  {\it at least} as good  as the
+$\sqrt s=7$ TeV results.  Again,  these are conservative limits as the
+experimental  limits   on  cross  section  are   expected  to  improve
+significantly  with  the  analysis  of  more data,  if  no  signal  is
+observed. In that case, the direct collider limits  could 
+surpass the indirect limits for a  significant range of heavy neutrino masses,
+once  the new production  mechanism proposed  here is  considered.  In
+particular,  Fig.~\ref{fig4}   shows  that  the  effect   of  the  new
+production mechanism  at LHC energies  $\sqrt{s} = 14$~TeV will  be to
+improve the current ATLAS limit by {\it at least} a factor of five.
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=8cm]{lim.pdf}
+\end{center}
+\caption{Improved upper  limits (solid lines, also labeled ``New") on the  mixing
+  parameter $|V_{\mu  N}|^2$ for
+  LHC  energies $\sqrt  s=7, 8$  and  14~TeV, along  with the  current
+  CMS~\cite{CMS-LL}   and  ATLAS~\cite{ATLAS-LL}  limits   derived  at
+  $\sqrt{s} =  7$~TeV, and the conservative upper limits expected for 
+  8-  and  14-TeV LHC  runs using the  {\em  previous}
+  production mode  of Fig.~\ref{fig1} (dashed lines, also labeled ``Prev.''). 
+The  horizontal
+  line  shows the  current best limit  on $|V_{\mu  N}|^2$ from
+  indirect searches~\cite{del}.}
+\label{fig4}
+\end{figure}
+
+In summary, we  have analyzed a new dominant  production mechanism for
+heavy neutrinos at the LHC.  This mechanism is extremely important for
+the range of  heavy neutrino masses currently being searched
+for  and provides significantly  improved {\em  direct} limits  on the
+light-to-heavy neutrino  mixing $V_{\ell  N}$, in a  fully independent
+fashion of the indirect searches. As more data are gathered at the LHC
+and  the   sensitivity  to  higher  heavy  neutrino   mass  ranges  is
+contemplated, these  new contributions will be crucial in
+setting  the  best possible  direct  limits  on  the mixing  parameter
+$V_{\mu  N}$ in the absence of a signal. On the other hand, 
+an evidence of LNV at the LHC could   
+reveal underlying symmetries of the lepton sector, thus  
+shedding light on the  seesaw mechanism. 
+We should note that the scope of the new infrared-enhanced 
+production mechanism
+proposed here is not just limited to heavy Majorana neutrinos, and can
+also  be  applied to  other  heavy  particle  searches (the  so-called
+`exotics')  at  the  LHC. For instance, for pseudo-Dirac heavy neutrinos, 
+ the same production channels studied 
+here could give rise to an enhanced tri-lepton signal. 
+This mechanism is also applicable for searches of 
+vector-like fermions and new charged  scalars. 
+We hope to  address some of these
+aspects in a future communication.
+
+\acknowledgments 
+P.S.B.D. and A.P. thank Mike Seymour for helpful discussions on the
+equivalent photon approximation. P.S.B.D. also thanks Francisco del Aguila 
+and Rabindra Mohapatra for useful discussions on lepton number violation, 
+Olivier Mattelaer for
+help with photon structure functions in {\tt MadGraph}, 
+John Almond and Joel Klinger for
+clarifications on the ATLAS selection cuts used here. The work of
+P.S.B.D. and A.P. is supported by the Lancaster-Manchester-Sheffield
+Consortium for Fundamental Physics under STFC grant ST/J000418/1. In
+addition, A.P.  gratefully acknowledges partial support by a IPPP
+associateship from Durham University.
+
+ 
+\begin{thebibliography}{99}
+\bibitem{review1} For a review, see R.~N.~Mohapatra and A.~Y.~Smirnov,
+  %``Neutrino Mass and New Physics,''
+  Ann.\ Rev.\ Nucl.\ Part.\ Sci.\  {\bf 56}, 569 (2006) [hep-ph/0603118]. 
+
+\bibitem{type1} P. Minkowski, Phys. Lett. B {\bf 67}, 421 (1977); 
+R. N. Mohapatra and G. Senjanovi\'{c}, Phys. Rev. Lett. {\bf 44}, 912 (1980);  
+T. Yanagida, {\it Workshop on unified theories and baryon number in
+  the universe}, eds. A. Sawada and A. Sugamoto, KEK, Tsukuba (1979);  
+%S. Glashow, Quarks and lep- tons,Carg`ese1979,ed.M.L ́evy(Plenum,NY,1980); 
+M. Gell-Mann, P. Ramond and R. Slansky, {\it Supergravity}, ed. P. Van
+Niewenhuizen and D. Freeman, North Holland, Amsterdam (1980).   
+
+   
+\bibitem{valle} 
+J.~Schechter and J.~W.~F.~Valle,
+ %``Neutrino Masses in SU(2) x U(1) Theories,''
+  Phys.\ Rev.\ D {\bf 22}, 2227 (1980); 
+  %``Neutrino Decay and Spontaneous Violation of Lepton Number,''
+  Phys.\ Rev.\ D {\bf 25}, 774 (1982).
+
+\bibitem{0v2breview} For reviews, see e.g., W. Rodejohann, Int. J. Mod. Phys. E {\bf 20}, 1833 (2011) 
+[arXiv:1106.1334 [hep-ph]]; 
+%J. D. Vergados, H. Ejiri and F. Simkovic, Rept. Prog. Phys. {\bf 75},
+%106301 (2012) %[arXiv:1205.0649 [hep-ph]]. 
+F.~F.~Deppisch, M.~Hirsch and H.~Pas,
+  %``Neutrinoless Double Beta Decay and Physics Beyond the Standard Model,''
+  J.\ Phys.\ G {\bf 39}, 124007 (2012) [arXiv:1208.0727 [hep-ph]].
+
+ 
+  \bibitem{unitarity} 
+% H.~Zhang and Z.~-z.~Xing,
+  %``Leptonic unitarity triangles in matter,''
+ % Eur.\ Phys.\ J.\ C {\bf 41}, 143 (2005); 
+S.~Antusch, C.~Biggio, E.~Fernandez-Martinez, M.~B.~Gavela and J.~Lopez-Pavon,
+  %``Unitarity of the Leptonic Mixing Matrix,''
+  JHEP {\bf 0610}, 084 (2006) [hep-ph/0607020]; 
+A.~Abada, C.~Biggio, F.~Bonnet, M.~B.~Gavela and T.~Hambye,
+  %``Low energy effects of neutrino masses,''
+  JHEP {\bf 0712}, 061 (2007) [arXiv:0707.4058 [hep-ph]].
+
+\bibitem{lfv} For a review, see  M.~Raidal {\it et al.},
+  %``Flavour physics of leptons and dipole moments,''
+  Eur.\ Phys.\ J.\ C {\bf 57}, 13 (2008) [arXiv:0801.1826 [hep-ph]]. 
+
+\bibitem{invunitarity} 
+M.~Malinsky, T.~Ohlsson and H.~Zhang,
+  %``Non-unitarity effects in a realistic low-scale seesaw model,''
+  Phys.\ Rev.\ D {\bf 79}, 073009 (2009) [arXiv:0903.1961 [hep-ph]]; 
+M.~Malinsky, T.~Ohlsson, Z.~-z.~Xing and H.~Zhang,
+  %``Non-unitary neutrino mixing and CP violation in the minimal
+  %inverse seesaw model,'' 
+  Phys.\ Lett.\ B {\bf 679}, 242 (2009) [arXiv:0905.2889 [hep-ph]];   
+P.~S.~B.~Dev and R.~N.~Mohapatra,
+  %``TeV Scale Inverse Seesaw in SO(10) and Leptonic Non-Unitarity Effects,''
+  Phys.\ Rev.\ D {\bf 81}, 013001 (2010) [arXiv:0910.3924 [hep-ph]]; 
+D.~V.~Forero, S.~Morisi, M.~Tortola and J.~W.~F.~Valle,
+  %``Lepton flavor violation and non-unitary lepton mixing in
+  %low-scale type-I seesaw,'' 
+  JHEP {\bf 1109}, 142 (2011) [arXiv:1107.6009 [hep-ph]].
+
+\bibitem{atre} 
+  For a review, see A.~Atre, T.~Han, S.~Pascoli and B.~Zhang,
+  %``The Search for Heavy Majorana Neutrinos,''
+  JHEP {\bf 0905}, 030 (2009) [arXiv:0901.3589 [hep-ph]].
+
+\bibitem{KS} W.-Y. Keung and G. Senjanovi\'{c}, Phys. Rev. Lett. {\bf
+  50}, 1427 (1983). 
+
+%\bibitem{LR} J.C. Pati and A. Salam, Phys. Rev. D {\bf 10}, 275 (1974); 
+%R. N. Mohapatra and J. C. Pati, Phys. Rev. D {\bf 11} 2558 (1975); 
+%R. N. Mohapatra and G. Senjanovi\'{c}, Phys. Rev. D {\bf 12} 1502 (1975). 
+
+\bibitem{APZPC} A. Pilaftsis, Z. Phys. C {\bf 55}, 275 (1992) [hep-ph/9901206].
+
+\bibitem{datta} A.~Datta, M.~Guchait and A.~Pilaftsis,
+  %``Probing lepton number violation via majorana neutrinos at hadron
+  %supercolliders,'' 
+  Phys.\ Rev.\ D {\bf 50}, 3195 (1994) [hep-ph/9311257]. 
+
+\bibitem{theory-LL}    F.~M.~L.~Almeida,    Jr.,    Y.~D.~A.~Coutinho,
+  J.~A.~Martins Simoes and M.~A.~B.~do Vale,
+  %``On a signature for heavy Majorana neutrinos in hadronic collisions,''
+  Phys.\ Rev.\ D {\bf 62}, 075004 (2000) [hep-ph/0002024]; 
+ O.~Panella, M.~Cannoni, C.~Carimalo and Y.~N.~Srivastava,
+  %``Signals of heavy Majorana neutrinos at hadron colliders,''
+  Phys.\ Rev.\ D {\bf 65}, 035005 (2002) [hep-ph/0107308];  
+T. Han and B. Zhang, Phys. Rev. Lett. {\bf 97}, 171804 (2006); % [hep-ph/0604064]; 
+F. del Aguila, J. A. Aguilar-Saavedra and R. Pittau, JHEP {\bf 0710},
+047 (2007) [hep-ph/0703261];  
+F.~del Aguila and J.~A.~Aguilar-Saavedra,
+  %``Distinguishing seesaw models at LHC with multi-lepton signals,''
+  Nucl.\ Phys.\ B {\bf 813}, 22 (2009) [arXiv:0808.2468 [hep-ph]].
+
+\bibitem{BLP} S.~Bray, J.~S.~Lee and A.~Pilaftsis,
+%``Resonant CP violation due to heavy neutrinos at the LHC,''
+  Nucl.\ Phys.\ B {\bf 786}, 95 (2007) [hep-ph/0702294].
+  %%CITATION = HEP-PH/0702294;%%
+
+\bibitem{ATLAS-LL} ATLAS Collaboration, ATLAS-CONF-2012-139.  
+
+\bibitem{CMS-LL} S.~Chatrchyan {\it et al.}  [CMS Collaboration], 
+Phys. Lett. {\bf B 717}, 109
+  (2012) [arXiv:1207.6079 [hep-ph]].  
+
+
+\bibitem{Planck} P. A. R. Ade {\it et al.} [Planck Collaboration],
+  arXiv:1303.5076 [astro-ph.CO].  
+
+
+
+\bibitem{cancel} 
+J.~Gluza,
+  %``On teraelectronvolt Majorana neutrinos,''
+  Acta Phys.\ Polon.\ B {\bf 33}, 1735 (2002) [hep-ph/0201002]; 
+A.~Pilaftsis,
+  %``Resonant tau-leptogenesis with observable lepton number violation,''
+  Phys.\ Rev.\ Lett.\  {\bf 95}, 081602 (2005) [hep-ph/0408103]; 
+J. Kersten and A. Y. Smirnov, Phys. Rev. D {\bf 76}, 073005 (2007) [arXiv:0705.3221 [hep-ph]];   
+%A.~de Gouvea, arXiv:0706.1732 [hep-ph];
+  %``GeV seesaw, accidentally small neutrino masses, and Higgs decays
+  %to neutrinos,'';
+Z.-z.~Xing,
+  %``Naturalness and Testability of TeV Seesaw Mechanisms,''
+  Prog.\ Theor.\ Phys.\ Suppl.\  {\bf 180}, 112 (2009) [arXiv:0905.3903 [hep-ph]];   
+X.-G.~He, S.~Oh, J.~Tandean and C.~-C.~Wen,
+  %``Large Mixing of Light and Heavy Neutrinos in Seesaw Models and the LHC,''
+  Phys.\ Rev.\ D {\bf 80}, 073012 (2009) [arXiv:0907.1607 [hep-ph]]; 
+A.~Ibarra, E.~Molinaro and S.~T.~Petcov,
+  %``TeV Scale See-Saw Mechanisms of Neutrino Mass Generation, the
+  %Majorana Nature of the Heavy Singlet Neutrinos and
+  %$(\beta\beta)_{0\nu}$-Decay,'' 
+  JHEP {\bf 1009}, 108 (2010) [arXiv:1007.2378 [hep-ph]];
+F.~F.~Deppisch and A.~Pilaftsis,
+  %``Lepton Flavour Violation and theta(13) in Minimal Resonant Leptogenesis,''
+  Phys.\ Rev.\ D {\bf 83}, 076007 (2011) [arXiv:1012.1834 [hep-ph]]; 
+% M.~Mitra, G.~Senjanovi\'{c} and F.~Vissani,
+%``Neutrinoless Double Beta Decay and Heavy Sterile Neutrinos,''
+% Nucl.\ Phys.\ B {\bf 856}, 26 (2012). %[arXiv:1108.0004 [hep-ph]]; 
+%N.~Haba, T.~Horita, K.~Kaneta and Y.~Mimura,
+%``TeV-scale seesaw with non-negligible left-right neutrino mixings,''
+%  arXiv:1110.2252 [hep-ph]; 
+ P.~S.~B.~Dev, C.-H.~Lee and R.~N.~Mohapatra,
+  %``Natural TeV-Scale Left-Right Seesaw for Neutrinos and Experimental Tests,''
+  Phys.\ Rev.\ D {\bf 88}, 093010 (2013) [arXiv:1309.0774 [hep-ph]].
+
+\bibitem{ft1} Even for quasi-degenerate heavy Majorana neutrinos (as occurs in specific models), the LNV signal can be sizable when the mass splitting $\Delta M_N\equiv M_{N_1}-M_{N_2}$ is comparable to the width $\Gamma_N\equiv (\Gamma_{N_1}+\Gamma_{N_2})/2$~\cite{BLP}. For instance, for the on-shell production of $N_{1,2}$ with average four-momentum squared $\bar{s}=(M_{N_1}^2+M_{N_2}^2)/2$, the LNV amplitude in the muon-channel is given by ${\cal A}_{\rm LNV}^{\mu\mu}(\bar{s})=-V^2_{\mu N_1}\frac{2\Delta M_N}{\Delta M_N^2+\Gamma_N^2}+{\cal O}\left(\frac{\Delta M_N}{M_{N_1}}\right)$, for $\Delta M_N\lsim \Gamma_N$.   
+%Such mass splittings can be naturally obtained from loop-effects, see e.g.,  
+%as for instance, in the minimal radiative inverse seesaw model:  
+%P.~S.~B.~Dev and A.~Pilaftsis,
+  %``Minimal Radiative Neutrino Mass Mechanism for Inverse Seesaw Models,''
+%  Phys.\ Rev.\ D {\bf 86}, 113001 (2012)
+%  [arXiv:1209.4051 [hep-ph]].}  
+
+\bibitem{ww} C. F. von Weizs\"{a}cker, Z. Phys. {88}, 612 (1934);  
+E. J. Williams, Phys. Rev. {\bf 45}, 729 (1934). 
+
+\bibitem{epa} V. M. Budnev, I. F. Ginzburg, G. V. Meledin and V. G. Serbo, 
+Phys. Rept. {\bf 15}, 181 (1974). 
+ 
+\bibitem{epa2} 
+S. Frixione, M. L. Mangano, P. Nason and G. Ridolfi, 
+Phys. Lett. B {\bf 319}, 339 (1993) [hep-ph/9310350]; 
+%\bibitem{epa} 
+M.~Gl\"{u}ck, C.~Pisano and E.~Reya,
+  %``The Polarized and unpolarized photon content of the nucleon,''
+  Phys.\ Lett.\ B {\bf 540}, 75 (2002) [hep-ph/0206126].
+
+\bibitem{mg5} 
+  J.~Alwall, M.~Herquet, F.~Maltoni, O.~Mattelaer and T.~Stelzer,
+  %``MadGraph 5 : Going Beyond,''
+  JHEP {\bf 1106}, 128 (2011) [arXiv:1106.0522 [hep-ph]].
+
+\bibitem{cteq6l} 
+  J.~Pumplin, D.~R.~Stump, J.~Huston, H.~L.~Lai, P.~M.~Nadolsky and W.~K.~Tung,
+  %``New generation of parton distributions with uncertainties from global QCD analysis,''
+  JHEP {\bf 0207}, 012 (2002) [hep-ph/0201195].
+
+\bibitem{kniehl}  B.~A.~Kniehl,
+  %``Elastic e p scattering and the Weizsacker-Williams approximation,''
+  Phys.\ Lett.\ B {\bf 254}, 267 (1991).
+
+\bibitem{pisano}  C.~Pisano,
+  %``Testing the equivalent photon approximation of the proton in the process e p ---> nu W X,''
+  Eur.\ Phys.\ J.\ C {\bf 38}, 79 (2004). 
+ % [hep-ph/0408101].
+
+\bibitem{calchep} A.~Belyaev, N.~D.~Christensen and A.~Pukhov,
+  %``CalcHEP 3.4 for collider physics within and beyond the Standard Model,''
+  Comput.\ Phys.\ Commun.\  {\bf 184}, 1729 (2013) [arXiv:1207.6082 [hep-ph]].
+
+\bibitem{pythia}   T.~Sjostrand, S.~Mrenna and P.~Z.~Skands,
+  %``PYTHIA 6.4 Physics and Manual,''
+  JHEP {\bf 0605}, 026 (2006) [hep-ph/0603175].
+
+\bibitem{delphes}  S.~Ovyn, X.~Rouby and V.~Lemaitre,
+  %``DELPHES, a framework for fast simulation of a generic collider
+  %experiment,'' 
+  arXiv:0903.2225 [hep-ph]; J. de Favereau {\it et al}, 
+%DELPHES 3: A modular framework for fast simulation of a generic
+%collider experiment,  
+arXiv:1307.6346 [hep-ex]. 
+
+\bibitem{fastjet}
+  M.~Cacciari, G.~P.~Salam and G.~Soyez,
+  %``FastJet User Manual,''
+  Eur.\ Phys.\ J.\ C {\bf 72}, 1896 (2012) [arXiv:1111.6097 [hep-ph]].
+
+
+\bibitem{del} F.~del Aguila, J.~de Blas and M.~Perez-Victoria,
+  %``Effects of new leptons in Electroweak Precision Data,''
+  Phys.\ Rev.\ D {\bf 78}, 013010 (2008) [arXiv:0803.4008 [hep-ph]].
+
+\bibitem{IP} A.~Ilakovac and A.~Pilaftsis,
+  %``Flavor violating charged lepton decays in seesaw-type models,''
+  Nucl.\ Phys.\ B {\bf 437}, 491 (1995) [hep-ph/9403398].  
+
+\bibitem{conv}  R.~Alonso, M.~Dhen, M.~B.~Gavela and T.~Hambye,
+  %``Muon conversion to electron in nuclei in type-I seesaw models,''
+  JHEP {\bf 1301}, 118 (2013) [arXiv:1209.2679 [hep-ph]].
+
+\end{thebibliography}
+\end{document}
+

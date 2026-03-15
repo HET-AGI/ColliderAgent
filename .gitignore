@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# MadGraph/MadAnalysis outputs
+*.lhe
+*.lhe.gz
+*.hepmc
+*.hepmc.gz
+*.root
+*.lhco
+Events/
+SubProcesses/
+run_*/
+
+# UFO generated files (keep templates, ignore generated)
+*.pyc
+
+# Temporary files
+*.tmp
+*.temp
+.cache/

@@ -1,0 +1,126 @@
+\begin{fmffile}{Fdiagrams/AP_VBF_diag}
+\fmfset{arrow_len}{2.5mm}
+%\parbox[c][3cm]{4.7cm}{\centering
+%\begin{fmfgraph*}(100,40)
+%\fmfleft{i1,i2,i3}
+%\fmfright{o3,o2,o1}
+%  \fmf{fermion}{i3,v1}
+%  \fmf{fermion}{v1,i1}
+%  \fmf{boson,tension=2,lab=$W^\pm$}{v1,v2}
+%  \fmf{boson}{v2,o3}
+%  \fmf{dashes}{v2,o1}
+%\fmfv{lab=$W^\pm$,l.angle=0}{o3}
+%\fmfv{lab=$a$}{o1}
+%\fmfv{lab=$q$}{i3}
+%\fmfv{lab=$\bar{q}^\prime$}{i1}
+%\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{W}}+c_2+c_6+c_8$}},l.angle=0,l.dist=10}{v2}
+%\end{fmfgraph*} 
+%}
+% ~
+\centering{
+\parbox[c]{1cm}{\flushright (i)}
+\parbox[c][3cm]{5cm}{\centering
+\begin{fmfgraph*}(100,50)
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{fermion,tension=2}{i3,v1}
+  \fmf{fermion,tension=2}{v1,i1}
+  \fmf{boson,tension=2,l.side=left,lab={\color{red}\tiny$\begin{array} c c_{\tilde{W}}+c_2 \\ +c_6+c_8\end{array}$}}{v1,v2}
+  \fmf{boson}{v2,o3}
+  \fmf{dashes}{v2,o1}
+  \fmf{boson}{v2,o2}
+  
+\fmfv{lab=$W^\pm$,l.angle=0}{o3}
+\fmfv{lab=$a$}{o1}
+\fmfv{lab=$\gamma$}{o2}
+\fmfv{lab=$q$}{i3}
+\fmfv{lab=$\bar{q}^\prime$}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab=$W^\pm$,l.angle=-120}{v2}
+\end{fmfgraph*}
+}
+~~~~~
+\parbox[c]{1cm}{\flushright (ii)}
+\parbox[c][3cm]{5cm}{\centering
+\begin{fmfgraph*}(100,50)
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{fermion,tension=2}{i3,v1}
+  \fmf{fermion,tension=2}{v1,i1}
+  \fmf{boson,tension=2,lab=$W^\pm$}{v1,v2}
+  \fmf{boson}{v2,o3}
+  \fmf{boson,label=$Z/\gamma$,l.side=left,l.dist=5}{v2,v3}
+  \fmf{dashes}{v3,o1}
+  \fmf{boson}{v3,o2}
+\fmfv{lab=$W^\pm$,l.angle=0}{o3}
+\fmfv{lab=$a$}{o1}
+\fmfv{lab=$\gamma$}{o2}
+\fmfv{lab=$q$}{i3}
+\fmfv{lab=$\bar{q}^\prime$}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,
+lab=\parbox{3cm}{\centering\color{red}\tiny$\begin{array} c c_{\tilde{W}}+c_\Bt +\\+ c_1 + c_2 + c_7 \end{array}$},l.angle=30}{v3}
+\end{fmfgraph*}
+}
+}\\
+\centering{
+\parbox[c]{1cm}{\flushright (iii)}
+\parbox[c][3cm]{5cm}{\centering
+\begin{fmfgraph*}(100,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o1,o2,o3}
+  \fmf{fermion,tension=2}{i3,v1,o3}
+  \fmf{fermion,tension=2}{i1,v3,o1}
+  \fmf{boson,tension=2}{v1,v2,v3}
+  \fmf{dashes}{v2,o2}
+
+\fmfv{lab=$a$}{o2}
+\fmfv{lab=$j$}{o1,o3}
+\fmfv{lab=$q$}{i3}
+\fmfv{lab=$\bar{q}^\prime$}{i1}
+\fmfv{lab=$W^\pm$,l.angle=-120}{v1}
+\fmfv{lab=$W^\mp$,l.angle=120}{v3}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{W}}+c_2+c_6+c_8$}},l.angle=-50}{v2}
+\end{fmfgraph*} 
+}
+~~~~~
+\parbox[c]{1cm}{\flushright (iv)}
+\parbox[c][3cm]{5cm}{\centering
+\begin{fmfgraph*}(100,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o1,o2,o3,o4}
+  \fmf{fermion,tension=2}{i3,v1,o4}
+  \fmf{fermion,tension=2}{i1,v3,o1}
+  \fmf{boson,tension=2}{v1,v2,v3}
+  \fmf{dashes}{v2,o3}
+  \fmf{boson}{v2,o2}
+
+\fmfv{lab=$a$}{o3}
+\fmfv{lab=$\gamma$}{o2}
+\fmfv{lab=$j$}{o1,o4}
+\fmfv{lab=$q$}{i3}
+\fmfv{lab=$\bar{q}^\prime$}{i1}
+\fmfv{lab=$W^\pm$,l.angle=-120}{v1}
+\fmfv{lab=$W^\mp$,l.angle=120}{v3}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{W}}+c_2+c_6+c_8$}},l.angle=0,l.dist=20}{v2}
+\end{fmfgraph*} 
+}
+}
+%\parbox[c][3cm]{4cm}{\centering
+%\begin{fmfgraph*}(80,60)
+%
+%\fmfleft{i3,i2,i1}
+%\fmfright{o3,o2,o1}
+%\fmf{fermion,tension=2}{i3,v3,v1,i1}
+%\fmf{boson,tension=1.5}{v1,v4,o2}
+%\fmf{dashes}{v4,o1}
+%\fmf{boson}{v3,o3}
+%\fmfv{lab=$a$}{o1}
+%\fmfv{lab=$\gamma$}{o2}
+%\fmfv{lab=$q$}{i3}
+%\fmfv{lab=$\bar{q}^\prime$}{i1}
+%\fmfv{lab=$W^\pm$}{o3}
+%\end{fmfgraph*} 
+%}
+
+\end{fmffile}

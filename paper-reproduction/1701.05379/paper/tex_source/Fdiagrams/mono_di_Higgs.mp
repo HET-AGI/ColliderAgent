@@ -1,0 +1,53 @@
+% Fdiagrams/mono_di_Higgs.mp -- do not edit, generated automatically by EPJC_V2.tex
+input feynmp
+require_RCS_revision "1.30";
+save arrowlen; arrowlen:=2mm;
+beginchar(1, 160*1.0pt#, 60*1.0pt#, 0);
+"feynmf: 1";
+LaTeX_unitlength:=1.0pt;
+subgraph (0, 0, w, h);
+vinit;
+pickup pencircle scaled thin;
+vleft (__i3, __i2, __i1);
+vright (__o3, __o2, __o1);
+vconnect ("fermion", __i1, __v1);
+vconnect ("fermion", __v1, __i3);
+vconnect ("boson,lab=$Z/\gamma $,l.side=left", __v1, __v2);
+vconnect ("dashes", __v2, __o3);
+vconnect ("dashes", __v2, __o1);
+vvertex ("lab=$h$,l.angle=0", __o3);
+vvertex ("lab=$a$,l.angle=0", __o1);
+vvertex ("lab=$q$,l.angle=180", __i1);
+vvertex ("lab=$\bar {q}$,l.angle=180", __i3);
+vvertex ("d.shape=circle,d.size=3,foreground=red,lab={\parbox {2cm}{\centering \color {red}\tiny $\at _{2D}+\at _3+\quad (\at _{10}+\at _{11}+\at _{12}+\at _{13}+\at _{14}+\at _{17})$}},l.angle=0,l.dist=15", __v2);
+vfreeze;
+vdraw;
+endsubgraph;
+endchar;
+beginchar(2, 160*1.0pt#, 60*1.0pt#, 0);
+"feynmf: 2";
+LaTeX_unitlength:=1.0pt;
+subgraph (0, 0, w, h);
+vinit;
+pickup pencircle scaled thin;
+vleft (__i3, __i2, __i1);
+vright (__o3, __o2, __o1);
+vconnect ("fermion", __i1, __v1);
+vconnect ("fermion", __v1, __i3);
+vconnect ("boson,lab=$Z/\gamma $,l.side=left", __v1, __v2);
+vconnect ("dashes,tension=.7", __v2, __o3);
+vconnect ("dashes,tension=.7", __v2, __o2);
+vconnect ("dashes,tension=.7", __v2, __o1);
+vvertex ("lab=$h$,l.angle=0", __o3);
+vvertex ("lab=$h$,l.angle=0", __o2);
+vvertex ("lab=$a$,l.angle=0", __o1);
+vvertex ("lab=$q$,l.angle=180", __i1);
+vvertex ("lab=$\bar {q}$,l.angle=180", __i3);
+vvertex ("d.shape=circle,d.size=3,foreground=red,lab={\parbox {1.8cm}{\centering \color {red}\tiny $\bt _3+\bt _{10}+ \bt _{11}+\bt _{12}+\bt _{13}+\bt _{14}+\bt _{16}+\bt _{17}$}},l.angle=-120,l.dist=10", __v2);
+vfreeze;
+vdraw;
+endsubgraph;
+endchar;
+% the end.
+end.
+endinput;

@@ -1,0 +1,40 @@
+\begin{fmffile}{Fdiagrams/mono_di_Higgs}
+\fmfset{arrowlen}{2mm}
+\parbox{7cm}{\centering
+\begin{fmfgraph*}(160,60)
+\fmfleft{i3,i2,i1}
+\fmfright{o3,o2,o1}
+  \fmf{fermion}{i1,v1}
+  \fmf{fermion}{v1,i3}
+  \fmf{boson,lab=$Z/\gamma$,l.side=left}{v1,v2}
+  \fmf{dashes}{v2,o3}
+  \fmf{dashes}{v2,o1}
+  
+\fmfv{lab=$h$,l.angle=0}{o3}
+\fmfv{lab=$a$,l.angle=0}{o1}
+\fmfv{lab=$q$,l.angle=180}{i1}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i3}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{2cm}{\centering\color{red}\tiny$\at_{2D}+\at_3+\quad (\at_{10}+\at_{11}+\at_{12}+\at_{13}+\at_{14}+\at_{17})$}},l.angle=0,l.dist=15}{v2}
+\end{fmfgraph*}
+}
+~
+\parbox{7cm}{\centering
+\begin{fmfgraph*}(160,60)
+\fmfleft{i3,i2,i1}
+\fmfright{o3,o2,o1}
+  \fmf{fermion}{i1,v1}
+  \fmf{fermion}{v1,i3}
+  \fmf{boson,lab=$Z/\gamma$,l.side=left}{v1,v2}
+  \fmf{dashes,tension=.7}{v2,o3}
+  \fmf{dashes,tension=.7}{v2,o2}
+  \fmf{dashes,tension=.7}{v2,o1}
+  
+\fmfv{lab=$h$,l.angle=0}{o3}
+\fmfv{lab=$h$,l.angle=0}{o2}
+\fmfv{lab=$a$,l.angle=0}{o1}
+\fmfv{lab=$q$,l.angle=180}{i1}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i3}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$\bt_3+\bt_{10}+ \bt_{11}+\bt_{12}+\bt_{13}+\bt_{14}+\bt_{16}+\bt_{17}$}},l.angle=-120,l.dist=10}{v2}
+\end{fmfgraph*}
+}
+\end{fmffile}

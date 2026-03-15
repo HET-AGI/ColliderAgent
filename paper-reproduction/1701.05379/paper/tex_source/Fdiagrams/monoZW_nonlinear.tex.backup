@@ -1,0 +1,199 @@
+
+\begin{fmffile}{Fdiagrams/monoZW_nonlinear}
+\fmfset{arrow_len}{2.5mm}
+% \parbox[c][2.5cm]{4.5cm}{\centering
+% \begin{fmfgraph*}(100,50)	% ggF -> h -> ssh
+% \fmfleft{i1,i2}
+% \fmfright{o3,o2,o1}
+%   \fmf{gluon}{i2,v1}
+%   \fmf{gluon}{i1,v2}
+%   \fmf{fermion,tension=.7}{v1,v2,v3,v1}
+%   \fmf{dashes,lab=$h$,tension=.75,l.side=left}{v3,v4}
+%   \fmf{dashes}{v4,o1}
+%   \fmf{dashes}{v4,o2}
+%   \fmf{dashes}{v4,o3}   
+%    
+% \fmfv{lab=$h$,l.angle=0}{o1}
+% \fmfv{lab=$S$,l.angle=0}{o2}
+% \fmfv{lab=$S$,l.angle=0}{o3}
+% \fmfv{lab=$g$,l.angle=180}{i1}
+% \fmfv{lab=$g$,l.angle=180}{i2}
+% 
+% \fmfv{lab=$t$,l.angle=120,l.dist=10}{v3}
+% \fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$\lambda_S+c_2$},l.angle=-120}{v4}
+% \end{fmfgraph*}
+% }
+% ~
+% \parbox[c][2.5cm]{4.5cm}{\centering
+% \begin{fmfgraph*}(100,50)	% ggF -> h -> ss -> ssh
+% \fmfleft{i1,i2}
+% \fmfright{o3,o2,o1}
+%   \fmf{gluon}{i2,v1}
+%   \fmf{gluon}{i1,v2}
+%   \fmf{fermion,tension=.7}{v1,v2,v3,v1}
+%   \fmf{dashes,lab=$h$,tension=1,l.side=left}{v3,v4}
+%   \fmf{dashes,tension=.4}{v4,o1}
+%   \fmf{dashes,label=$S$,l.side=left,l.dist=3}{v4,v5}
+%   \fmf{dashes}{v5,o2}
+%   \fmf{dashes}{v5,o3}   
+%    
+% \fmfv{lab=$S$,l.angle=0}{o1}
+% \fmfv{lab=$S$,l.angle=0,l.dist=3}{o2}
+% \fmfv{lab=$h$,l.angle=0}{o3}
+% \fmfv{lab=$g$,l.angle=180}{i1}
+% \fmfv{lab=$g$,l.angle=180}{i2}
+% 
+% \fmfv{lab=$t$,l.angle=120,l.dist=10}{v3}
+% \fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$(\lambda_S+c_2)^2$},l.angle=190,l.dist=8}{v5}
+% \fmfv{d.shape=circle,d.size=3,foreground=red}{v4}
+% \end{fmfgraph*}
+% }
+% }
+% ~
+% \parbox[c][2.5cm]{4.5cm}{\centering
+% \begin{fmfgraph*}(100,50)	% ggFbox -> hz -> hss
+% \fmfleft{i1,i2}
+% \fmfright{o3,o2,o1}
+%   \fmf{gluon,tension=2}{i2,v1}
+%   \fmf{gluon,tension=2}{i1,v2}
+%   \fmf{fermion,tension=2}{v1,v2,v3,v4,v1}
+%   \fmf{phantom,tension=1.5}{v4,o1}
+%   \fmf{phantom,tension=1.5}{v3,o3}
+%   \fmffreeze
+%   \fmf{boson,lab=$Z$,tension=2,l.side=right}{v3,v5}
+%   \fmf{dashes,tension=.8}{v4,o1}
+%   \fmf{dashes,tension=1.5}{v5,o2}
+%   \fmf{dashes,tension=1.5}{v5,o3}   
+%    
+% \fmfv{lab=$h$,l.angle=0}{o1}
+% \fmfv{lab=$S$,l.angle=0}{o2}
+% \fmfv{lab=$S$,l.angle=0}{o3}
+% \fmfv{lab=$g$,l.angle=180}{i1}
+% \fmfv{lab=$g$,l.angle=180}{i2}
+% 
+% \fmfv{lab=$t$,l.angle=157,l.dist=12}{v4}
+% \fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$c_4$},l.angle=90}{v5}
+% \end{fmfgraph*}
+% }
+% \\
+% \parbox[c][2.5cm]{4.5cm}{\centering
+% \begin{fmfgraph*}(100,50)	% ggF -> z -> hss
+% \fmfleft{i1,i2}
+% \fmfright{o3,o2,o1}
+%   \fmf{gluon}{i2,v1}
+%   \fmf{gluon}{i1,v2}
+%   \fmf{fermion,tension=.7}{v1,v2,v3,v1}
+%   \fmf{boson,lab=$Z$,tension=.75,l.side=left}{v3,v4}
+%   \fmf{dashes}{v4,o1}
+%   \fmf{dashes}{v4,o2}
+%   \fmf{dashes}{v4,o3}   
+%    
+% \fmfv{lab=$h$,l.angle=0}{o1}
+% \fmfv{lab=$S$,l.angle=0}{o2}
+% \fmfv{lab=$S$,l.angle=0}{o3}
+% \fmfv{lab=$g$,l.angle=180}{i1}
+% \fmfv{lab=$g$,l.angle=180}{i2}
+% 
+% \fmfv{lab=$t$,l.angle=120,l.dist=10}{v3}
+% \fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$c_4+c_5$},l.angle=-120}{v4}
+% \end{fmfgraph*}
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar -> A-> Za
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,i1}
+  \fmf{boson,lab=$A$,l.side=left,tension=1.2}{v1,v2}
+  \fmf{boson}{v2,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{B}}+c_{\tilde{W}}+$\\$c_1+c_2+c_7$}},l.angle=0}{v2}
+\end{fmfgraph*}
+}
+~
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar -> z -> Za
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,i1}
+  \fmf{boson,lab=$Z$,l.side=left,tension=1.2}{v1,v2}
+  \fmf{boson}{v2,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{B}}+c_{\tilde{W}}+$\\$c_1+c_2+c_7$}},l.angle=0}{v2}
+\end{fmfgraph*}
+}
+~
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar ->Z a
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,v2,i1}
+  \fmf{boson}{v1,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$c_{2D}+c_{10}$},l.angle=60}{v2}
+\end{fmfgraph*}
+}
+\\
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar -> h -> Za
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,i1}
+  \fmf{dashes,lab=$h$,l.side=left,tension=1.2}{v1,v2}
+  \fmf{boson}{v2,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$ $},l.angle=-120}{v2}
+\end{fmfgraph*}
+}
+~
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar -> z -> Za
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,i1}
+  \fmf{boson,lab=$Z$,l.side=left,tension=1.2}{v1,v2}
+  \fmf{boson}{v2,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\parbox{1.8cm}{\centering\color{red}\tiny$c_{\tilde{B}}+c_{\tilde{W}}+$\\$c_1+c_2+c_7$}},l.angle=0}{v2}
+\end{fmfgraph*}
+}
+~
+\parbox[c][2.5cm]{4.5cm}{\centering
+\begin{fmfgraph*}(100,50)	% qqbar ->Z a
+\fmfleft{i1,i2}
+\fmfright{o2,o1}
+  \fmf{fermion,tension=1.2}{i2,v1,v2,i1}
+  \fmf{boson}{v1,o1}
+  \fmf{dashes}{v2,o2}  
+   
+\fmfv{lab=$Z$,l.angle=0}{o1}
+\fmfv{lab=$a$,l.angle=0}{o2}
+\fmfv{lab=$q$,l.angle=180}{i2}
+\fmfv{lab=$\bar{q}$,l.angle=180}{i1}
+\fmfv{d.shape=circle,d.size=3,foreground=red,lab={\color{red}\tiny$c_{2D}+c_{10}$},l.angle=60}{v2}
+\end{fmfgraph*}
+}
+\end{fmffile}

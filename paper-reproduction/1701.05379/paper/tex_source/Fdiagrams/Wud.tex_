@@ -1,0 +1,14 @@
+
+\begin{fmffile}{wudcoupl}
+\begin{fmfgraph*}(50,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{boson}{i2,v1}
+  \fmf{fermion}{o1,v1,o3}
+  
+\fmfv{lab=$W^-_\mu$}{i2}
+\fmfv{lab=$U_j$,l.angle=0}{o1}
+\fmfv{lab=$D_i$,l.angle=0}{o3}
+\end{fmfgraph*}
+\end{fmffile}

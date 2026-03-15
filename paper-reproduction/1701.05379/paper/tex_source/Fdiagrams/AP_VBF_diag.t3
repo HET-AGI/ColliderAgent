@@ -1,0 +1,9 @@
+% AP_VBF_diag.t3 -- generated from AP_VBF_diag.mp
+\fmfL(4.91267,-3.18,rt){$\bar {q}^\prime $}%
+\fmfL(4.91267,53.18,rb){$q$}%
+\fmfL(95.08733,-3.18,lt){$j$}%
+\fmfL(106,25,l){$a$}%
+\fmfL(95.08733,53.18,lb){$j$}%
+\fmfL(51.54553,36.47052,rt){$W^\pm $}%
+\fmfL(51.54553,13.52953,rb){$W^\mp $}%
+\fmfL(67.4933,20.40385,lt){{\parbox {1.8cm}{\centering \color {red}\tiny $c_{\tilde {W}}+c_2+c_6+c_8$}}}%

@@ -1,0 +1,16 @@
+
+\begin{fmffile}{zeehcoupl}
+\begin{fmfgraph*}(50,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{boson}{i1,v1}
+  \fmf{dashes}{i3,v1}
+  \fmf{fermion}{o1,v1,o3}
+  
+\fmfv{lab=$Z_\mu$,l.angle=180}{i1}
+\fmfv{lab=$h$,l.angle=180}{i3}
+\fmfv{lab=$E$,l.angle=0}{o1}
+\fmfv{lab=$E$,l.angle=0}{o3}
+\end{fmfgraph*}
+\end{fmffile}

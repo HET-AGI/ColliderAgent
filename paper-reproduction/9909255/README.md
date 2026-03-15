@@ -1,0 +1,3 @@
+- paper: PDF and tex source of the paper
+- `prompt_figure_2.md`: prompt for reproducing figure 1 in the paper
+- `prompt_figure_2_with comments.md`: version with comments. DO NOT give this version to agent.

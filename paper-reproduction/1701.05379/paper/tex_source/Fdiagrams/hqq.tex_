@@ -1,0 +1,13 @@
+
+\begin{fmffile}{hqqcoupl}
+\begin{fmfgraph*}(50,50)
+
+\fmfleft{i1,i2,i3}
+\fmfright{o3,o2,o1}
+  \fmf{dashes}{i2,v1}
+  \fmf{fermion,label=$f_j$}{o1,v1}
+  \fmf{fermion,label=$f_i$}{v1,o3}
+  
+\fmfv{lab=$h$}{i2}
+\end{fmfgraph*}
+\end{fmffile}
