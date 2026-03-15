@@ -68,3 +68,9 @@ run_*/
 *.tmp
 *.temp
 .cache/
+
+# Claude Code
+*.claude
+.claude/
+skills-lock.json
+.agents/

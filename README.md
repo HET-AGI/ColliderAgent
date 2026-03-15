@@ -18,42 +18,58 @@
 </div>
 
 ```mermaid
+---
+config:
+  flowchart:
+        padding: 10
+        nodeSpacing: 20
+        rankSpacing: 20
+---
 flowchart TB
-    subgraph MAGNUS["Execution Backend: Magnus"]
+    subgraph MAGNUS["**Execution Backend: Magnus**"]
         direction LR
-        T1["Mathematica"] ~~~ T2["FeynRules"] ~~~ T3["MadGraph"] ~~~ T4["Pythia"] ~~~ T5["Delphes"] ~~~ T6["MadAnalysis"] ~~~ T7["..."]
+        L_HEP["**HEP tools**"] ~~~ T1("Mathematica") ~~~ T2("FeynRules") ~~~ T3("MadGraph") ~~~ T4("Pythia") ~~~ T5("Delphes") ~~~ T6("MadAnalysis") ~~~ T7["......"]
     end
 
-    subgraph CRE["Cognitive Reasoning Engine"]
+    MAGNUS <-->|"CLI"| CRE
+
+    subgraph CRE["**Cognitive Reasoning Engine**"]
         direction TB
-        subgraph SKILLS["equipped skills"]
+        subgraph ROW1[" "]
             direction LR
-            S1["pheno-pipeline<br/>orchestrator"] ~~~ S2["feynrules-model<br/>generator"] ~~~ S3["feynrules-model<br/>validator"] ~~~ S4["ufo-generator"] ~~~ S5["madgraph<br/>simulator"] ~~~ S6["madanalysis<br/>analyzer"]
+            L_S["**equipped<br/>skills**"] ~~~ S1("pheno-pipeline<br/>orchestrator") ~~~ S2("feynrules-model<br/>generator") ~~~ S3("feynrules-model<br/>validator") ~~~ S4("ufo<br/>generator") ~~~ S5("madgraph<br/>simulator") ~~~ S6("madanalysis<br/>analyzer")
         end
-        subgraph SAGENTS["subagents"]
+        subgraph ROW2[" "]
             direction LR
-            A1["orchestrator"] --> A2["model-generator"] --> A3["collider<br/>simulator"] --> A4["event<br/>analyzer"] --> A5["pheno<br/>analyzer"]
+            L_A["**subagent**"] ~~~ A1(["orchestrator"]) --> A2(["&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;model&#8209;generator&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;"]) --> A3(["collider<br/>simulator"]) --> A4(["event<br/>analyzer"]) --> A5(["pheno<br/>analyzer"])
         end
+        ROW1 ~~~ ROW2
     end
 
-    subgraph USER["User Layer"]
+    CRE <--> USER
+
+    subgraph USER["**User Layer**"]
         direction LR
-        IN["natural language input<br/>Lagrangian, process, cuts, ..."] ~~~ OUT["output<br/>distributions, parameter bounds, ..."]
+        IN["**natural language input**<br>Lagrangian, collider process, kinematic cuts, ..."] ~~~ OUT["**output**<br>kinematic distributions, bounds on parameter space, ..."]
     end
 
-    MAGNUS <-->|CLI| CRE
-    IN --> A1
-    A5 --> OUT
+    classDef tool fill:#fff,stroke:#80be70,stroke-width:2px,color:#616161
+    classDef skill fill:#ecf3f7,stroke:#85abc2,stroke-width:2px,color:#6e6e6e
+    classDef agent fill:#fff,stroke:#d88365,stroke-width:2px,color:#6c6c6c
+    classDef io fill:#fff,stroke:#535353,stroke-width:2px,color:#555
+    classDef plain fill:none,stroke:none,color:#616161,font-weight:bold
 
-    classDef tool fill:#d4edda,stroke:#28a745,color:#155724
-    classDef skill fill:#cce5ff,stroke:#4a90d9,color:#004085
-    classDef agent fill:#ffd5c8,stroke:#e07b54,color:#7b241c
-    classDef io fill:#f5f5f5,stroke:#aaaaaa,color:#333333
-
-    class T1,T2,T3,T4,T5,T6,T7 tool
+    class T1,T2,T3,T4,T5,T6 tool
     class S1,S2,S3,S4,S5,S6 skill
     class A1,A2,A3,A4,A5 agent
     class IN,OUT io
+    class L_HEP,L_S,L_A,T7 plain
+
+    style MAGNUS fill:#f6f2ea,stroke:#2c2c2c,stroke-width:2px,color:#4a4a4a,rx:8,ry:8
+    style CRE fill:#f6f2ea,stroke:#2c2c2c,stroke-width:2px,color:#4a4a4a,rx:8,ry:8
+    style USER fill:#f6f2ea,stroke:#2c2c2c,stroke-width:2px,color:#4a4a4a,rx:8,ry:8
+    style ROW1 fill:none,stroke:none
+    style ROW2 fill:none,stroke:none
 ```
 
 ## Overview
