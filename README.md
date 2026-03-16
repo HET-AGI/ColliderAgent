@@ -263,8 +263,10 @@ The `paper-reproduction/` directory contains example prompts organized by arXiv 
 | -------------------------------------------- | ---------------------------------- |
 | [1308.2209](paper-reproduction/1308.2209/)   | Heavy Majorana neutrino production |
 | [1605.02910](paper-reproduction/1605.02910/) | Z′ and heavy Higgs phenomenology   |
-| `1701.05379/`                                | Mono-Higgs and mono-Z/W signatures |
-| `2103.02708/`                                | CMS BSM searches                   |
+| [1701.05379](paper-reproduction/1701.05379/) | Mono-Higgs and mono-Z/W signatures |
+| [2103.02708](paper-reproduction/2103.02708/) | CMS BSM searches                   |
+
+Furthermore, more examples can be found at [paper-reproduction/](paper-reproduction/).
 
 ## Repository Structure
 
@@ -323,8 +325,8 @@ If you use Collider-Agent in your research, please cite:
 ```bibtex
 @misc{collider-agent,
   author = {Qiu, Shi and Cai, Zeyu and Wei, Jiashen and Li, Zeyu and Yin, Yixuan and Cao, Qing-Hong and Liu, Chang and Luo, Ming-xing and Yuan, Xing-Bo and Zhu, Hua Xing},
-  title  = {A Decoupled Architecture for Autonomous High-Energy Physics Phenomenology: Application to Collider Studies},
-  year   = {2025},
+  title  = {An End-to-end Architecture for Collider Physics and Beyond},
+  year   = {2026},
   howpublished = {\url{https://github.com/HET-AGI/ColliderAgent}},
   note   = {Preprint}
 }
@@ -332,4 +334,4 @@ If you use Collider-Agent in your research, please cite:
 
 ## Acknowledgments
 
-We thank the developers of FeynRules, MadGraph5_aMC@NLO, Pythia8, Delphes, and MadAnalysis5 for their excellent tools that make this work possible.
+We thank the developers of [FeynRules](https://arxiv.org/abs/1310.1921), [MadGraph5_aMC@NLO](https://github.com/restrepo/madgraph), [Pythia8](https://pythia.org/), [Delphes](https://github.com/delphes/delphes), and [MadAnalysis5](https://github.com/MadAnalysis/madanalysis5) for their excellent tools that make this work possible.
