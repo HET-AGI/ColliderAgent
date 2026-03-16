@@ -17,6 +17,7 @@
 
 ![Architecture](images/architecture.svg)
 
+</div>
 
 
 ## Overview
