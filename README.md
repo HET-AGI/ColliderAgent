@@ -240,12 +240,12 @@ This runs the full pipeline non-interactively: MadGraph5 generates the events vi
 
 ### Basic Workflow
 
-1. Prepare a prompt describing the target paper and figure to reproduce (see `paper-reproduction/` for examples)
+1. Prepare a detailed Markdown prompt (for example, `prompt.md`) describing the collider analysis you want to run, including the Lagrangian, collider process, event selection, and parameter scan strategy, much like you would write your own research note or paper draft (see `paper-reproduction/` for examples)
 
 2. Start your agent and provide the prompt:
 
 ```bash
-claude
+claude -p "Execute the analysis following prompt.md"
 ```
 
 3. The system orchestrates the full pipeline:
@@ -253,20 +253,24 @@ claude
    - Validate and generate the UFO model
    - Run MadGraph5 simulations with Pythia8 / Delphes
    - Apply analysis cuts with MadAnalysis5
-   - Generate the target figure
+   - Generate the analysis outputs, such as kinematic distribution plots, parameter exclusion regions, and any other results requested in the user prompt
 
 ### Example Prompts
 
 The `paper-reproduction/` directory contains example prompts organized by arXiv ID:
 
-| Paper                                        | Topic                              |
-| -------------------------------------------- | ---------------------------------- |
-| [1308.2209](paper-reproduction/1308.2209/)   | Heavy Majorana neutrino production |
-| [1605.02910](paper-reproduction/1605.02910/) | Z′ and heavy Higgs phenomenology   |
-| [1701.05379](paper-reproduction/1701.05379/) | Mono-Higgs and mono-Z/W signatures |
-| [2103.02708](paper-reproduction/2103.02708/) | CMS BSM searches                   |
 
-Furthermore, more examples can be found at [paper-reproduction/](paper-reproduction/).
+| arXiv ID | Topic | Figures |
+|----------|-------|---------|
+| [hep-ph/9909255](9909255/) | $e^+ e^- \to \mu^+ \mu^- $ affected by KK tower of gravitons| 2 |
+| [1308.2209](1308.2209/) | Heavy Neutrinos production at the LHC | 3 |
+| [1605.02910](1605.02910/) | Exclusion parameter region from Drell-Yan process at the LHC for a $U(1)'$ model | 1, 10 |
+| [1701.05379](1701.05379/) | ALP Effective Field Theory and Collider Signatures | 8 |
+| [1811.07920](1811.07920/) | Exclusion parameter region from mono-$\tau$ search at the LHC for the $U_1$ leptoquark model  | 3 |
+| [2005.06475](2005.06475/) | Leptoquark production from lepton-Quark collisions at the LHC by using `LUXlep` PDF| 2 |
+| [2103.02708](2103.02708/) | $p p \to Z^\prime \to \ell^+ \ell^-$ at the LHC in the SSM and $E_6$ inspired $Z^\prime$ scenario| 4 |
+| [2104.05720](2104.05720/) | Searching for Leptoquarks via $\mu^+ \mu^- \to b \bar{b}$ process at Future Muon Colliders | 11, 12 |
+
 
 ## Repository Structure
 
