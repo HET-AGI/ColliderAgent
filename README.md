@@ -15,7 +15,8 @@
 
 [Overview](#overview) • [Quickstart](#quickstart) • [Installation](#installation) • [Examples](#example-prompts) • [Citation](#citation)
 
-![Architecture](images/architecture.svg)
+
+<img src="images/architecture.svg" alt="Architecture" width="900" />
 
 </div>
 
