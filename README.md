@@ -166,7 +166,7 @@ The FeynRules-based blueprints (`feynrules-model-validator`, `ufo-generator`) re
 mkdir -p ~/.wolfram-container-license
 docker run -it --rm \
   -v ~/.wolfram-container-license:/root/.WolframEngine/Licensing \
-  git.pku.edu.cn/2200011523/mma-het:latest wolframscript
+  git.pku.edu.cn/het-agi/mma-het:latest wolframscript
 ```
 
 3. Follow the interactive prompts to enter your Wolfram ID and password.
