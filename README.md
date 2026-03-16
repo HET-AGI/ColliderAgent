@@ -31,7 +31,7 @@ Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more
 - Validate the model and produce a UFO output for MadGraph5
 - Run parton-level and showered event generation with MadGraph5 + Pythia8
 - Apply detector simulation (Delphes) and analysis cuts (MadAnalysis5)
-- Generate the target figure, ready for comparison with the paper
+- Generate kinematic distributions, cutflow tables, exclusion contours in parameter space, etc.
 
 ## Roadmap
 
