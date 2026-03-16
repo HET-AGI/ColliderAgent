@@ -4,7 +4,7 @@
 
 # ⚛ Collider-Agent
 
-**Autonomous multi-agent system for high-energy physics phenomenology**
+**An End-to-end Architecture for Collider Physics and Beyond**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org)
@@ -107,7 +107,7 @@ Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more
   
   > Other agents with skills support also work (skills only, no sub-agents): Cursor, Windsurf, Gemini CLI, Cline, Goose, Roo Code, and [more](#supported-agents-and-their-global-skills-paths)
 
-- Python 3.10+
+- Python 3.10+ (requires `magnus-sdk>=0.7.0`)
 
 ### Setup
 
@@ -118,11 +118,51 @@ git clone https://github.com/HET-AGI/ColliderAgent.git
 cd ColliderAgent
 ```
 
-**2. Install the Python package:**
+**2. Connect to the Magnus platform:**
+
+First, install the Magnus SDK:
 
 ```bash
-pip install -e .
+pip install magnus-sdk
 ```
+
+<details>
+<summary>☁️ Option A: Connect to an existing cloud instance</summary>
+
+If you have access to a cloud-hosted Magnus instance, authenticate with:
+
+```bash
+magnus login
+```
+
+Enter your server URL and API key when prompted. All subsequent commands are routed to the remote backend automatically.
+
+</details>
+
+<details>
+<summary>🖥️ Option B: Local deployment</summary>
+
+**Additional prerequisites:** Docker (daemon running), Node.js (optional, enables the Web UI)
+
+Start the local backend:
+
+```bash
+magnus local start
+```
+
+This fetches the Magnus source, installs backend dependencies, starts the server on port `8017`, and creates a local database and user account. If Node.js is installed, a Web UI is also launched at `http://localhost:3011`.
+
+Verify the setup:
+
+```bash
+magnus run hello-world
+```
+
+A successful run prints `Hello from Magnus!` after pulling the required container image.
+
+</details>
+
+> For full Magnus documentation and deployment options, see [github.com/Rise-AGI/magnus](https://github.com/Rise-AGI/magnus).
 
 **3. Copy agents and skills to your agent's configuration directory.**
 
@@ -162,6 +202,30 @@ cp -r src/skills <skills-path>
 
 **4. Restart your agent** to load the new agents and skills.
 
+**5. (Optional) Activate the Wolfram Engine license:**
+
+<details>
+<summary>🔬 Configure Mathematica / Wolfram Engine license</summary>
+
+The FeynRules-based blueprints (`feynrules-model-validator`, `ufo-generator`) require a Wolfram Engine license. Because the license is tied to the machine identity of the *container* rather than the host, activation must be performed inside the container itself.
+
+1. Register a free Wolfram ID at [wolfram.com/engine/free-license](https://wolfram.com/engine/free-license)
+
+2. Run the activation inside the container:
+
+```bash
+mkdir -p ~/.wolfram-container-license
+docker run -it --rm \
+  -v ~/.wolfram-container-license:/root/.WolframEngine/Licensing \
+  git.pku.edu.cn/2200011523/mma-het:latest wolframscript
+```
+
+3. Follow the interactive prompts to enter your Wolfram ID and password.
+
+The license file (`mathpass`) is written to `~/.wolfram-container-license/` on the host, which all subsequent FeynRules blueprint runs mount automatically. This step is only needed once.
+
+</details>
+
 ## Quickstart
 
 The fastest way to try Collider-Agent is to run a standard-model dilepton invariant mass plot — a classic parton-level check — directly from the command line:
@@ -170,7 +234,7 @@ The fastest way to try Collider-Agent is to run a standard-model dilepton invari
 claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-bypass-permissions
 ```
 
-This runs the full pipeline non-interactively: MadGraph5 generates the events via Magnus, and the agent produces a normalized $m_{\ell\ell}$ histogram in your working directory.
+This runs the full pipeline non-interactively: MadGraph5 generates the events via [Magnus](https://github.com/rise-agi/magnus), and the agent produces a normalized $m_{\ell\ell}$ histogram in your working directory.
 
 ## Usage
 
