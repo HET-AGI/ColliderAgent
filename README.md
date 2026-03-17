@@ -292,14 +292,20 @@ ColliderAgent/
 If you use Collider-Agent in your research, please cite:
 
 ```bibtex
-@misc{collider-agent,
-  author = {Qiu, Shi and Cai, Zeyu and Wei, Jiashen and Li, Zeyu and Yin, Yixuan and Cao, Qing-Hong and Liu, Chang and Luo, Ming-xing and Yuan, Xing-Bo and Zhu, Hua Xing},
-  title  = {An End-to-end Architecture for Collider Physics and Beyond},
-  year   = {2026},
-  howpublished = {\url{https://github.com/HET-AGI/ColliderAgent}},
-  note   = {Preprint}
+@article{Qiu:2026iby,
+    author = "Qiu, Shi and Cai, Zeyu and Wei, Jiashen and Li, Zeyu and Yin, Yixuan and Cao, Qing-Hong and Liu, Chang and Luo, Ming-xing and Yuan, Xing-Bo and Zhu, Hua Xing",
+    title = "{An End-to-end Architecture for Collider Physics and Beyond}",
+    eprint = "2603.14553",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-ph",
+    reportNumber = "CPTNP-2026-012",
+    month = "3",
+    year = "2026",
+    url = "https://github.com/HET-AGI/ColliderAgent"
 }
 ```
+
+Please also cite the HEP tools used in your analysis, including [FeynRules](https://arxiv.org/abs/1310.1921), [MadGraph5_aMC@NLO](https://github.com/restrepo/madgraph), [Pythia8](https://pythia.org/), [Delphes](https://github.com/delphes/delphes), and [MadAnalysis5](https://github.com/MadAnalysis/madanalysis5) 
 
 ## Acknowledgments
 
