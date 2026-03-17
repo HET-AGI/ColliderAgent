@@ -204,9 +204,25 @@ claude -p "Execute the analysis following prompt.md"
    - Apply analysis cuts with MadAnalysis5
    - Generate the analysis outputs, such as kinematic distribution plots, parameter exclusion regions, and any other results requested in the user prompt
 
+
+### Standalone Tasks
+
+The agent can also be used for individual sub-tasks, without running the full collider-phenomenology pipeline. For example, you can ask it to:
+
+- translate a Lagrangian written in standard LaTeX-based physics notation into a FeynRules `.fr` model file
+- generate events for a process at the LHC based on a `UFO` model file
+- analyze Monte Carlo events with MadAnalysis to produce a kinematic distribution plot
+
+For instance, you may provide a prompt like:
+
+```bash
+claude -p "Given the Lagrangian in prompt_lagrangian.md, generate a FeynRules .fr model and export the corresponding UFO files"
+```
+Here, `prompt_lagrangian.md` contains the Lagrangian written in standard LaTeX physics notation.
+
 ### Example Prompts
 
-The `paper-reproduction/` directory contains example prompts organized by arXiv ID:
+The `paper-reproduction/` directory contains example prompts to reproduce figures in the following papers:
 
 
 | arXiv ID | Topic | Figures |
