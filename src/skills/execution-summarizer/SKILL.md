@@ -50,15 +50,16 @@ Example format:
 
 ```
 1. **Model Building** (feynrules-model-generator → feynrules-model-validator → ufo-generator)
-   - Generated `MyModel.fr` with 2 new particles (S1, S2) and 3 couplings
+   - Generated `models/MyModel.fr` with 2 new particles (S1, S2) and 3 couplings
    - Validation: passed (Hermiticity ✓, mass diagonalization ✓)
-   - UFO output: `progress/MyModel_UFO/`
+   - UFO output: `models/MyModel_UFO/`
 
 2. **Event Generation** (madgraph-simulator)
    - Process: `p p > s1 s1~, s1 > t t~`
    - √s = 14 TeV, 50k events
    - Cross section: 12.3 ± 0.2 fb
-   - Events: `progress/Events/run_01/`
+   - Script: `scripts/mg5_14TeV.mg5`
+   - Events: `events/pp_s1s1/Events/run_01/`
    ...
 ```
 
@@ -107,11 +108,13 @@ Map the user-specified event selection criteria to the analysis code.
 A list of all key output files produced, with their paths and brief descriptions.
 
 ```
-- execution_summary.md        — this summary
-- progress/MyModel.fr         — FeynRules model file
-- progress/MyModel_UFO/       — UFO model directory
-- progress/Events/run_01/     — generated events (LHE + HepMC)
-- plots/mll_distribution.pdf  — dilepton invariant mass plot
+- execution_summary.md              — this summary
+- models/MyModel.fr                 — FeynRules model file
+- models/MyModel_UFO/               — UFO model directory
+- scripts/mg5_14TeV.mg5             — MadGraph script
+- scripts/plot_mll.py               — analysis script
+- events/pp_s1s1/Events/run_01/     — generated events (LHE + HepMC)
+- output/figures/mll_distribution.pdf — dilepton invariant mass plot
 ```
 
 ---

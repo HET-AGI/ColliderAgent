@@ -35,18 +35,31 @@ This skill reads artifacts from the completed run:
 
 ## Output Structure
 
-Create a **single directory** (default: `reproduction/`) containing all files needed to reproduce the analysis. Everything must be self-contained — no file should depend on paths outside this directory at rest (paths are configured at run time).
+Create a `reproduction/` directory with the following structure. Everything must be self-contained — no file should depend on paths outside this directory at rest (paths are configured at run time).
 
 ```
 reproduction/
-├── README.md                  # Main guide document (see Section 4)
-├── run_all.sh                 # One-click automation script (supports --local and --magnus)
-├── <model>.fr                 # FeynRules model file
-├── generate_ufo.wl            # WolframScript for UFO generation (local mode only)
-├── mg5_compile.dat            # MadGraph process compilation script (local step-by-step only)
-├── mg5_launch_<label>.dat     # MadGraph launch scripts (local step-by-step only)
-├── <analysis>.py              # Python analysis/plotting script(s)
-└── ...                        # Any other scripts used in the pipeline
+├── README.md                      # Main guide document
+├── run_all.sh                     # One-click automation script (--local / --magnus)
+├── models/                        # Model files
+│   └── <Model>.fr                 # FeynRules model file (cp from models/)
+└── scripts/                       # All executable scripts
+    ├── generate_ufo.wl            # WolframScript for UFO generation (Write — new file)
+    ├── mg5_<label>.mg5            # MadGraph scripts (cp from scripts/)
+    ├── ma5_<label>.ma5            # MadAnalysis scripts (cp from scripts/, if used)
+    └── plot_<desc>.py             # Python analysis scripts (cp from scripts/)
+```
+
+At runtime, `run_all.sh` creates a `workdir/` following the standard pipeline layout:
+
+```
+reproduction/workdir/              # created at runtime
+├── models/<Model>_UFO/            # generated UFO model
+├── events/<process_label>/        # MadGraph output + events
+├── analysis/<label>/              # MadAnalysis output (if used)
+└── output/
+    ├── figures/                   # plots
+    └── data/                      # data tables
 ```
 
 ## Workflow
@@ -62,19 +75,34 @@ Read all progress files and identify which pipeline steps were executed:
 
 Also read the original task/prompt file for context.
 
-### Step 2: Collect and adapt scripts
+### Step 2: Collect scripts (cp-first strategy)
 
-For each pipeline step that was executed:
+Because all pipeline scripts already use **relative paths**, most files can be copied verbatim. Only 3 files need to be created from scratch.
 
-1. **Read the original script/file** from its current location
-2. **Create a portable copy** in `reproduction/` with the following adaptations:
-   - **`.fr` model files**: use `cp` via Bash to copy verbatim — do NOT use Write to rewrite identical content (saves tokens)
-   - For all other files that need path changes, replace all **hardcoded absolute paths** with either:
-     - Placeholder tokens (e.g., `<UFO_PATH>`, `<OUTPUT_PATH>`) for MadGraph `.dat` scripts
-     - Command-line arguments or environment variables for shell/Python scripts
-     - Relative paths where appropriate
-   - Keep all physics content (Lagrangian terms, parameters, process definitions, cuts, plot styles) **exactly as-is** — do not modify any physics
-   - Preserve comments that explain the physics
+**Files to `cp` (via Bash)** — do NOT rewrite with Write tool:
+
+| Source | Destination | Notes |
+|--------|-------------|-------|
+| `models/<Model>.fr` | `reproduction/models/<Model>.fr` | Model file, verbatim |
+| `scripts/mg5_*.mg5` | `reproduction/scripts/` | MadGraph scripts, already use relative paths |
+| `scripts/ma5_*.ma5` | `reproduction/scripts/` | MadAnalysis scripts (if used) |
+| `scripts/plot_*.py` | `reproduction/scripts/` | Analysis scripts, already use relative paths |
+
+```bash
+mkdir -p reproduction/models reproduction/scripts
+cp models/<Model>.fr reproduction/models/
+cp scripts/*.mg5 reproduction/scripts/
+cp scripts/*.py reproduction/scripts/
+# cp scripts/*.ma5 reproduction/scripts/   # if MA5 was used
+```
+
+**Files to Write (new)** — these don't exist in the pipeline:
+
+| File | Purpose |
+|------|---------|
+| `reproduction/scripts/generate_ufo.wl` | WolframScript for local UFO generation |
+| `reproduction/run_all.sh` | Dual-backend automation script |
+| `reproduction/README.md` | Guide document |
 
 ### Step 3: Create the automation script (`run_all.sh`)
 
@@ -97,6 +125,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORK_DIR="${SCRIPT_DIR}/workdir"
 MG5_BIN="${MG5_BIN:-mg5_aMC}"
 FR_PATH="${FR_PATH:-${HOME}/Library/Mathematica/Applications/FeynRules}"
+
+mkdir -p "${WORK_DIR}/models" "${WORK_DIR}/events" "${WORK_DIR}/output/figures" "${WORK_DIR}/output/data"
 ```
 
 Requirements for `run_all.sh`:
@@ -114,19 +144,13 @@ Requirements for `run_all.sh`:
 
 | Local | Magnus |
 |-------|--------|
-| `wolframscript -code '...'` (inline FeynRules script) | `magnus run validate-feynrules -- --model <fr> --lagrangian <L>` then `magnus run generate-ufo -- --model <fr> --lagrangian <L> --output <ufo_dir>` |
+| `cd workdir && wolframscript ../scripts/generate_ufo.wl` | `magnus run validate-feynrules -- --model <fr> --lagrangian <L>` then `magnus run generate-ufo -- --model <fr> --lagrangian <L> --output workdir/models/<Model>_UFO` |
 
-**Step 2 — Process Compilation:**
-
-| Local | Magnus |
-|-------|--------|
-| Write a `.dat` script, then `mg5_aMC script.dat` | `magnus run madgraph-compile -- --ufo <ufo_dir> --process "..." --output <mg5_dir>` |
-
-**Step 3 — Event Generation (launch):**
+**Step 2 — Process Compilation + Event Generation:**
 
 | Local | Magnus |
 |-------|--------|
-| Write a `.dat` launch script with `set <param> <value>` syntax, then `mg5_aMC script.dat` | `magnus run madgraph-launch -- --process <mg5_dir> --commands "done\nset ...\ndone" --output <mg5_dir>` |
+| `cd workdir && ${MG5_BIN} ../scripts/mg5_<label>.mg5` (scripts already contain `output` + `launch` with relative paths) | `magnus run madgraph-compile -- --ufo <ufo_dir> --process "..." --output workdir/events/<process>` then `magnus run madgraph-launch -- --process workdir/events/<process> --commands "..." --output workdir/events/<process>` |
 
 Key syntax differences between local and Magnus for parameter setting:
 
@@ -164,7 +188,7 @@ The README.md must contain the following sections, written in the language match
 
 #### Section 3: File Inventory
 - Table listing every file in the reproduction directory
-- Annotate which files are backend-specific (e.g., `generate_ufo.wl` = local only, `mg5_compile.dat` = local step-by-step only)
+- Annotate which files are backend-specific (e.g., `scripts/generate_ufo.wl` = local only)
 
 #### Section 4: Quick Start (one-click)
 - **Local mode** example with environment variables
@@ -208,9 +232,9 @@ After creating all files:
 
 1. **Preserve physics exactly** — never modify Lagrangian terms, coupling values, process definitions, parameter scan ranges, plot styles, or any physics content.
 
-2. **Path portability** — no hardcoded absolute paths in any script except `run_all.sh` (which constructs them from `SCRIPT_DIR` and environment variables). MadGraph `.dat` files use `<PLACEHOLDER>` tokens.
+2. **cp-first strategy** — pipeline scripts already use relative paths. Copy them with `cp` via Bash. Only `generate_ufo.wl`, `run_all.sh`, and `README.md` need to be created with Write.
 
-3. **Dual backend** — `run_all.sh` must support both `--local` and `--magnus` via a `BACKEND` variable. Every compute step branches on this variable. The README must document both paths with exact commands.
+3. **Path portability** — `run_all.sh` executes MG5 scripts via `cd workdir && ${MG5_BIN} ../scripts/mg5_<label>.mg5`. The scripts' relative paths (`events/...`, `models/...`) resolve correctly relative to `workdir/`. No hardcoded absolute paths in any file.
 
 4. **Correct Magnus syntax** — Magnus `madgraph-launch` uses `set param_card BLOCK CODE VALUE` syntax (not `set ParamName value`). It requires explicit `done` commands for the state machine. Include `set use_syst False` to avoid LHAPDF issues on cloud. See the `madgraph-simulator` skill for the complete state machine specification.
 
@@ -218,7 +242,7 @@ After creating all files:
 
 6. **Include actual results** — the README should contain numerical results from the original run as a verification reference.
 
-7. **Single directory** — everything goes in one flat directory. Only `workdir/` is created at runtime.
+7. **Organized directory** — `reproduction/` contains `models/`, `scripts/`, plus `README.md` and `run_all.sh` at the top level. `workdir/` is created at runtime following the standard pipeline layout.
 
 8. **Idempotent automation** — `run_all.sh` must be safe to run multiple times. Each step checks for existing output.
 

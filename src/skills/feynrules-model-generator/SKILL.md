@@ -34,7 +34,11 @@ Work through these steps **one at a time**. Do not try to write the complete `.f
 
 ### Step 3: Create the .fr file from the skeleton
 
-Copy [templates/skeleton.fr](templates/skeleton.fr) into the workspace as your starting `.fr` file. Fill in `M$ModelName` and `M$Information` with the model name and metadata. Add any needed index definitions.
+Copy [templates/skeleton.fr](templates/skeleton.fr) into `models/<Model>.fr` (e.g. `models/HeavyN.fr`). Fill in `M$ModelName` and `M$Information` with the model name and metadata. Add any needed index definitions.
+
+**Output paths** (all relative to working directory):
+- FeynRules model file: `models/<Model>.fr`
+- UFO directory (after validation + generation): `models/<Model>_UFO/`
 
 ### Step 4: Define particle classes
 

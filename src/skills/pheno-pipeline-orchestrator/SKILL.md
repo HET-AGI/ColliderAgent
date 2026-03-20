@@ -5,11 +5,36 @@ description: >
   Triggers when the user asks to "execute an analysis", "run the full pipeline",
   "execute <filename>.md", or references an analysis prompt/plan .md file to
   execute end-to-end.
+  Also triggers when the user's request spans multiple pipeline stages simultaneously,
+  such as event generation (simulate, generate events, pp ->, LHC, TeV) combined with
+  event analysis (plot, distribution, invariant mass, cut-flow) and/or post-processing
+  (reproduction guide, summarize, exclusion limit, fit), or when the user describes
+  a complete physics study (e.g. "complete study of...", "full analysis of...",
+  "investigate ... and produce ..."). Do NOT trigger for single-stage requests that
+  only involve one of: model building, event generation, event analysis, or plotting.
 ---
 
 # Analysis Pipeline Orchestrator
 
 You are the orchestrator for a particle physics analysis pipeline. When the user provides a task description (typically a .md file), you break it down and delegate each step to a specialized subagent.
+
+## Standard Directory Layout (reference)
+
+Each subagent's skill defines its own output paths. The combined layout is:
+
+```
+<working_dir>/
+├── models/          # Step 1 (feynrules-model-generator)
+├── scripts/         # Steps 2/3/4 (all executable scripts)
+├── events/          # Step 2 (madgraph-simulator)
+├── analysis/        # Step 3 (madanalysis-analyzer)
+├── output/          # Step 4 (pheno-analyzer)
+│   ├── figures/
+│   └── data/
+├── progress/        # Orchestrator tracking
+├── reproduction/    # reproduction-guide-generator
+└── execution_summary.md
+```
 
 ## Pipeline
 
@@ -19,26 +44,27 @@ Execute the following steps **sequentially**, using the specified subagent for e
 - Input: the Lagrangian and particle content from the user's task description
 - The subagent generates .fr model → validates → produces UFO model
 - Output: `progress/step1_feynrules.md`
-- Extract from return: UFO path, particle names, PDG codes, parameter block/code info
+- Extract from return: UFO path (e.g. `models/SM_HeavyN_UFO`), model file path (e.g. `models/HeavyN.fr`), particle names, PDG codes, parameter block/code info
 
 ### Step 2: Event Generation → `collider-simulator` subagent
 - Input: UFO path + particle info from step 1, plus collider settings from the task description
 - The subagent compiles the process and generates Monte Carlo events
 - Output: `progress/step2_madgraph.md`
-- Extract from return: output directory path(s), run name ↔ parameter mapping
+- Extract from return: script paths (e.g. `scripts/mg5_7TeV.mg5`), process dirs (e.g. `events/pp_muN_7TeV`), run name ↔ parameter mapping
 - **Do NOT extract physics results** (cross sections, widths, etc.) — leave that to downstream subagents who will read the output files directly
 
 ### Step 3: Event Analysis → `event-analyzer` subagent (if needed)
 - Input: event file paths from step 2, analysis specifications from the task description
 - The subagent runs MadAnalysis5 for kinematic distributions and cut-flow
 - Output: `progress/step3_madanalysis.md`
+- Extract from return: script path (e.g. `scripts/ma5_dilepton.ma5`), analysis dir (e.g. `analysis/dilepton_mass`), histogram path
 - Skip this step if the task does not require MA5 analysis
 
 ### Step 4: Post-Processing → `pheno-analyzer` subagent
 - Input: output directory path(s) and run ↔ parameter mapping from the latest upstream step (step 3 if executed, otherwise step 2), plus analysis procedure from the task description
 - The subagent reads simulation/analysis output files directly, extracts the physics results it needs (cross sections, kinematic distributions, etc.), performs analysis, and produces plots
 - Output: `progress/step4_postprocessing.md`
-- Extract from return: plot file paths, summary of key results
+- Extract from return: script path (e.g. `scripts/plot_xsec_vs_mass.py`), figure files (e.g. `output/figures/figure_3.pdf`), data files (if any)
 
 ## Rules
 
@@ -62,7 +88,7 @@ The orchestrator manages **paths and scheduling**, not physics results:
 
 If the Magnus server is unreachable:
 
-1. **Retry up to 2 times** with a 20-second interval (`sleep 10`) before falling back to local execution. Each failed Magnus call returns a large HTML error page, so limit retries to avoid wasting context.
+1. **Retry up to 2 times** with a 20-second interval (`sleep 20`) before falling back to local execution. Each failed Magnus call returns a large HTML error page, so limit retries to avoid wasting context.
 2. **Check for local tools** (wolframscript, MadGraph5) and fall back to local execution.
 3. **When running MadGraph locally via `Bash(run_in_background=true)`**:
    - Wait for the `task-notification` to confirm completion. Do NOT use `TaskOutput(block=true)` — it pulls the entire verbose MadGraph log into context.
