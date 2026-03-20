@@ -1,0 +1,179 @@
+(* ************************************************************************* *)
+(* *********							    ******** *)
+(* *********    FeynRules model file: SM + Zp                       ******** *)
+(* *********               	      	      	       		    ******** *)
+(* ************************************************************************* *)
+
+
+
+
+(* ************************************* *)
+(*             Information               *)
+(* ************************************* *)
+
+M$ModelName="Zp";
+
+M$Information={
+	Authors->{"Xing-Bo Yuan"}, 
+	Emails->{"y@ccnu.edu.cn"},
+	Institutions->{"CCNU"},
+	Data->"17.Apr.2022",
+	Version->"1.0",
+	Reference->{"No"},
+	URLs->{"No"}
+	};
+
+
+(* SM + Zp *)
+
+
+
+FeynmanGauge=False; (* default *)
+
+
+
+
+(* ************************************* *)
+(*         Interaction orders            *)
+(* ************************************* *)
+
+M$InteractionOrderHierarchy={
+	{QCD,1},
+	{QED,2},
+	{NP,2}
+	};
+
+(* i.e. g_s ~ O(1), g_e ~ O(1/2), g_NP ~ O(1/2) *)
+
+
+
+
+(* ************************************* *)
+(*               Parameters              *)
+(* ************************************* *)
+
+M$ClassesDescription = {
+
+ V[5] == { 
+    ClassName       -> Zp, 
+    SelfConjugate   -> True,
+    Mass            -> MZp,
+    Width           -> WZp,
+    ParticleName    -> "Zp", 
+    PropagatorLabel -> "Zp",
+    PropagatorType  -> Sine,
+    PropagatorArrow -> None,
+    FullName        -> "Zp"
+  },
+  F[20] == {
+    ClassName        -> uqP,
+    ClassMembers     -> {uP, cP, tP},
+    Indices          -> {Index[Generation], Index[Colour]},
+    FlavorIndex      -> Generation,
+    SelfConjugate    -> False,
+    Mass             -> {Mu, MuP, McP, MtP},
+    Width            -> {0, 0, 0},
+    QuantumNumbers   -> {Q -> 2/3},
+    PropagatorLabel  -> {"uqP", "U", "C", "T"},
+    PropagatorType   -> Straight,
+    PropagatorArrow  -> Forward,
+    ParticleName     -> {"U",  "C",  "T" },
+    AntiParticleName -> {"U~", "C~", "T~"},
+    FullName         -> {"U-quark", "C-quark", "T-quark"}
+  }
+}
+
+M$Parameters={
+
+  sL=={
+  	ParameterType->External,
+	ComplexParameter->False,
+	InteractionOrder->{NP,1},
+	Description->"sin[theta_L]"
+	},
+
+  cL=={
+  	ParameterType->External,
+	ComplexParameter->False,
+	InteractionOrder->{NP,1},
+	Description->"cos[theta_L]"
+	},
+
+  sR=={
+  	ParameterType->External,
+	ComplexParameter->False,
+	InteractionOrder->{NP,1},
+	Description->"sin[theta_R]"
+	},
+
+  cR=={
+  	ParameterType->External,
+	ComplexParameter->False,
+	InteractionOrder->{NP,1},
+	Description->"cos[theta_R]"
+	},
+
+  g3=={
+  	ParameterType->External,
+	ComplexParameter->False,
+	InteractionOrder->{NP,1},
+	Description->"gauge coupling of Zp"
+	}
+};
+
+
+	
+(* ************************************* *)
+(*               Lagrangian              *)
+(* ************************************* *)
+
+LA:= (2/3)*ee*tPbar.Ga[mu].tP*A[mu];
+
+(* SM ttZ interaction has be subtracted  *)
+LZ:= (
+      +ee/(sw*cw)*Z[mu]*(
+			 +1/2*(cL^2-1)*tbar.Ga[mu].ProjM.t
+			 +1/2*sL*cL*tbar.Ga[mu].ProjM.tP
+			 +1/2*sL*cL.tPbar.Ga[mu].ProjM.t
+			 +(1/2*sL^2-2/3*sw^2)*tPbar.Ga[mu].ProjM.tP
+			 )
+      -ee/cw*sw*2/3*Z[mu]*tPbar.Ga[mu].ProjP.tP
+     );
+
+LW0:= (
+      +ee/sw/Sqrt[2]*(cL-1)*CKM[3,3]* tbar.Ga[mu].ProjM.b*W[mu]
+      +ee/sw/Sqrt[2]*sL    *CKM[3,3]*tPbar.Ga[mu].ProjM.b*W[mu]
+      );
+
+LW:= LW0 + HC[LW0];
+
+LZp:= (
+       +(2/3)*g3*Zp[mu]*(
+                         +sL^2 *  tbar.Ga[mu].ProjM.t
+		  	 -sL*cL*  tbar.Ga[mu].ProjM.tP
+		   	 -sL*cL* tPbar.Ga[mu].ProjM.t
+			 +cL^2 * tPbar.Ga[mu].ProjM.tP
+			)
+       +(2/3)*g3*Zp[mu]*(
+                         +sR^2 *  tbar.Ga[mu].ProjP.t
+		  	 -sR*cR*  tbar.Ga[mu].ProjP.tP
+		   	 -sR*cR* tPbar.Ga[mu].ProjP.t
+			 +cR^2 * tPbar.Ga[mu].ProjP.tP
+			)
+       );
+
+LNP:= LA + LZ + LW + LZp;
+
+
+(*
+
+backup
+
+LA:= (2/3)*ee*tPbar[sp1].Ga[mu,sp1,sp2].tP[sp2]*A[mu];
+
+LZp:= (
+       +(2/3)*g3*{tbar[sp1],tPbar[sp1]}.{{sL^2, -sL*cL}, {-sL*cL,cL^2}}.{Ga[mu, sp1, sp2].ProjM[sp2,sp3].t[sp3], Ga[mu, sp1, sp2].ProjM[sp2,sp3].tP[sp3]}*Zp[mu]
+       +(2/3)*g3*{tbar[sp1],tPbar[sp1]}.{{sR^2, -sR*cR}, {-sR*cR,cR^2}}.{Ga[mu, sp1, sp2].ProjP[sp2,sp3].t[sp3], Ga[mu, sp1, sp2].ProjP[sp2,sp3].tP[sp3]}*Zp[mu]
+       )
+
+*)

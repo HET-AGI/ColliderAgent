@@ -1,0 +1,64 @@
+(* ************************** *)
+(* *****  Lagrangian    ***** *)
+(* ************************** *)
+
+(* Kinetic Terms *)
+LKinetic := Block[{mu},
+  (* Fermion kinetic terms *)
+  ExpandIndices[
+    I * fermionbar[sp1, ii].Ga[mu, sp1, sp2].DC[fermion[sp2, ii], mu],
+    FlavorExpand -> {SU2W, SU2D}
+  ] +
+
+  (* Scalar kinetic terms *)
+  DC[scalarfield[mu], mu] * DC[scalarfield[nu], nu] -
+
+  (* Gauge field kinetic terms *)
+  -1/4 * FS[vectorfield, mu, nu] * FS[vectorfield, mu, nu]
+];
+
+(* Mass Terms *)
+LMass := Block[{sp1, sp2, ii, jj},
+  (* Fermion masses *)
+  -MassFermion[ii] * fermionbar[sp1, ii].fermion[sp1, ii] +
+
+  (* Scalar masses *)
+  -MassScalar^2 * scalarfield * scalarfield
+];
+
+(* Yukawa / Interaction Terms *)
+LYukawa := Block[{sp1, sp2, ii, jj},
+  (* Generic Yukawa coupling: scalar-fermion-fermion *)
+  -YukawaLeft[ii, jj] * scalarfield * fermionbar[sp1, ii].ProjM[sp1, sp2].fermion[sp2, jj] +
+  -YukawaRight[ii, jj] * scalarfield * fermionbar[sp1, ii].ProjP[sp1, sp2].fermion[sp2, jj] +
+
+  (* Hermitian conjugate to ensure Hermiticity *)
+  HC[
+    YukawaLeft[ii, jj] * scalarfield * fermionbar[sp1, ii].ProjM[sp1, sp2].fermion[sp2, jj] +
+    YukawaRight[ii, jj] * scalarfield * fermionbar[sp1, ii].ProjP[sp1, sp2].fermion[sp2, jj]
+  ]
+];
+
+(* Scalar Potential / Self-Interactions *)
+LScalar := Block[{},
+  (* Quartic coupling *)
+  -lambda * (scalarfield * scalarfield)^2 +
+
+  (* Cubic coupling *)
+  -cubicCoupling * scalarfield * scalarfield * scalarfield
+];
+
+(* Total Lagrangian *)
+LTotal := LKinetic + LMass + LYukawa + LScalar;
+
+
+(* ************************** *)
+(* ***** Lagrangian Parts *** *)
+(* ************************** *)
+
+(* Define which parts contribute to which processes *)
+LSM := LKinetic + LMass;  (* Standard Model-like terms *)
+LNewPhysics := LYukawa + LScalar;  (* New physics terms *)
+
+(* For FeynRules to generate Feynman rules *)
+L := LTotal;

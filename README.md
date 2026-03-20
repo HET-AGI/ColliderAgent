@@ -13,7 +13,9 @@
 
 > From a LaTeX Lagrangian to a publication-ready figure — fully automated.
 
-[Overview](#overview) • [Quickstart](#quickstart) • [Installation](#installation) • [Examples](#example-prompts) • [Citation](#citation)
+[Overview](#overview) • [Quickstart](#quickstart) • [Installation](#installation) • [Examples](#example-prompts) • [Python Agent](#python-agent) • [Citation](#citation)
+
+[中文](README_zh.md)
 
 
 <img src="images/architecture.svg" alt="Architecture" width="900" />
@@ -255,6 +257,8 @@ ColliderAgent/
 │       ├── madanalysis-analyzer/
 │       ├── pheno-pipeline-orchestrator/
 │       └── magnus/
+├── python-agent/                      # Standalone ADK agent (Python API)
+├── scripts/                           # Magnus cloud blueprint scripts
 ├── paper-reproduction/                # Example prompts from paper
 │   ├── 1308.2209/
 │   ├── 1605.02910/
@@ -286,6 +290,22 @@ ColliderAgent/
 | `madanalysis-analyzer`        | Perform cut-flow analysis and produce histograms  |
 | `pheno-pipeline-orchestrator` | Coordinate the end-to-end phenomenology pipeline  |
 | `magnus`                      | Interface with the Magnus cloud HEP platform      |
+
+## Python Agent
+
+In addition to the skill-based interface, ColliderAgent ships a **standalone Python ADK agent** and a set of **Magnus cloud blueprint scripts** for users who want direct programmatic access to the pipeline — without Claude Code or any other AI coding assistant.
+
+| Module | Description |
+|---|---|
+| [`python-agent/`](python-agent/) | Google ADK agent that accepts natural-language physics tasks and orchestrates the full pipeline via Python API. Includes `uv`-based setup, interactive `CLI.py`, and a full test suite. |
+| [`scripts/`](scripts/) | Entry-point scripts executed by Magnus blueprint containers. Each script corresponds to a named blueprint (`validate-feynrules`, `generate-ufo`, `madgraph-compile`, etc.) called by the agent's tools. |
+
+> [!NOTE]
+> If you only want to use Collider-Agent through Claude Code (or another AI agent), you don't need these directories. They are intended for programmatic access, custom integrations, and pipeline development.
+
+See the individual READMEs for installation and usage details:
+- [python-agent/README.md](python-agent/README.md)
+- [scripts/README.md](scripts/README.md)
 
 ## Citation
 

@@ -1,0 +1,27 @@
+(* ::Package:: *)
+
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+
+M$ModelName = "ModelNameHere";
+
+M$Information = {
+  Authors -> {"Author Name"},
+  Version -> "1.0",
+  Date -> "DD. MM. YYYY",
+  Institutions -> {"Institution Name"},
+  Emails -> {"email@example.com"},
+  References -> {"arXiv:XXXX.XXXXX", "DOI:XX.XXXX/..."},
+  URLs -> {"http://example.com"},
+  Description -> "Brief description of the model"
+};
+
+(* ************************** *)
+(* ***** Change Log     ***** *)
+(* ************************** *)
+
+FeynRulesVersion = "2.3";
+FR$Revision = {
+  "1.0" -> "Initial implementation"
+};

@@ -1,0 +1,59 @@
+(* ************************** *)
+(* *****  Particle Classes  ***** *)
+(* ************************** *)
+
+M$ClassesDescription = {
+
+  (* Fermions *)
+  F[id] == {
+    ClassName -> fermionName,
+    ClassMembers -> {fermion1, fermion2, fermion3},
+    SelfConjugate -> False,
+    Indices -> {Index[Generation]},
+    FlavorIndex -> Generation,
+    QuantumNumbers -> {Q -> charge},
+    Mass -> {MassSymbol, {mass1, mass2, mass3}},
+    Width -> {WidthSymbol, {width1, width2, width3}},
+    PropagatorLabel -> "fermion",
+    PropagatorType -> Straight,
+    PropagatorArrow -> Forward,
+    PDG -> {PDG1, PDG2, PDG3},
+    ParticleName -> {"name1", "name2", "name3"},
+    AntiParticleName -> {"antiname1", "antiname2", "antiname3"},
+    FullName -> {"Full Name 1", "Full Name 2", "Full Name 3"},
+    TeXParticleName -> {"\\psi_1", "\\psi_2", "\\psi_3"},
+    TeXAntiParticleName -> {"\\bar{\\psi}_1", "\\bar{\\psi}_2", "\\bar{\\psi}_3"}
+  },
+
+  (* Scalars *)
+  S[id] == {
+    ClassName -> scalarName,
+    SelfConjugate -> True,  (* or False for charged scalars *)
+    QuantumNumbers -> {Q -> 0},  (* Neutral scalar *)
+    Mass -> {MassSymbol, massValue},
+    Width -> {WidthSymbol, widthValue},
+    PropagatorLabel -> "scalar",
+    PropagatorType -> D,
+    PDG -> PDGID,
+    ParticleName -> "ScalarName",
+    FullName -> "Full Scalar Name",
+    TeXParticleName -> "\\phi"
+  },
+
+  (* Vectors / Gauge Bosons *)
+  V[id] == {
+    ClassName -> vectorName,
+    SelfConjugate -> True,  (* or False for W± *)
+    Indices -> {Index[Lorentz]},
+    QuantumNumbers -> {Q -> 0},
+    Mass -> {MassSymbol, massValue},
+    Width -> {WidthSymbol, widthValue},
+    PropagatorLabel -> "vector",
+    PropagatorType -> Sine,
+    PDG -> PDGID,
+    ParticleName -> "VectorName",
+    FullName -> "Full Vector Name",
+    TeXParticleName -> "V^\\mu"
+  }
+
+};

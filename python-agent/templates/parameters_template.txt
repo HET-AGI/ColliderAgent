@@ -1,0 +1,49 @@
+(* ************************** *)
+(* *****  Parameters    ***** *)
+(* ************************** *)
+
+M$Parameters = {
+
+  (* External Parameters *)
+
+  (* Coupling constants *)
+  parameterName == {
+    ParameterType -> External,
+    BlockName -> BLOCKNAME,
+    OrderBlock -> 1,
+    Value -> 1.0,
+    InteractionOrder -> {QED, 1},
+    Description -> "Coupling constant description"
+  },
+
+  (* Masses *)
+  MassSymbol == {
+    ParameterType -> External,
+    BlockName -> MASS,
+    OrderBlock -> {ParticleID},
+    Value -> 100,  (* GeV *)
+    Description -> "Particle mass"
+  },
+
+  (* Mixing matrices (example for 3x3) *)
+  MatrixName == {
+    ParameterType -> External,
+    Indices -> {Index[Generation], Index[Generation]},
+    Unitary -> True,
+    Value -> {
+      MatrixName[1,1] -> 1.0,
+      MatrixName[2,2] -> 1.0,
+      MatrixName[3,3] -> 1.0
+    },
+    Description -> "Mixing matrix"
+  },
+
+  (* Internal/Derived Parameters *)
+
+  derivedParam == {
+    ParameterType -> Internal,
+    Value -> Sqrt[parameterName],
+    Description -> "Derived parameter"
+  }
+
+};

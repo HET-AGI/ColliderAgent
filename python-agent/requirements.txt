@@ -1,0 +1,39 @@
+# Google ADK Framework
+google-adk
+
+# LLM Integration
+litellm>=1.0.0
+
+# Symbolic Math & Parsing
+sympy>=1.12
+pyparsing>=3.1.0
+
+# Web Scraping (for downloader utility)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Data Handling
+python-dotenv>=1.0.0
+pyyaml>=6.0
+
+# Utilities
+tqdm>=4.66.0  # Progress bars for downloads
+
+# Type hints and validation
+typing-extensions>=4.8.0
+
+# Mathematica Integration (for physics validation)
+# NOTE: Also requires Mathematica and FeynRules package installed
+wolframclient>=1.1.7
+
+# MadGraph Integration (for event generation)
+# NOTE: Also requires MadGraph5_aMC@NLO installed (use utils/install_madgraph.py)
+pexpect>=4.8.0  # Interactive MG5 session management
+# Optional: LHE file parsing (we provide custom parser)
+# pylhe>=0.7.0
+
+# Optional: Semantic search for reference model matching
+# Uncomment if you want to use embedding-based similarity search
+# sentence-transformers>=2.2.0
+# faiss-cpu>=1.7.4

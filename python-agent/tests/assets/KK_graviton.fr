@@ -1,0 +1,109 @@
+(* ========================================= *)
+(* KK Graviton Model - Randall-Sundrum     *)
+(* Coupling to electrons and muons only    *)
+(* Based on hep-ph/9909255                 *)
+(* ========================================= *)
+
+M$ModelName = "KK_Graviton_Lepton";
+
+M$Information = {
+  Authors      -> {"Collider Agent"},
+  Version      -> "1.0",
+  Date         -> "2024",
+  Institutions -> {"Physics Simulation"},
+  Emails       -> {"agent@collider.sim"},
+  References   -> {"hep-ph/9909255"}
+};
+
+(* ========================================= *)
+(* Index Definitions                         *)
+(* ========================================= *)
+
+IndexRange[Index[Generation]] = Range[3];
+IndexStyle[Generation, f];
+
+(* ========================================= *)
+(* Interaction Order Hierarchy              *)
+(* ========================================= *)
+
+M$InteractionOrderHierarchy = {
+  {QCD, 1},
+  {QED, 2},
+  {GR, 2}  (* Gravitational interactions *)
+};
+
+(* ========================================= *)
+(* Particle Classes                          *)
+(* ========================================= *)
+
+M$ClassesDescription = {
+  
+  (* KK Graviton - First massive mode *)
+  T[1] == {
+    ClassName       -> Gkk,
+    SelfConjugate   -> True,
+    Mass            -> {MGkk, 600},
+    Width           -> {WGkk, 10},
+    PDG             -> 5000039,
+    ParticleName    -> "Gkk",
+    PropagatorLabel -> "Gkk",
+    PropagatorType  -> U,
+    PropagatorArrow -> None,
+    FullName        -> "KK_Graviton"
+  }
+  
+};
+
+(* ========================================= *)
+(* Parameters                                *)
+(* ========================================= *)
+
+M$Parameters = {
+  
+  (* Lambda_pi - The key coupling scale *)
+  LamG == {
+    ParameterType    -> External,
+    BlockName        -> GRAVPARAMS,
+    OrderBlock       -> 1,
+    Value            -> 1000,  (* Default 1 TeV *)
+    InteractionOrder -> {GR, 1},
+    TeX              -> Subscript[\[CapitalLambda], \[Pi]],
+    Description      -> "KK graviton coupling scale Lambda_pi"
+  }
+  
+};
+
+(* ========================================= *)
+(* Lagrangian                                *)
+(* ========================================= *)
+
+(* Energy-momentum tensor for electron *)
+(* T^{mu,nu}_{(e)} = (i/4)[ebar gamma^mu d^nu e - (d^nu ebar) gamma^mu e + (mu <-> nu)] *)
+
+LGkkElectron := Block[{mu, nu, sp1, sp2, sp3, sp4},
+  -(1/LamG) * Gkk[mu, nu] * (
+    (I/4) * (
+      ebar[sp1].Ga[mu, sp1, sp2].del[e[sp2], nu] 
+      - del[ebar[sp3], nu].Ga[mu, sp3, sp4].e[sp4]
+      + ebar[sp1].Ga[nu, sp1, sp2].del[e[sp2], mu]
+      - del[ebar[sp3], mu].Ga[nu, sp3, sp4].e[sp4]
+    )
+  )
+];
+
+(* Energy-momentum tensor for muon *)
+(* T^{mu,nu}_{(mu)} = (i/4)[mubar gamma^mu d^nu mu - (d^nu mubar) gamma^mu mu + (mu <-> nu)] *)
+
+LGkkMuon := Block[{mu, nu, sp1, sp2, sp3, sp4},
+  -(1/LamG) * Gkk[mu, nu] * (
+    (I/4) * (
+      mubar[sp1].Ga[mu, sp1, sp2].del[mu[sp2], nu]
+      - del[mubar[sp3], nu].Ga[mu, sp3, sp4].mu[sp4]
+      + mubar[sp1].Ga[nu, sp1, sp2].del[mu[sp2], mu]
+      - del[mubar[sp3], mu].Ga[nu, sp3, sp4].mu[sp4]
+    )
+  )
+];
+
+(* Total new physics Lagrangian *)
+LGR := LGkkElectron + LGkkMuon;

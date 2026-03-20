@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# UV package manager
+uv.lock
+.python-version
+
+# IDE
+.vscode/
+.cursor/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+feynrules_agent.log
+
+# Environment variables
+.env
+.env_magnus
+
+# Downloaded models (too large for git)
+test_fr/
+
+# MadGraph installation (too large for git)
+tools/madgraph/
+
+# MadAnalysis5 installation (too large for git)
+tools/madanalysis5/
+
+# Generated database (can be rebuilt)
+symbol_db/*.json
+
+# Outputs
+outputs/
+*.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# any database
+*.db
+
+# ADK
+.adk
+test/
+
+# FeynRules Outputs
+tools/feynrules/NP_S_UFO/
+
+# MadGraph auto-generated parser cache (must not shadow Python's py package)
+py.py

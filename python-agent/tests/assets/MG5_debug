@@ -1,0 +1,195 @@
+#************************************************************
+#*                     MadGraph5_aMC@NLO                    *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*         VERSION 3.6.6                 2025-10-30         *
+#*                                                          *
+#*    The MadGraph5_aMC@NLO Development Team - Find us at   *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph5_aMC@NLO         *
+#*                                                          *
+#*     run as ./bin/mg5_aMC  filename                       *
+#*                                                          *
+#************************************************************
+set group_subprocesses Auto
+set ignore_six_quark_processes False
+set low_mem_multicore_nlo_generation False
+set complex_mass_scheme False
+set include_lepton_initiated_processes False
+set gauge unitary
+set loop_optimized_output True
+set loop_color_flows False
+set max_npoint_for_channel 0
+set default_unset_couplings 99
+set max_t_for_channel 99
+set zerowidth_tchannel True
+set nlo_mixed_expansion True
+import model sm
+define p = g u c d s u~ c~ d~ s~
+define j = g u c d s u~ c~ d~ s~
+define l+ = e+ mu+
+define l- = e- mu-
+define vl = ve vm vt
+define vl~ = ve~ vm~ vt~
+install pythia8
+Traceback (most recent call last):
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/various/misc.py", line 977, in call
+    return subprocess.call(arg, *args, **opt)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 395, in call
+    with Popen(*popenargs, **kwargs) as p:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 1972, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'wget'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/various/misc.py", line 946, in deco_f
+    return f(arg, *args, **opt)
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/various/misc.py", line 980, in call
+    return subprocess.call(arg, *args, **opt)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 395, in call
+    with Popen(*popenargs, **kwargs) as p:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/shiqiu/miniconda3/lib/python3.13/subprocess.py", line 1972, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: './wget'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/interface/extended_cmd.py", line 1548, in onecmd
+    return self.onecmd_orig(line, **opt)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/interface/extended_cmd.py", line 1497, in onecmd_orig
+    return func(arg, **opt)
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/interface/master_interface.py", line 490, in do_install
+    self.cmd.do_install(self, *args, **opts)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/interface/madgraph_interface.py", line 6548, in do_install
+    return self.advanced_install(name, path['HEPToolsInstaller'],
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                additional_options = add_options)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/interface/madgraph_interface.py", line 6037, in advanced_install
+    misc.wget(HepToolsInstaller_web_address,
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              pjoin(MG5DIR,'HEPTools','HEPToolsInstallers.tar.gz'),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              stderr=open(os.devnull,'w'), stdout=open(os.devnull,'w'),
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                             cwd=MG5DIR)
+                                                             ^^^^^^^^^^^
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/various/misc.py", line 2334, in wget
+    return call(['wget', http, '--output-document=%s'% path], *args, **opt)
+  File "/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/madgraph/various/misc.py", line 965, in deco_f
+    raise Exception('%s fails with no such file or directory' \
+                                                           % arg)
+Exception: ['./wget', 'http://madgraph.mi.infn.it//Downloads/HEPToolsInstaller/HEPToolsInstaller_V168.tar.gz', '--output-document=/srv/home/shiqiu/HEP-Agent/collider-agent/tools/madgraph/MG5_aMC_v3_6_6/HEPTools/HEPToolsInstallers.tar.gz'] fails with no such file or directory
+                          MadGraph5_aMC@NLO Options    
+                          ----------------    
+        complex_mass_scheme 	:	False
+    default_unset_couplings 	:	99
+                      gauge 	:	unitary
+         group_subprocesses 	:	Auto
+  ignore_six_quark_processes 	:	False
+  include_lepton_initiated_processes 	:	False
+           loop_color_flows 	:	False
+      loop_optimized_output 	:	True
+  low_mem_multicore_nlo_generation 	:	False
+     max_npoint_for_channel 	:	0
+          max_t_for_channel 	:	99
+        nlo_mixed_expansion 	:	True
+               stdout_level 	:	20 (user set)
+         zerowidth_tchannel 	:	True
+
+                         MadEvent Options    
+                          ----------------    
+     automatic_html_opening 	:	True
+                    nb_core 	:	None
+        notification_center 	:	True
+                   run_mode 	:	2
+
+                      Configuration Options    
+                      ---------------------    
+                        OLP 	:	MadLoop
+   acknowledged_v3.1_syntax 	:	False
+         auto_convert_model 	:	True
+                auto_update 	:	7
+         cluster_local_path 	:	None
+           cluster_nb_retry 	:	1
+              cluster_queue 	:	None (user set)
+         cluster_retry_wait 	:	300
+               cluster_size 	:	100
+      cluster_status_update 	:	(600, 30)
+          cluster_temp_path 	:	None
+               cluster_type 	:	condor
+           cluster_walltime 	:	None (user set)
+                    collier 	:	./HEPTools/lib
+                contur_path 	:	./HEPTools/contur
+               cpp_compiler 	:	None
+             crash_on_error 	:	False
+               delphes_path 	:	./Delphes
+                      eMELA 	:	None (user set)
+                 eps_viewer 	:	None
+        exrootanalysis_path 	:	./ExRootAnalysis
+              f2py_compiler 	:	None
+          f2py_compiler_py2 	:	None
+          f2py_compiler_py3 	:	None
+                    fastjet 	:	None (user set)
+           fortran_compiler 	:	None
+                      golem 	:	None (user set)
+                 hepmc_path 	:	None (user set)
+                  hwpp_path 	:	None (user set)
+                     lhapdf 	:	lhapdf-config
+                 lhapdf_py2 	:	None
+                 lhapdf_py3 	:	None
+          madanalysis5_path 	:	None (user set)
+           madanalysis_path 	:	./MadAnalysis
+  mg5amc_py8_interface_path 	:	None (user set)
+                      ninja 	:	./HEPTools/lib
+        output_dependencies 	:	external
+                   pineappl 	:	pineappl
+            pythia-pgs_path 	:	./pythia-pgs
+               pythia8_path 	:	None (user set)
+                 rivet_path 	:	./HEPTools/rivet
+                    samurai 	:	None
+               syscalc_path 	:	./SysCalc
+                    td_path 	:	./td
+                text_editor 	:	None
+                thepeg_path 	:	None (user set)
+                    timeout 	:	60
+                web_browser 	:	None
+                  yoda_path 	:	./HEPTools/yoda
