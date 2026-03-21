@@ -42,7 +42,11 @@ In standalone mode, gather information from the target run identified in Run Dis
 
 ### Step 2: Write the Execution Summary
 
-Create a file named **`execution_summary.md`** in the working directory. If the file already exists from a previous run, overwrite it. The summary must contain the following sections:
+**File naming**:
+- For the **initial run** (no `parent` field in manifest): create **`execution_summary.md`** in the working directory.
+- For **incremental runs** (has a `parent` field): create **`execution_summary_<run_label>.md`** (e.g., `execution_summary_heavyN_xsec_scan_11TeV.md`). Do NOT overwrite the initial `execution_summary.md` or any previous incremental summary.
+
+The summary must contain the following sections:
 
 ---
 
@@ -126,7 +130,7 @@ Map the user-specified event selection criteria to the analysis code.
 A list of all key output files produced, with their paths and brief descriptions.
 
 ```
-- execution_summary.md              — this summary
+- execution_summary.md (or execution_summary_<run_label>.md for incremental runs) — this summary
 - models/MyModel.fr                 — FeynRules model file
 - models/MyModel_UFO/               — UFO model directory
 - scripts/mg5_14TeV.mg5             — MadGraph script
