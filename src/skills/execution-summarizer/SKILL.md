@@ -16,28 +16,46 @@ This skill produces a structured execution summary after the agent completes a u
 
 Invoke this skill **after the entire user prompt has been fulfilled** — i.e., after all pipeline steps (model building, event generation, analysis, post-processing) or standalone tasks have finished.
 
+## Run Discovery
+
+This skill can be invoked in two ways:
+
+1. **By the orchestrator** at the end of a pipeline run — the conversation already contains context (run label, progress paths, results). Use that context directly.
+2. **Standalone** in a new conversation — no prior context is available. In this case:
+   - Read `progress/run_manifest.yaml` to discover all completed runs.
+   - If the user specified a run label, summarize that run.
+   - If there is only one run, summarize that run.
+   - If there are multiple runs and the user did not specify, summarize the most recent run (by timestamp).
+
 ## Workflow
 
-### Step 1: Collect Execution Artifacts
+### Step 1: Collect Execution Artifacts (standalone mode only)
 
-Gather information from every completed step. Sources include:
+Skip this step if invoked by the orchestrator — the conversation already contains all needed context.
+
+In standalone mode, gather information from the target run identified in Run Discovery:
 
 - The original user prompt / task file (`.md`)
-- Read `progress/run_manifest.yaml` to find all runs and their progress files. Each run's files are in `progress/<run_label>/` (e.g., `step1_feynrules.md`, `step2_madgraph.md`, `step3_madanalysis.md`, `step4_postprocessing.md`).
+- Progress files from the target run's directory `progress/<run_label>/` (e.g., `step1_feynrules.md`, `step2_madgraph.md`, `step3_madanalysis.md`, `step4_postprocessing.md`)
 - Generated code files: `.fr` model files, MadGraph scripts, MadAnalysis scripts, Python analysis scripts
 - Output logs and result files: cross sections, event files, plots
 
 ### Step 2: Write the Execution Summary
 
-Create a file named **`execution_summary.md`** in the working directory. The summary must contain the following sections:
+Create a file named **`execution_summary.md`** in the working directory. If the file already exists from a previous run, overwrite it. The summary must contain the following sections:
 
 ---
 
-#### Section 1: Task Overview
+#### Section 1: Run Info
+
+- **Run label**: the `<run_label>` from the manifest or orchestrator context
+- **Timestamp**: when the run was executed
+
+#### Section 2: Task Overview
 
 A brief paragraph describing what the user requested and the overall outcome.
 
-#### Section 2: Execution Steps
+#### Section 3: Execution Steps
 
 A numbered list of every major action the agent performed, including:
 
@@ -63,7 +81,7 @@ Example format:
    ...
 ```
 
-#### Section 3: Prompt-to-Code Mapping Tables
+#### Section 4: Prompt-to-Code Mapping Tables
 
 This is the **core section**. Build one mapping table per pipeline stage, showing how each element in the user prompt corresponds to the generated code.
 
@@ -103,7 +121,7 @@ Map the user-specified event selection criteria to the analysis code.
 
 **Only include tables that are relevant to the executed steps.** If a step was skipped (e.g., no MadAnalysis was run), omit the corresponding table.
 
-#### Section 4: Output Files
+#### Section 5: Output Files
 
 A list of all key output files produced, with their paths and brief descriptions.
 
@@ -126,7 +144,7 @@ After writing `execution_summary.md`, inform the user that the summary has been 
 ## Rules
 
 1. **Be precise** — use actual file names, actual parameter values, and actual code snippets from the generated files. Do not paraphrase or approximate.
-2. **Read the generated files** — do not rely on memory alone. Re-read the `.fr` file, MadGraph scripts, and analysis scripts to build accurate mapping tables.
+2. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, event counts, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always `Read` the actual **code files** (`.fr`, `.mg5`, `.ma5`, `.py`) to extract exact code snippets, line numbers, and parameter values for the mapping tables. In standalone mode, read everything.
 3. **Keep it concise** — the summary should be informative but not excessively long. Focus on the mapping tables and key results.
 4. **Handle partial pipelines** — if only some steps were executed (e.g., only model building), only include the relevant sections and tables.
 5. **Use LaTeX notation** in the "User Prompt" column of the mapping tables for readability.

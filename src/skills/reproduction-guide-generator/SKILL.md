@@ -24,12 +24,23 @@ The reproduction package must support **two execution backends**:
 - After a pipeline run has completed (all steps finished, plots generated)
 - When the user asks to create a reproduction guide, reproducibility package, or standalone scripts
 
+## Run Discovery
+
+This skill can be invoked in two ways:
+
+1. **By the orchestrator** at the end of a pipeline run — the conversation already contains context (run label, progress paths, results). Use that context directly.
+2. **Standalone** in a new conversation — no prior context is available. In this case:
+   - Read `progress/run_manifest.yaml` to discover all completed runs.
+   - If the user specified a run label, package that run.
+   - If there is only one run, package that run.
+   - If there are multiple runs and the user did not specify, package the most recent run (by timestamp).
+
 ## Inputs
 
-This skill reads artifacts from the completed run:
+In orchestrator mode, inputs come from the conversation context. In standalone mode, this skill reads artifacts from the completed run:
 
 1. **Original task file** (e.g., `prompt_*.md`) — the physics specification
-2. **Progress files** in `progress/` — step-by-step records of what was done
+2. **Progress files** in `progress/<run_label>/` — step-by-step records of what was done
 3. **Generated code files** — `.fr` model files, MadGraph `.dat` scripts, Python analysis scripts
 4. **Output results** — scan summary files, plots, cross section tables
 
@@ -64,15 +75,17 @@ reproduction/workdir/              # created at runtime
 
 ## Workflow
 
-### Step 1: Inventory the completed run
+### Step 1: Inventory the completed run (standalone mode only)
 
-Read all progress files and identify which pipeline steps were executed:
+Skip this step if invoked by the orchestrator — the conversation already contains all needed context.
 
-Read `progress/run_manifest.yaml` to identify the relevant run(s) and their progress file locations. Each run's files are in `progress/<run_label>/`:
-- Step 1 (Model Building): `step1_feynrules.md`, `.fr` files in `models/`
-- Step 2 (Event Generation): `step2_madgraph.md`, MadGraph scripts, output directories
-- Step 3 (Event Analysis): `step3_madanalysis.md` (may not exist)
-- Step 4 (Post-Processing): `step4_postprocessing.md`, plotting scripts in `scripts/`, event-level analysis scripts in `analysis/`
+In standalone mode, collect artifacts from the target run identified in Run Discovery:
+
+- Read progress files from `progress/<run_label>/`:
+  - Step 1 (Model Building): `step1_feynrules.md`, `.fr` files in `models/`
+  - Step 2 (Event Generation): `step2_madgraph.md`, MadGraph scripts, output directories
+  - Step 3 (Event Analysis): `step3_madanalysis.md` (may not exist)
+  - Step 4 (Post-Processing): `step4_postprocessing.md`, plotting scripts in `scripts/`, event-level analysis scripts in `analysis/`
 
 Also read the original task/prompt file for context.
 
@@ -183,6 +196,7 @@ The README.md must contain the following sections, written in the language match
 
 #### Section 1: Overview
 - One paragraph summarizing the physics goal and the pipeline
+- **Run label**: the `<run_label>` this reproduction package corresponds to
 - A simple ASCII flow diagram showing the pipeline stages
 - Table summarizing the two supported backends
 
@@ -254,4 +268,4 @@ After creating all files:
 
 9. **Minimal dependencies** — do not add dependencies beyond what the original pipeline used.
 
-10. **Read, don't recall** — always read the actual files from the completed run. Do not rely on conversation memory.
+10. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, paths, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always `Read` the actual **script files** (`.mg5`, `.ma5`, `.py`, `.fr`) when you need to inspect or modify their content (e.g., for path portability checks). In standalone mode, read everything.
