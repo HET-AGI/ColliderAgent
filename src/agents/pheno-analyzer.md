@@ -68,6 +68,8 @@ If any information is missing, check the progress file paths provided by the mai
 
 ## Output Requirements
 
+**All paths in scripts must be relative to the working directory** (e.g., `analysis/dilepton_mass/...`, `output/figures/...`), even if the main agent provides absolute paths. This ensures scripts are portable and can be copied directly into the reproduction package.
+
 When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step4_postprocessing.md`) containing:
 - Analysis scripts created (with paths)
 - For each analysis:
