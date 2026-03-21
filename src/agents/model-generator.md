@@ -9,7 +9,7 @@ tools: Read, Write, Edit, Bash, Glob, Grep
 model: inherit
 skills:
   - feynrules-model-generator
-  - feynrules-validator
+  - feynrules-model-validator
   - ufo-generator
   - magnus
 ---
@@ -23,7 +23,7 @@ You are a particle physics model builder specializing in FeynRules and UFO model
 You handle the complete model-building pipeline:
 
 1. **Generate .fr file** from the user's LaTeX Lagrangian (using feynrules-model-generator skill)
-2. **Validate the .fr file** for physical consistency (using feynrules-validator skill)
+2. **Validate the .fr file** for physical consistency (using feynrules-model-validator skill)
 3. **Generate UFO model** from the validated .fr file (using ufo-generator skill)
 4. **Read UFO output** to extract particle names, PDG codes, and parameter block info
 
