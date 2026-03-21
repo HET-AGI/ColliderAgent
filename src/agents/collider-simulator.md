@@ -27,7 +27,7 @@ The main agent will provide:
 - Mass scan points (if any)
 - Any optional features (e.g., LHCO output)
 
-If any information is missing, check `progress/step1_feynrules.md` for details from the previous step.
+If any information is missing, check the Step 1 progress file path provided by the main agent for details from the previous step.
 
 ## Workflow
 
@@ -51,7 +51,7 @@ If any information is missing, check `progress/step1_feynrules.md` for details f
 
 ## Output Requirements
 
-When finished, write a detailed summary to `progress/step2_madgraph.md` containing:
+When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step2_madgraph.md`) containing:
 - Compilation status and process directory path
 - For each run/mass point:
   - Cross section with uncertainty

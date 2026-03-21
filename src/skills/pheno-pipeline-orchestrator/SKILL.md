@@ -32,9 +32,26 @@ Each subagent's skill defines its own output paths. The combined layout is:
 │   ├── figures/
 │   └── data/
 ├── progress/        # Orchestrator tracking
+│   ├── run_manifest.yaml   # Index of all runs
+│   └── <run_label>/        # Per-run progress files
 ├── reproduction/    # reproduction-guide-generator
 └── execution_summary.md
 ```
+
+## Run Initialization
+
+Before executing any pipeline step:
+1. Generate a short, descriptive **run label** from the task content (e.g., `dy_14tev_50k`, `heavyN_scan_7TeV`).
+2. If `progress/run_manifest.yaml` exists and already contains a run with the same label, append a short timestamp to disambiguate (e.g., `dy_14tev_50k_1432`).
+3. Create the directory `progress/<run_label>/`.
+4. Read `progress/run_manifest.yaml` if it exists; otherwise create it.
+5. Add a new run entry to the manifest:
+   ```yaml
+   - label: <run_label>
+     timestamp: "<ISO 8601>"
+     task: "<one-line task description>"
+     steps: {}
+   ```
 
 ## Pipeline
 
@@ -43,37 +60,38 @@ Execute the following steps **sequentially**, using the specified subagent for e
 ### Step 1: Model Building → `model-generator` subagent
 - Input: the Lagrangian and particle content from the user's task description
 - The subagent generates .fr model → validates → produces UFO model
-- Output: `progress/step1_feynrules.md`
+- Output: `progress/<run_label>/step1_feynrules.md`
 - Extract from return: UFO path (e.g. `models/SM_HeavyN_UFO`), model file path (e.g. `models/HeavyN.fr`), particle names, PDG codes, parameter block/code info
 
 ### Step 2: Event Generation → `collider-simulator` subagent
 - Input: UFO path + particle info from step 1, plus collider settings from the task description
 - The subagent compiles the process and generates Monte Carlo events
-- Output: `progress/step2_madgraph.md`
+- Output: `progress/<run_label>/step2_madgraph.md`
 - Extract from return: script paths (e.g. `scripts/mg5_7TeV.mg5`), process dirs (e.g. `events/pp_muN_7TeV`), run name ↔ parameter mapping
 - **Do NOT extract physics results** (cross sections, widths, etc.) — leave that to downstream subagents who will read the output files directly
 
 ### Step 3: Event Analysis → `event-analyzer` subagent (if needed)
 - Input: event file paths from step 2, analysis specifications from the task description
 - The subagent runs MadAnalysis5 for kinematic distributions and cut-flow
-- Output: `progress/step3_madanalysis.md`
+- Output: `progress/<run_label>/step3_madanalysis.md`
 - Extract from return: script path (e.g. `scripts/ma5_dilepton.ma5`), analysis dir (e.g. `analysis/dilepton_mass`), histogram path
 - Skip this step if the task does not require MA5 analysis
 
 ### Step 4: Post-Processing → `pheno-analyzer` subagent
 - Input: output directory path(s) and run ↔ parameter mapping from the latest upstream step (step 3 if executed, otherwise step 2), plus analysis procedure from the task description
 - The subagent reads simulation/analysis output files directly, extracts the physics results it needs (cross sections, kinematic distributions, etc.), performs analysis, and produces plots
-- Output: `progress/step4_postprocessing.md`
+- Output: `progress/<run_label>/step4_postprocessing.md`
 - Extract from return: script path (e.g. `scripts/plot_xsec_vs_mass.py`), figure files (e.g. `output/figures/figure_3.pdf`), data files (if any)
 
 ## Rules
 
 1. **Read the task file first** — understand the full scope before starting any step.
 2. **Run steps sequentially** — each step depends on the previous step's output.
-3. **Pass precise information** — when invoking each subagent, include all relevant details from the task description AND the previous step's return summary. The subagent has no access to the task file or conversation history.
-4. **If a subagent's return summary is insufficient**, read the corresponding `progress/stepN_*.md` file for complete details before proceeding.
+3. **Pass precise information** — when invoking each subagent, include all relevant details from the task description AND the previous step's return summary. Tell the subagent the progress file path to write to (e.g., `progress/<run_label>/step2_madgraph.md`). The subagent has no access to the task file or conversation history.
+4. **If a subagent's return summary is insufficient**, read the corresponding `progress/<run_label>/stepN_*.md` file for complete details before proceeding.
 5. **Skip steps that are not needed** — not every task requires all 4 steps. For example, if the user already has a UFO model, skip step 1.
 6. **Generate execution summary** — after all steps complete, invoke the `execution-summarizer` skill to produce a detailed `execution_summary.md` with prompt-to-code mapping tables and key results.
+7. **Update manifest after each step** — after a subagent completes, update the run's entry in `progress/run_manifest.yaml` with the step's status (success/failed).
 
 ## Separation of Concerns
 

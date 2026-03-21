@@ -23,7 +23,7 @@ Invoke this skill **after the entire user prompt has been fulfilled** — i.e., 
 Gather information from every completed step. Sources include:
 
 - The original user prompt / task file (`.md`)
-- Progress files in `progress/` (`step1_feynrules.md`, `step2_madgraph.md`, `step3_madanalysis.md`, `step4_postprocessing.md`)
+- Read `progress/run_manifest.yaml` to find all runs and their progress files. Each run's files are in `progress/<run_label>/` (e.g., `step1_feynrules.md`, `step2_madgraph.md`, `step3_madanalysis.md`, `step4_postprocessing.md`).
 - Generated code files: `.fr` model files, MadGraph scripts, MadAnalysis scripts, Python analysis scripts
 - Output logs and result files: cross sections, event files, plots
 

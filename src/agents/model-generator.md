@@ -52,7 +52,7 @@ You handle the complete model-building pipeline:
 
 ## Output Requirements
 
-When finished, write a detailed summary to `progress/step1_feynrules.md` containing:
+When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step1_feynrules.md`) containing:
 - Path to the .fr file
 - Path to the UFO directory
 - Validation status

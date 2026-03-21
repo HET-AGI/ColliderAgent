@@ -22,7 +22,7 @@ The main agent will provide:
 - Plot specifications (axes, ranges, styles, bands, contours)
 - Cross section values for each mass point
 
-If any information is missing, check `progress/step2_madgraph.md` and `progress/step3_madanalysis.md` for details from previous steps.
+If any information is missing, check the progress file paths provided by the main agent for details from previous steps.
 
 ## Capabilities
 
@@ -68,7 +68,7 @@ If any information is missing, check `progress/step2_madgraph.md` and `progress/
 
 ## Output Requirements
 
-When finished, write a detailed summary to `progress/step4_postprocessing.md` containing:
+When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step4_postprocessing.md`) containing:
 - Analysis scripts created (with paths)
 - For each analysis:
   - Event selection efficiencies

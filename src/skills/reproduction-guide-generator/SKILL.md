@@ -68,10 +68,11 @@ reproduction/workdir/              # created at runtime
 
 Read all progress files and identify which pipeline steps were executed:
 
-- Step 1 (Model Building): look for `progress/step1_feynrules.md`, `.fr` files in `models/`
-- Step 2 (Event Generation): look for `progress/step2_madgraph.md`, MadGraph `.dat` scripts, output directories
-- Step 3 (Event Analysis): look for `progress/step3_madanalysis.md` (may not exist)
-- Step 4 (Post-Processing): look for `progress/step4_postprocessing.md`, plotting scripts in `scripts/`, event-level analysis scripts in `analysis/`
+Read `progress/run_manifest.yaml` to identify the relevant run(s) and their progress file locations. Each run's files are in `progress/<run_label>/`:
+- Step 1 (Model Building): `step1_feynrules.md`, `.fr` files in `models/`
+- Step 2 (Event Generation): `step2_madgraph.md`, MadGraph scripts, output directories
+- Step 3 (Event Analysis): `step3_madanalysis.md` (may not exist)
+- Step 4 (Post-Processing): `step4_postprocessing.md`, plotting scripts in `scripts/`, event-level analysis scripts in `analysis/`
 
 Also read the original task/prompt file for context.
 
