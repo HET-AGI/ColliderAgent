@@ -10,8 +10,16 @@ description: >
   event analysis (plot, distribution, invariant mass, cut-flow) and/or post-processing
   (reproduction guide, summarize, exclusion limit, fit), or when the user describes
   a complete physics study (e.g. "complete study of...", "full analysis of...",
-  "investigate ... and produce ..."). Do NOT trigger for single-stage requests that
-  only involve one of: model building, event generation, event analysis, or plotting.
+  "investigate ... and produce ...").
+  ALSO triggers for incremental or follow-up requests that modify a previous run and
+  propagate changes through downstream stages, such as "add more events and update
+  the plot", "re-run with different parameters", "increase statistics and re-analyze",
+  "change cuts and update figures", or any request that combines a modification to an
+  upstream stage with updating downstream results. These are multi-stage tasks and
+  MUST go through the orchestrator to maintain run labeling, progress tracking, and
+  script generation consistency.
+  Do NOT trigger for single-stage requests that only involve one of: model building,
+  event generation, event analysis, or plotting.
 ---
 
 # Analysis Pipeline Orchestrator
@@ -52,6 +60,66 @@ Before executing any pipeline step:
      task: "<one-line task description>"
      steps: {}
    ```
+
+## Incremental Runs
+
+When the user's request modifies or extends a **previous run** (e.g., "add more events", "re-run with different cuts", "increase statistics and update the plot"), this is an **incremental run**. The orchestrator must still manage run labels, scripts, and progress — the same structure as a fresh run, but reusing upstream artifacts.
+
+### Detection
+
+An incremental run is identified when:
+- The conversation already contains results from a prior run, OR
+- `progress/run_manifest.yaml` contains completed runs for the same process
+- AND the user requests a modification + downstream update (not a fresh start)
+
+### Run Labeling
+
+Create a **new run label** that references the parent run, e.g.:
+- Parent: `dy_ll_14tev` → Incremental: `dy_ll_14tev_add10k` or `dy_ll_14tev_100k`
+- This ensures full traceability; never silently overwrite a previous run's progress files.
+
+### Artifact Reuse
+
+Read the parent run's progress files to identify reusable artifacts:
+- **Compiled process directory** — if the physics process is unchanged, reuse it (skip `madgraph-compile`; only run `madgraph-launch` for additional events)
+- **UFO model** — if the Lagrangian is unchanged, skip Step 1 entirely
+- **Analysis scripts** — if only statistics changed, the MA5/plotting scripts may need only path updates
+
+### Script Generation
+
+Even for incremental runs, the collider-simulator subagent **must generate a new script file** (e.g., `scripts/mg5_dy_14tev_run02.mg5`). This ensures:
+1. The exact parameters of the incremental run are recorded
+2. The reproduction package can replay this specific run
+3. Parameter overrides (e.g., `nevents 10000`) are explicitly written, not inherited from a previous run_card
+
+When passing instructions to the collider-simulator subagent for an incremental launch, explicitly state:
+- That a compiled process directory already exists (give the path)
+- That a NEW script must still be generated with the incremental parameters
+- The exact `nevents` and any changed parameters — do NOT rely on the existing run_card defaults
+
+### Pipeline Execution
+
+Execute only the **affected steps and all downstream steps**:
+
+| User Request | Steps to Execute |
+|---|---|
+| "Add more events + update plot" | Step 2 (launch only) → Step 3 → Step 4 |
+| "Change analysis cuts + update plot" | Step 3 → Step 4 |
+| "Re-run with different mass + full pipeline" | Step 2 (compile + launch) → Step 3 → Step 4 |
+| "Update plot style only" | Step 4 only |
+
+For each executed step, write progress files under `progress/<new_run_label>/` and update the manifest.
+
+### Manifest Entry
+
+Add a `parent` field to link incremental runs to their origin:
+```yaml
+- label: dy_ll_14tev_add10k
+  parent: dy_ll_14tev
+  timestamp: "<ISO 8601>"
+  task: "Add 10k events to Drell-Yan run and update figure"
+  steps: {}
+```
 
 ## Pipeline
 
