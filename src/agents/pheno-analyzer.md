@@ -55,15 +55,16 @@ If any information is missing, check `progress/step2_madgraph.md` and `progress/
 ### Step 2: Write Analysis Code
 - Write Python scripts for event selection, template construction, and statistical analysis
 - Use numpy, scipy, matplotlib; use uproot for ROOT file reading
-- Save scripts to `analysis/` directory for reproducibility
+- Save event-level analysis scripts to `analysis/` directory
 
 ### Step 3: Execute Analysis
 - Run the analysis scripts
 - Debug and fix any issues
 
 ### Step 4: Generate Plots
+- Write plotting scripts and save to `scripts/` directory
 - Create the requested figures with proper styling
-- Save plots as PDF and PNG
+- Save plots as PDF and PNG to `output/figures/`
 
 ## Output Requirements
 

@@ -71,7 +71,7 @@ Read all progress files and identify which pipeline steps were executed:
 - Step 1 (Model Building): look for `progress/step1_feynrules.md`, `.fr` files in `models/`
 - Step 2 (Event Generation): look for `progress/step2_madgraph.md`, MadGraph `.dat` scripts, output directories
 - Step 3 (Event Analysis): look for `progress/step3_madanalysis.md` (may not exist)
-- Step 4 (Post-Processing): look for `progress/step4_postprocessing.md`, Python scripts in `analysis/`
+- Step 4 (Post-Processing): look for `progress/step4_postprocessing.md`, plotting scripts in `scripts/`, event-level analysis scripts in `analysis/`
 
 Also read the original task/prompt file for context.
 
@@ -86,13 +86,15 @@ Because all pipeline scripts already use **relative paths**, most files can be c
 | `models/<Model>.fr` | `reproduction/models/<Model>.fr` | Model file, verbatim |
 | `scripts/mg5_*.mg5` | `reproduction/scripts/` | MadGraph scripts, already use relative paths |
 | `scripts/ma5_*.ma5` | `reproduction/scripts/` | MadAnalysis scripts (if used) |
-| `scripts/plot_*.py` | `reproduction/scripts/` | Analysis scripts, already use relative paths |
+| `scripts/plot_*.py` | `reproduction/scripts/` | Plotting scripts, already use relative paths |
+| `analysis/*.py` | `reproduction/scripts/` | Event-level analysis scripts (if any) |
 
 ```bash
 mkdir -p reproduction/models reproduction/scripts
 cp models/<Model>.fr reproduction/models/
 cp scripts/*.mg5 reproduction/scripts/
 cp scripts/*.py reproduction/scripts/
+cp analysis/*.py reproduction/scripts/ 2>/dev/null || true   # if event-level analysis was used
 # cp scripts/*.ma5 reproduction/scripts/   # if MA5 was used
 ```
 
