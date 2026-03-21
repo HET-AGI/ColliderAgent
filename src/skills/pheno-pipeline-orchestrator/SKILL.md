@@ -102,13 +102,22 @@ The orchestrator manages **paths and scheduling**, not physics results:
 - **Step 3/4 subagents** are responsible for reading the simulation output files themselves and extracting whatever physics results the task requires.
 
 
-## Local Fallback (when Magnus is unavailable)
+## Local Execution
 
+Local execution is triggered in two cases:
+
+### Case 1: User requests local execution
+If the user explicitly asks to run locally (e.g., "run locally", "use local MadGraph", "don't use Magnus"), skip Magnus entirely and use local tools directly. Do not attempt Magnus calls.
+
+### Case 2: Magnus is unavailable
 If the Magnus server is unreachable:
-
 1. **Retry up to 2 times** with a 20-second interval (`sleep 20`) before falling back to local execution. Each failed Magnus call returns a large HTML error page, so limit retries to avoid wasting context.
 2. **Check for local tools** (wolframscript, MadGraph5) and fall back to local execution.
-3. **When running MadGraph locally via `Bash(run_in_background=true)`**:
+
+### Local execution guidelines
+When running locally:
+- **Check for local tools** — verify `wolframscript` and MadGraph5 (`mg5_aMC` or `MG5_aMC_v*`) are available before proceeding.
+- **When running MadGraph locally via `Bash(run_in_background=true)`**:
    - Wait for the `task-notification` to confirm completion. Do NOT use `TaskOutput(block=true)` — it pulls the entire verbose MadGraph log into context.
    - After the notification, use `Grep` on the task output file to extract only the specific lines needed (e.g., run names, output paths).
    - Let downstream subagents read the MadGraph output directories directly for physics results.
