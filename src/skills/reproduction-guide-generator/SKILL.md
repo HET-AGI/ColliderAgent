@@ -78,28 +78,31 @@ Also read the original task/prompt file for context.
 
 ### Step 2: Collect scripts (cp-first strategy)
 
-Because all pipeline scripts already use **relative paths**, most files can be copied verbatim. Only 3 files need to be created from scratch.
+Every pipeline script should be **copied first**. Pipeline subagents are expected to generate scripts with relative paths, so most files can be copied verbatim. After copying, verify and fix any remaining absolute paths.
 
-**Files to `cp` (via Bash)** — do NOT rewrite with Write tool:
-
-| Source | Destination | Notes |
-|--------|-------------|-------|
-| `models/<Model>.fr` | `reproduction/models/<Model>.fr` | Model file, verbatim |
-| `scripts/mg5_*.mg5` | `reproduction/scripts/` | MadGraph scripts, already use relative paths |
-| `scripts/ma5_*.ma5` | `reproduction/scripts/` | MadAnalysis scripts (if used) |
-| `scripts/plot_*.py` | `reproduction/scripts/` | Plotting scripts, already use relative paths |
-| `analysis/*.py` | `reproduction/scripts/` | Event-level analysis scripts (if any) |
+**Step 2a: Copy all scripts**
 
 ```bash
 mkdir -p reproduction/models reproduction/scripts
 cp models/<Model>.fr reproduction/models/
 cp scripts/*.mg5 reproduction/scripts/
+cp scripts/*.ma5 reproduction/scripts/ 2>/dev/null || true
 cp scripts/*.py reproduction/scripts/
-cp analysis/*.py reproduction/scripts/ 2>/dev/null || true   # if event-level analysis was used
-# cp scripts/*.ma5 reproduction/scripts/   # if MA5 was used
+cp analysis/*.py reproduction/scripts/ 2>/dev/null || true
 ```
 
-**Files to Write (new)** — these don't exist in the pipeline:
+**Step 2b: Verify portability — check for absolute paths**
+
+After copying, use `Grep` to check for any remaining absolute paths in the copied scripts:
+
+```
+Grep(pattern="/Users/|/home/|/tmp/", path="reproduction/scripts/", output_mode="content")
+```
+
+- **If no matches** → all scripts are portable, proceed to Step 3.
+- **If matches found** → Grep returns the offending lines with content. Use `Edit` to replace those specific lines with relative-path equivalents (e.g., using `os.path.join(SCRIPT_DIR, ...)`). Do NOT `Read` the full file — the Grep output provides enough context for `Edit`.
+
+**Files to `Write` (new)** — only files that don't exist in the pipeline:
 
 | File | Purpose |
 |------|---------|
@@ -235,7 +238,7 @@ After creating all files:
 
 1. **Preserve physics exactly** — never modify Lagrangian terms, coupling values, process definitions, parameter scan ranges, plot styles, or any physics content.
 
-2. **cp-first strategy** — pipeline scripts already use relative paths. Copy them with `cp` via Bash. Only `generate_ufo.wl`, `run_all.sh`, and `README.md` need to be created with Write.
+2. **cp-first strategy** — `cp` all existing pipeline scripts first. Then use `Grep` to check for absolute paths; if any are found, use `Edit` to fix only the matching lines. Only use `Write` for files that don't exist in the pipeline (`generate_ufo.wl`, `run_all.sh`, `README.md`). Never use `Write` to recreate an existing file.
 
 3. **Path portability** — `run_all.sh` executes MG5 scripts via `cd workdir && ${MG5_BIN} ../scripts/mg5_<label>.mg5`. The scripts' relative paths (`events/...`, `models/...`) resolve correctly relative to `workdir/`. No hardcoded absolute paths in any file.
 
