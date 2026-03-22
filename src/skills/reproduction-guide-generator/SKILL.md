@@ -53,9 +53,10 @@ reproduction/
 ├── README.md                      # Main guide document
 ├── run_all.sh                     # One-click automation script (--local / --magnus)
 ├── models/                        # Model files
-│   └── <Model>.fr                 # FeynRules model file (cp from models/)
+│   ├── <Model>.fr                 # FeynRules model file (cp from models/)
+│   └── <Model>_UFO/              # Pre-built UFO model directory (cp from workdir/models/)
 └── scripts/                       # All executable scripts
-    ├── generate_ufo.wl            # WolframScript for UFO generation (Write — new file)
+    ├── generate_ufo.wl            # WolframScript for UFO generation (Write — new file, used only with --from-fr)
     ├── mg5_<label>.mg5            # MadGraph scripts (cp from scripts/)
     ├── ma5_<label>.ma5            # MadAnalysis scripts (cp from scripts/, if used)
     └── plot_<desc>.py             # Python analysis scripts (cp from scripts/)
@@ -65,7 +66,7 @@ At runtime, `run_all.sh` creates a `workdir/` following the standard pipeline la
 
 ```
 reproduction/workdir/              # created at runtime
-├── models/<Model>_UFO/            # generated UFO model
+├── models/<Model>_UFO/            # UFO model (copied from package, or regenerated with --from-fr)
 ├── events/<process_label>/        # MadGraph output + events
 ├── analysis/<label>/              # MadAnalysis output (if used)
 └── output/
@@ -98,11 +99,14 @@ Every pipeline script should be **copied first**. Pipeline subagents are expecte
 ```bash
 mkdir -p reproduction/models reproduction/scripts
 cp models/<Model>.fr reproduction/models/
+cp -r workdir/models/<Model>_UFO reproduction/models/
 cp scripts/*.mg5 reproduction/scripts/
 cp scripts/*.ma5 reproduction/scripts/ 2>/dev/null || true
 cp scripts/*.py reproduction/scripts/
 cp analysis/*.py reproduction/scripts/ 2>/dev/null || true
 ```
+
+The UFO directory (`workdir/models/<Model>_UFO/`) is the version that was generated and validated during the pipeline run. It must be included because agent-generated UFO models may contain fixes applied during the run that are not reproducible from the `.fr` file alone.
 
 **Step 2b: Verify portability — check for absolute paths**
 
@@ -131,12 +135,14 @@ Write a bash script that executes the full pipeline end-to-end with **dual-backe
 #!/bin/bash
 set -e
 
-# Parse --magnus (default) or --local
+# Parse --magnus (default) or --local, and optional --from-fr
 BACKEND="magnus"
+FROM_FR=false
 for arg in "$@"; do
     case $arg in
-        --magnus) BACKEND="magnus" ;;
-        --local)  BACKEND="local" ;;
+        --magnus)  BACKEND="magnus" ;;
+        --local)   BACKEND="local" ;;
+        --from-fr) FROM_FR=true ;;
     esac
 done
 
@@ -151,6 +157,7 @@ mkdir -p "${WORK_DIR}/models" "${WORK_DIR}/events" "${WORK_DIR}/output/figures" 
 Requirements for `run_all.sh`:
 
 - **Dual backend**: each pipeline step has an `if [ "${BACKEND}" = "magnus" ]` branch selecting the correct tool
+- **`--from-fr` flag**: when specified, regenerates UFO from the `.fr` file (useful if the user modifies the model). Without this flag, the script uses the pre-built UFO directory shipped in `models/<Model>_UFO/`
 - **Configurable via environment variables**: `MG5_BIN`, `FR_PATH` (local mode), plus Magnus credentials via `magnus login` (Magnus mode)
 - **Idempotent**: each step checks whether its output already exists and skips if so
 - **Self-contained working directory**: all intermediate outputs go into `workdir/`
@@ -159,11 +166,31 @@ Requirements for `run_all.sh`:
 
 #### Backend-specific commands per step:
 
-**Step 1 — UFO Generation:**
+**Step 1 — UFO Model Setup:**
 
-| Local | Magnus |
-|-------|--------|
-| `cd workdir && wolframscript ../scripts/generate_ufo.wl` | `magnus run validate-feynrules -- --model <fr> --lagrangian <L>` then `magnus run generate-ufo -- --model <fr> --lagrangian <L> --output workdir/models/<Model>_UFO` |
+By default, the script copies the pre-built UFO directory from the reproduction package into `workdir/models/`. This is the recommended approach because the UFO model shipped in the package has been validated during the original pipeline run and may contain fixes that are not reproducible from the `.fr` file alone.
+
+With `--from-fr`, the script regenerates UFO from the `.fr` file instead:
+
+```bash
+if [ "${FROM_FR}" = true ]; then
+    # Regenerate UFO from .fr file
+    if [ "${BACKEND}" = "magnus" ]; then
+        magnus run validate-feynrules ...
+        magnus run generate-ufo ...
+    else
+        cd workdir && wolframscript ../scripts/generate_ufo.wl
+    fi
+else
+    # Default: use pre-built UFO
+    cp -r "${SCRIPT_DIR}/models/<Model>_UFO" "${WORK_DIR}/models/"
+fi
+```
+
+| Mode | Default (pre-built UFO) | `--from-fr` |
+|------|------------------------|-------------|
+| **Local** | `cp -r models/<Model>_UFO workdir/models/` | `cd workdir && wolframscript ../scripts/generate_ufo.wl` |
+| **Magnus** | `cp -r models/<Model>_UFO workdir/models/` | `magnus run validate-feynrules -- --model <fr> --lagrangian <L>` then `magnus run generate-ufo -- --model <fr> --lagrangian <L> --output workdir/models/<Model>_UFO` |
 
 **Step 2 — Process Compilation + Event Generation:**
 
@@ -202,17 +229,19 @@ The README.md must contain the following sections, written in the language match
 
 #### Section 2: Prerequisites
 - **Common dependencies** (Python, numpy, matplotlib) — needed for both backends
-- **Local mode dependencies** (Mathematica/wolframscript, FeynRules, MadGraph5) with verified versions
+- **Local mode dependencies**: MadGraph5 is always required. Mathematica/wolframscript and FeynRules are only required with `--from-fr`; without it, the pre-built UFO is used directly. Include verified versions.
 - **Magnus mode dependencies** (`magnus-sdk` via pip, `magnus login` for authentication)
 - Notes on installation paths and how to configure them
 
 #### Section 3: File Inventory
 - Table listing every file in the reproduction directory
-- Annotate which files are backend-specific (e.g., `scripts/generate_ufo.wl` = local only)
+- Include the `models/<Model>_UFO/` directory and note it contains the pre-built UFO model from the original run
+- Annotate which files are backend-specific (e.g., `scripts/generate_ufo.wl` = local + `--from-fr` only)
 
 #### Section 4: Quick Start (one-click)
-- **Local mode** example with environment variables
-- **Magnus mode** example with `magnus login` prerequisite
+- **Default mode** (pre-built UFO): `bash run_all.sh --magnus` or `bash run_all.sh --local` — uses the validated UFO model shipped in the package, no Mathematica needed
+- **From-FR mode**: `bash run_all.sh --magnus --from-fr` or `bash run_all.sh --local --from-fr` — regenerates UFO from the `.fr` file (requires Mathematica for local, or Magnus for cloud)
+- Explain the difference: default is recommended because the shipped UFO has been validated; `--from-fr` is for users who modify the `.fr` model
 - Description of what the script does at each stage for each backend
 - Where to find the output
 
@@ -252,7 +281,7 @@ After creating all files:
 
 1. **Preserve physics exactly** — never modify Lagrangian terms, coupling values, process definitions, parameter scan ranges, plot styles, or any physics content.
 
-2. **cp-first strategy** — `cp` all existing pipeline scripts first. Then use `Grep` to check for absolute paths; if any are found, use `Edit` to fix only the matching lines. Only use `Write` for files that don't exist in the pipeline (`generate_ufo.wl`, `run_all.sh`, `README.md`). Never use `Write` to recreate an existing file.
+2. **cp-first strategy** — `cp` all existing pipeline scripts and the UFO directory first. Then use `Grep` to check for absolute paths; if any are found, use `Edit` to fix only the matching lines. Only use `Write` for files that don't exist in the pipeline (`generate_ufo.wl`, `run_all.sh`, `README.md`). Never use `Write` to recreate an existing file.
 
 3. **Path portability** — `run_all.sh` executes MG5 scripts via `cd workdir && ${MG5_BIN} ../scripts/mg5_<label>.mg5`. The scripts' relative paths (`events/...`, `models/...`) resolve correctly relative to `workdir/`. No hardcoded absolute paths in any file.
 
@@ -268,4 +297,6 @@ After creating all files:
 
 9. **Minimal dependencies** — do not add dependencies beyond what the original pipeline used.
 
-10. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, paths, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always `Read` the actual **script files** (`.mg5`, `.ma5`, `.py`, `.fr`) when you need to inspect or modify their content (e.g., for path portability checks). In standalone mode, read everything.
+10. **Ship the validated UFO** — always include the UFO directory (`workdir/models/<Model>_UFO/`) that was generated and validated during the pipeline run. The default execution path in `run_all.sh` must use this pre-built UFO. UFO models generated by FeynRules can sometimes fail MadGraph import; the agent-generated version has already been fixed during the run, so it is the reliable default. The `--from-fr` flag provides an opt-in path to regenerate from the `.fr` file for users who modify the model.
+
+11. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, paths, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always `Read` the actual **script files** (`.mg5`, `.ma5`, `.py`, `.fr`) when you need to inspect or modify their content (e.g., for path portability checks). In standalone mode, read everything.
