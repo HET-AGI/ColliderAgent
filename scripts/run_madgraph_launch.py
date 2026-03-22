@@ -172,13 +172,17 @@ def _parse_results_summary(stdout: str)-> Dict[str, Any]:
 def _launch(
     process_dir: str,
     launch_commands: str,
+    interactive: bool = False,
 )-> Dict[str, Any]:
 
     # Build MG5 script
     nb_core = len(os.sched_getaffinity(0))
     print(f"CPU cores (sched_getaffinity): {nb_core}")
 
-    script = f"set nb_core {nb_core}\nlaunch {process_dir}\n{launch_commands}\n"
+    if interactive:
+        script = f"set nb_core {nb_core}\nlaunch -i {process_dir}\n{launch_commands}\n"
+    else:
+        script = f"set nb_core {nb_core}\nlaunch {process_dir}\n{launch_commands}\n"
 
     script_filename = "launch.mg5"
     with open(script_filename, "w") as file_pointer:
@@ -273,6 +277,7 @@ def main():
         parser.add_argument("--launch_commands", type=str, required=True)
         parser.add_argument("--target_path", type=str, required=True)
         parser.add_argument("--pdf", type=str, default="")
+        parser.add_argument("--interactive", action="store_true", default=False)
         args = parser.parse_args()
 
         # Download compiled process directory
@@ -301,6 +306,7 @@ def main():
         result_dict = _launch(
             process_dir = process_dir_name,
             launch_commands = args.launch_commands,
+            interactive = args.interactive,
         )
 
         # Attach param_card warnings (if any) to result
