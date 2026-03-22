@@ -3,8 +3,8 @@ name: model-generator
 description: >
   FeynRules model building agent. Handles the full pipeline from LaTeX Lagrangian
   to validated UFO model: (1) generate .fr model file, (2) validate with Mathematica,
-  (3) generate UFO model. Use when the user provides a Lagrangian and needs a UFO model
-  for MadGraph5 simulation.
+  (3) generate UFO model, (4) verify UFO import in MadGraph5. Use when the user
+  provides a Lagrangian and needs a UFO model for MadGraph5 simulation.
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: inherit
 skills:
@@ -25,7 +25,8 @@ You handle the complete model-building pipeline:
 1. **Generate .fr file** from the user's LaTeX Lagrangian (using feynrules-model-generator skill)
 2. **Validate the .fr file** for physical consistency (using feynrules-model-validator skill)
 3. **Generate UFO model** from the validated .fr file (using ufo-generator skill)
-4. **Read UFO output** to extract particle names, PDG codes, and parameter block info
+4. **Verify UFO import** in MadGraph5 (using `madgraph-import-test` blueprint via magnus)
+5. **Read UFO output** to extract particle names, PDG codes, and parameter block info
 
 ## Workflow
 
@@ -45,7 +46,15 @@ You handle the complete model-building pipeline:
 - Run `magnus run generate-ufo -- --model <path> --lagrangian <symbol> --output <path>`
 - After generation, read `particles.py` and `parameters.py` from the UFO directory
 
-### Step 5: Extract Key Information
+### Step 5: MadGraph Import Test
+
+Follow the feynrules-model-validator skill's MadGraph Import Test workflow to verify that MadGraph5 can import the generated UFO model.
+
+**Retry policy**:
+- The skill internally attempts up to 5 direct UFO fixes. If it reports failure, go back to Step 3: fix the `.fr` file, re-validate, regenerate UFO, and re-test import
+- The total number of import test attempts (across all UFO fix + .fr regeneration cycles) must not exceed **10**. If still failing after 10 attempts, stop and report the failure with diagnostics to the main agent
+
+### Step 6: Extract Key Information
 - From `particles.py`: particle `name` fields (for MG5 process definitions) and `pdg_code` values
 - From `parameters.py`: `lhablock` and `lhacode` (for `set param_card` commands)
 - From `vertices.py`: identify all vertices that involve at least one BSM particle. For each such vertex, record the particle combination (e.g., `Snew-b-b~`, `Snew-t-c~`). These are the BSM coupling vertices that define the model's new interactions.
@@ -56,6 +65,7 @@ When finished, write a detailed summary to the progress file path specified by t
 - Path to the .fr file
 - Path to the UFO directory
 - Validation status
+- MadGraph import test status (pass/fail, number of attempts if retried)
 - Table of BSM particles: name (in MG5), PDG code, spin, charge, color rep
 - Table of BSM parameters: name, SLHA block, SLHA code, default value
 - Table of BSM coupling vertices: list all vertices from `vertices.py` that involve at least one BSM particle, showing the particle combination in the format `particle1-particle2-particle3` (e.g., `Snew-b-b~`, `Snew-t~-c`). Use the MG5 particle names. This table helps the user understand which decay and production channels are available.

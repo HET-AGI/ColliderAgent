@@ -1,17 +1,26 @@
 ---
 name: feynrules-model-validator
-description: Validate FeynRules .fr model files for physical consistency using Mathematica via Magnus cloud. Triggers when the user wants to check a .fr model file for Hermiticity, diagonal mass/quadratic terms, and kinetic term normalization.
+description: Validate FeynRules models for correctness. Two capabilities: (1) Mathematica-based physical consistency checks on .fr files (Hermiticity, diagonal mass/quadratic terms, kinetic term normalization), (2) MadGraph5 import test on generated UFO directories to catch Python syntax errors and structural issues.
 ---
 
 # FeynRules Validator
 
 ## Overview
 
-This skill validates FeynRules `.fr` model files for physical consistency by running four standard checks in both Feynman and Unitary gauge (8 checks total) using remote Mathematica execution via the Magnus cloud platform.
+This skill validates FeynRules models at two stages:
 
-Validation is a critical step between writing a `.fr` model and generating a UFO model — it catches errors in the Lagrangian before they propagate to event generation.
+1. **Physical consistency checks** (on `.fr` files) — runs four standard checks in both Feynman and Unitary gauge (8 checks total) using remote Mathematica execution via Magnus cloud. Use this between writing a `.fr` model and generating a UFO model.
+2. **MadGraph import test** (on UFO directories) — verifies that MadGraph5 can successfully import the generated UFO model. Use this after UFO generation to catch Python syntax errors, corrupted code, and structural issues that Mathematica validation does not detect.
 
 ## Workflow
+
+Choose the appropriate workflow based on the task:
+- **To validate a `.fr` file** → follow "Physical Consistency Checks" below
+- **To test a UFO import** → follow "MadGraph Import Test" below
+
+---
+
+## Physical Consistency Checks
 
 ### Step 1: Prepare the Model
 
@@ -69,3 +78,53 @@ The validator auto-detects whether a model is:
 ## Reference Documentation
 
 - See [references/validation_checks.md](references/validation_checks.md) for detailed explanation of each check, pass criteria, and gauge-specific behavior
+
+---
+
+## MadGraph Import Test
+
+### Overview
+
+After UFO generation, verify that MadGraph5 can successfully import the model. This catches issues that Mathematica validation cannot detect — Python syntax errors, corrupted Mathematica code in UFO files, and structural problems caused by FeynRules code generation bugs.
+
+### Step 1: Run Import Test
+
+```bash
+magnus run madgraph-import-test -- --ufo path/to/MyModel_UFO
+```
+
+**Parameters**:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `--ufo` | Yes | Path to the UFO model directory |
+
+The UFO directory is automatically uploaded via the FileSecret mechanism.
+
+### Step 2: Interpret Results
+
+The blueprint returns a JSON result containing:
+
+- **`success`** (bool): `True` if MadGraph imported the model without errors
+- **`stdout`** (str): MadGraph output (last 4000 chars)
+- **`stderr`** (str): Error output (last 4000 chars)
+- **`return_code`** (int): MadGraph process exit code
+
+### Step 3: Error Detection
+
+Import failure is determined by `success: false`. When this occurs, check `stdout`/`stderr` for these markers:
+
+- **`UFOError`** — Python error in UFO files (e.g., syntax errors, import failures)
+- **`with error:`** — MG5 error during model import
+- **`interrupted in sub-command`** combined with **`error`** — subprocess failure during import
+
+### Step 4: Fix and Re-test
+
+If import fails, fix the UFO files directly (not the `.fr` file), because the errors typically originate from FeynRules code generation bugs:
+
+**Common UFO fixes** (known FeynRules 2.3.49 bugs):
+1. **`object_library.py`**: Python 2 `raise` syntax — `raise UFOError, "msg"` → `raise UFOError("msg")`
+2. **`coupling_orders.py`**: Corrupted Mathematica code — `perturbative_expansion = {{NP, 2}, ...}[[3,2]]` → remove or replace with valid Python
+3. **`couplings.py`**: Wrong coupling orders — e.g., `order = {'1':1}` → `order = {'NP':2}` for dimension-6 operators
+
+After fixing, re-run the import test to verify. **Maximum 5 direct UFO fix attempts** — if still failing after 5 attempts, stop and report failure to the caller with diagnostics.
