@@ -90,7 +90,7 @@ After UFO generation, verify that MadGraph5 can successfully import the model. T
 ### Step 1: Run Import Test
 
 ```bash
-magnus run madgraph-import-test -- --ufo path/to/MyModel_UFO
+magnus run madgraph-compile -- --ufo path/to/MyModel_UFO
 ```
 
 **Parameters**:
@@ -99,7 +99,7 @@ magnus run madgraph-import-test -- --ufo path/to/MyModel_UFO
 |-----------|----------|-------------|
 | `--ufo` | Yes | Path to the UFO model directory |
 
-The UFO directory is automatically uploaded via the FileSecret mechanism.
+When `--process` is omitted, `madgraph-compile` only imports the model and verifies it loads correctly without compiling any process. The UFO directory is automatically uploaded via the FileSecret mechanism.
 
 ### Step 2: Interpret Results
 
