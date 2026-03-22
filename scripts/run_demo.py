@@ -1,4 +1,4 @@
-# scripts/on_magnus/tests/test_file_backwarding.py
+# scripts/run_demo.py
 # Executed by Magnus blueprint `transfer-file`.
 # THIS IS NOT DEAD CODE. 
 from magnus import custody_file

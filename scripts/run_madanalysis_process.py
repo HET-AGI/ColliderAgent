@@ -1,4 +1,4 @@
-# scripts/on_magnus/run_madanalysis_process.py
+# scripts/run_madanalysis_process.py
 # Executed by Magnus blueprint `madanalysis-process`.
 # THIS IS NOT DEAD CODE.
 import os

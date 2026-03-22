@@ -1,4 +1,4 @@
-# scripts/on_magnus/run_madgraph_compile.py
+# scripts/run_madgraph_compile.py
 # Executed by Magnus blueprint `madgraph-compile`.
 # THIS IS NOT DEAD CODE.
 import os

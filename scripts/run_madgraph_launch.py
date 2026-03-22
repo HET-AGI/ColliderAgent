@@ -1,4 +1,4 @@
-# scripts/on_magnus/run_madgraph_launch.py
+# scripts/run_madgraph_launch.py
 # Executed by Magnus blueprint `madgraph-launch`.
 # THIS IS NOT DEAD CODE.
 import os
