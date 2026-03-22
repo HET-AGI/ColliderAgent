@@ -83,6 +83,7 @@ Additionally, manually verify:
 
 ## Key Conventions
 
+- **BSM ClassName must be at least 2 characters** (e.g., `Snew`, `Zp`, `N1`)
 - **Do NOT generate the SM part** — only the BSM extension
 - **Use explicit multiplication** (`*`) instead of implicit juxtaposition
 - **Fermion bilinears**: `psibar[sp1].Ga[mu,sp1,sp2].psi[sp2]` or dot notation `psibar.Ga[mu].psi`
