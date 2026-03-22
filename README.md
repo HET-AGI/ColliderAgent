@@ -93,6 +93,9 @@ Enter your server URL and API key when prompted. All subsequent commands are rou
 <details>
 <summary>🖥️ Option B: Local deployment</summary>
 
+> [!WARNING]
+> Local Magnus deployment is under active development and may contain known issues. It is **not recommended for general use** at this time. A stable release is expected no later than **March 29, 2026**.
+
 **Additional prerequisites:** Docker (daemon running), Node.js (optional, enables the Web UI)
 
 Start the local backend:

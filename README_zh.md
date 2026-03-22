@@ -91,6 +91,9 @@ magnus login
 <details>
 <summary>🖥️ 选项 B：本地部署</summary>
 
+> [!WARNING]
+> 本地 Magnus 部署目前仍在开发中，可能存在已知问题，**暂不建议下载使用**。稳定版本最迟于 **2026 年 3 月 29 日** 发布。
+
 **额外前提条件：** Docker（守护进程已运行）、Node.js（可选，用于启用 Web UI）
 
 启动本地后端：
