@@ -347,7 +347,7 @@ set param_card DECAY <pdg> Auto                # Auto-calculate width
 set param_card MASS <pdg> scan:[v1,v2,...]     # Mass scan
 ```
 
-Read the UFO model's `particles.py` and `parameters.py` to find the correct PDG codes and block/code values.
+If the caller provides PDG codes and block/code values, use them directly. Otherwise, read the UFO model's `particles.py` and `parameters.py` to find the correct PDG codes and block/code values.
 
 ### param_card duplicate PDG warning
 
