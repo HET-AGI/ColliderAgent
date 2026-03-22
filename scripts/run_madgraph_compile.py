@@ -41,17 +41,16 @@ def _compile(
                 lines.append(f"define {defn}")
 
     proc_list = [p.strip() for p in processes.strip().split("\n") if p.strip()]
-    if not proc_list:
-        return {
-            "success": False,
-            "message": "No processes provided.",
-        }
+    validate_only = len(proc_list) == 0
 
-    lines.append(f"generate {proc_list[0]}")
-    for proc in proc_list[1:]:
-        lines.append(f"add process {proc}")
+    if validate_only:
+        lines.append("quit")
+    else:
+        lines.append(f"generate {proc_list[0]}")
+        for proc in proc_list[1:]:
+            lines.append(f"add process {proc}")
+        lines.append(f"output {process_output_name}")
 
-    lines.append(f"output {process_output_name}")
     script = "\n".join(lines) + "\n"
 
     script_filename = "compile.mg5"
@@ -85,7 +84,28 @@ def _compile(
     # Check for errors: returncode, missing output dir, or stderr errors
     has_stderr_error = bool(re.search(r"(?i)^error\b", stderr_clean, re.MULTILINE))
 
-    if process_result.returncode != 0 or not os.path.isdir(process_output_name) or has_stderr_error:
+    if validate_only:
+        # Import-only: success = no errors
+        if process_result.returncode != 0 or has_stderr_error:
+            reason = []
+            if process_result.returncode != 0:
+                reason.append(f"return code {process_result.returncode}")
+            if has_stderr_error:
+                reason.append("errors detected in stderr")
+
+            clean = stdout_clean + "\n" + stderr_clean
+            result_dict = {
+                "success": False,
+                "message": f"Model import failed ({', '.join(reason)}).",
+                "stdout": clean[-3000:],
+                "script": script,
+            }
+        else:
+            result_dict = {
+                "success": True,
+                "message": "Model imported successfully.",
+            }
+    elif process_result.returncode != 0 or not os.path.isdir(process_output_name) or has_stderr_error:
         reason = []
         if process_result.returncode != 0:
             reason.append(f"return code {process_result.returncode}")
@@ -124,9 +144,9 @@ def main():
         parser = argparse.ArgumentParser()
         parser.add_argument("--ufo_secret", type=str, default="")
         parser.add_argument("--model", type=str, default="")
-        parser.add_argument("--process", type=str, required=True)
+        parser.add_argument("--process", type=str, default="")
         parser.add_argument("--definitions", type=str, default="")
-        parser.add_argument("--target_path", type=str, required=True)
+        parser.add_argument("--target_path", type=str, default="")
         args = parser.parse_args()
 
         # Determine model reference: custom UFO upload or MG5 built-in model
@@ -161,14 +181,15 @@ def main():
                 print(f"Embedded UFO model into {ufo_dest}/")
 
             # Upload compiled process directory
-            file_secret = magnus.custody_file(process_output_name)
-            download_target = args.target_path
-            result_dict["process_dir"] = download_target
+            if args.target_path:
+                file_secret = magnus.custody_file(process_output_name)
+                download_target = args.target_path
+                result_dict["process_dir"] = download_target
 
-            action_path = os.environ.get("MAGNUS_ACTION")
-            assert action_path is not None, "Environment variable MAGNUS_ACTION is not set."
-            with open(action_path, "w", encoding="utf-8") as file_pointer:
-                file_pointer.write(f"magnus receive {file_secret} --output {download_target}")
+                action_path = os.environ.get("MAGNUS_ACTION")
+                assert action_path is not None, "Environment variable MAGNUS_ACTION is not set."
+                with open(action_path, "w", encoding="utf-8") as file_pointer:
+                    file_pointer.write(f"magnus receive {file_secret} --output {download_target}")
 
         print("============ MG5 Compile Result ============")
         print(json.dumps(result_dict, ensure_ascii=False, indent=4))
