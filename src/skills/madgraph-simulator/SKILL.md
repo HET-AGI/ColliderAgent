@@ -345,7 +345,6 @@ set lpp1 1
 set lpp2 1
 set run_card pdlabel lhapdf
 set run_card lhaid 82400
-set run_card bypass_check partonshower
 set use_syst False
 done" \
   --output simulation/pp_ej
@@ -355,7 +354,6 @@ Key points:
 - The initial state **must** be `p p` (proton-proton), not `e u` or similar. The lepton is extracted from the proton's PDF, not used as an explicit beam particle.
 - `--definitions` redefines the proton multiparticle label to include `a e+ e- mu+ mu- ta+ ta-` so MG5 generates lepton-initiated subprocesses.
 - `set lpp1 1` and `set lpp2 1` are required. When the proton definition includes leptons, MG5 automatically sets `lpp1=0` (no PDF for beam 1). You must explicitly override both `lpp1` and `lpp2` back to 1 (proton PDF).
-- `set run_card bypass_check partonshower` is needed because MG5 by default disables Pythia8 when the proton definition includes leptons; this flag suppresses that check even when generating parton-level only.
 
 ### Lepton-from-proton with LUXlep PDF AND Pythia8 shower
 
@@ -380,7 +378,6 @@ set lpp1 1
 set lpp2 1
 set run_card pdlabel lhapdf
 set run_card lhaid 82400
-set run_card bypass_check partonshower
 set use_syst False
 done" \
   --output simulation/pp_ej
