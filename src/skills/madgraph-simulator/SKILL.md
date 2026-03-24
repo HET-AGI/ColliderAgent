@@ -417,6 +417,36 @@ p p > t t~, t > b l+ vl, t~ > b~ l- vl~      # With decay chains
 
 Use `add process` (second line onward in `--process`) for charge-conjugate states.
 
+### Particle exclusion in process definitions
+
+MG5 provides two operators for excluding particles from diagrams. Choosing the wrong one changes the physics.
+
+| Syntax | Meaning | Effect |
+|--------|---------|--------|
+| `/ X Y` | Completely forbid X, Y from **all** diagrams | Cannot appear as propagators (s/t/u-channel) or in any vertex — diagrams containing these particles are removed entirely |
+| `$$ X Y` | Forbid X, Y as **s-channel propagators only** | They can still appear as t/u-channel propagators or in other topologies |
+
+**CRITICAL**: NEVER use single `$` — it is invalid syntax in this workflow.
+
+**DEFAULT RULE — use `/` unless told otherwise.** When the user says any of the following, ALWAYS use `/`:
+- "exclude particles", "only consider contributions from X", "remove all SM contributions"
+- "no Z/γ/W/H mediation", "forbid gauge bosons"
+- "exclude ... including s and t channel contributions"
+
+Use `$$` ONLY when the user **explicitly** asks to remove s-channel resonances while keeping t/u-channel contributions (e.g., "remove s-channel Z but keep t-channel").
+
+**Examples**:
+
+```
+# User: "only LQ-mediated diagrams, exclude SM gauge bosons and Higgs"
+p p > j j / z a w+ w- h          ← CORRECT (complete exclusion)
+p p > j j $$ z a w+ w- h         ← WRONG (only removes s-channel propagators)
+p p > j j $ z a w+ w- h          ← WRONG (invalid syntax)
+
+# User: "remove s-channel Z resonance but keep t-channel Z"
+p p > e+ e- $$ z                   ← CORRECT (s-channel only)
+```
+
 ### Multiparticle definitions
 
 ```

@@ -156,9 +156,13 @@ MG5 provides two syntaxes for excluding particles from process diagrams:
 
 Examples:
 ```
-generate p p > j j / a z w+ w- h        # No photon, Z, W, Higgs in any diagram
+generate p p > j j / a z w+ w- h        # Exclude photon, Z, W, Higgs in any diagram
 generate p p > j j $$ z                 # No Z in s-channel only
 ```
+
+**RULE**: Use `/` to exclude one or more particles' contribution from all diagrams. If you only want to forbid a particle as an s-channel propagator (while keeping its t/u-channel contributions), use `$$` instead.
+
+**CRITICAL (WRONG SYNTAX)**: NEVER use `$` in any case, which is wrong syntax.
 
 #### Coupling order constraints
 
