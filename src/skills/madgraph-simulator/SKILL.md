@@ -121,6 +121,7 @@ done" \
 | `--commands` | Yes | MG5 launch body — everything after `launch <dir>` (see state machine below) |
 | `--output` | Yes | Where to download the output directory (with Events/) |
 | `--pdf` | No | LHAPDF PDF set name to install before running (e.g. `LUXlep-NNPDF31_nlo_as_0118_luxqed`). Downloaded from CERN if not already present. |
+| `--interactive` | No | Boolean. Use MG5 `launch -i` mode to run shower/detector on existing events. See [Interactive mode](#interactive-mode-launch--i) below. |
 
 The process directory is uploaded via FileSecret. On success, the full output directory (including `Events/run_XX/`) is downloaded to `--output`.
 
@@ -182,6 +183,8 @@ Lines after the preceding `done`:
 - `set use_syst False` — disable systematics (avoids LHAPDF-related failures when Python LHAPDF is unavailable)
 - `set run_card pdlabel lhapdf` — use LHAPDF PDF set (required when using `--pdf`)
 - `set run_card lhaid <ID>` — LHAPDF set ID (e.g. `82400` for LUXlep-NNPDF31_nlo_as_0118_luxqed)
+
+**CRITICAL: LUXlep PDF LHAID** — When using LUXlep PDF, the correct LHAID is **82400** (for `LUXlep-NNPDF31_nlo_as_0118_luxqed`). Do NOT use 82200 — that is a different, incompatible PDF set.
 - `set param_card MASS <PDG> scan:[v1,v2,v3,...]` — mass scan
 - `done` — start the run
 
@@ -210,6 +213,36 @@ done
 done
 set nevents 1000    <-- TOO LATE, run already started
 ```
+
+## Interactive mode (`launch -i`)
+
+When `--interactive true` is passed, the blueprint uses MG5's `launch -i` mode instead of the normal `launch`. This mode operates on **existing events** in the process directory — it does NOT re-generate events.
+
+**Use case**: Run Pythia8 shower and/or Delphes detector simulation on an already-generated LHE file. This is essential for the [lepton-from-proton with shower workflow](#lepton-from-proton-with-luxlep-pdf-and-pythia8-shower).
+
+**`--commands` syntax in interactive mode** is different from the state machine above. Use MG5 madevent interactive commands:
+
+```
+pythia8 run_01
+delphes run_01
+```
+
+- `pythia8 run_XX` — run Pythia8 shower on the LHE of run_XX
+- `delphes run_XX` — run Delphes detector simulation on the shower output of run_XX
+
+Do NOT use the state machine syntax (`shower=Pythia8`, `detector=Delphes`, `done`) with `--interactive`.
+
+**Example**:
+```bash
+magnus run madgraph-launch -- \
+  --process simulation/pp_ej \
+  --interactive true \
+  --commands "pythia8 run_01
+delphes run_01" \
+  --output simulation/pp_ej
+```
+
+**Output**: The shower/detector output files get a new tag (e.g., `tag_3_pythia8_events.hepmc`, `tag_3_delphes_events.lhco.gz`) under `Events/run_01/`.
 
 ## Examples
 
@@ -291,34 +324,94 @@ done" \
   --output simulation/pp_tS
 ```
 
-### Lepton-initiated process with LUXlep PDF
+### Lepton-from-proton with LUXlep PDF (parton-level only)
 
 ```bash
-# Compile (using SM model with lepton beams)
+# Compile: redefine proton to include photon and leptons
 magnus run madgraph-compile -- \
-  --model sm \
-  --process "e+ u > e+ u" \
-  --output simulation/ep_u
+  --ufo path/to/MyModel_UFO \
+  --process "p p > e- j NP=2" \
+  --definitions "p = g u c d s u~ c~ d~ s~ b b~ a e+ e- mu+ mu- ta+ ta-" \
+  --output simulation/pp_ej
 
-# Launch with LUXlep PDF set
+# Launch: parton-level only (no shower)
 magnus run madgraph-launch -- \
-  --process simulation/ep_u \
-  --pdf LUXlep-NNPDF31_nlo_as_0118_luxqed \
+  --process simulation/pp_ej \
   --commands "done
+set nevents 10000
+set ebeam1 6500
+set ebeam2 6500
+set lpp1 1
+set lpp2 1
 set run_card pdlabel lhapdf
 set run_card lhaid 82400
-set nevents 1000
-set ebeam1 7000
-set ebeam2 7000
+set run_card bypass_check partonshower
+set use_syst False
 done" \
-  --output simulation/ep_u
+  --output simulation/pp_ej
 ```
 
-The `--pdf` flag downloads the specified LHAPDF PDF set into the cloud container before MG5 runs. You must also set `pdlabel` and `lhaid` in `--commands` to tell MG5 to use it.
+Key points:
+- The initial state **must** be `p p` (proton-proton), not `e u` or similar. The lepton is extracted from the proton's PDF, not used as an explicit beam particle.
+- `--definitions` redefines the proton multiparticle label to include `a e+ e- mu+ mu- ta+ ta-` so MG5 generates lepton-initiated subprocesses.
+- `set lpp1 1` and `set lpp2 1` are required. When the proton definition includes leptons, MG5 automatically sets `lpp1=0` (no PDF for beam 1). You must explicitly override both `lpp1` and `lpp2` back to 1 (proton PDF).
+- `set run_card bypass_check partonshower` is needed because MG5 by default disables Pythia8 when the proton definition includes leptons; this flag suppresses that check even when generating parton-level only.
+
+### Lepton-from-proton with LUXlep PDF AND Pythia8 shower
+
+Pythia8 **cannot** backward-evolve initial-state leptons from proton PDFs. The workaround is a 3-step process: generate parton-level LHE, locally patch the LHE to replace initial-state leptons with photons, then run shower+detector on the patched LHE via interactive mode.
+
+```bash
+# Step 1: Compile (same as parton-level)
+magnus run madgraph-compile -- \
+  --ufo path/to/MyModel_UFO \
+  --process "p p > e- j NP=2" \
+  --definitions "p = g u c d s u~ c~ d~ s~ b b~ a e+ e- mu+ mu- ta+ ta-" \
+  --output simulation/pp_ej
+
+# Step 2: Launch parton-level only (no shower, no detector)
+magnus run madgraph-launch -- \
+  --process simulation/pp_ej \
+  --commands "done
+set nevents 10000
+set ebeam1 6500
+set ebeam2 6500
+set lpp1 1
+set lpp2 1
+set run_card pdlabel lhapdf
+set run_card lhaid 82400
+set run_card bypass_check partonshower
+set use_syst False
+done" \
+  --output simulation/pp_ej
+
+# Step 3: Patch LHE — replace initial-state leptons with photons
+python3 scripts/patch_lhe_lepton_to_photon.py \
+  simulation/pp_ej/Events/run_01/unweighted_events.lhe.gz \
+  simulation/pp_ej/Events/run_01/unweighted_events.lhe.gz
+
+# Step 4: Run Pythia8 + Delphes on patched LHE via interactive mode
+magnus run madgraph-launch -- \
+  --process simulation/pp_ej \
+  --interactive true \
+  --commands "pythia8 run_01
+delphes run_01" \
+  --output simulation/pp_ej
+```
+
+Key points:
+- `set lpp1 1` and `set lpp2 1` are required in Step 2. When the proton definition includes leptons, MG5 automatically sets `lpp1=0` (no PDF for beam 1). You must explicitly override both back to 1.
+- Step 2 generates parton-level LHE only — no shower or detector.
+- Step 3 uses `scripts/patch_lhe_lepton_to_photon.py` to replace all initial-state lepton PDG codes (status = -1, PDG +-11/+-13/+-15) with photon (PDG 22) in the LHE file. This allows Pythia8 to backward-evolve the initial state correctly. The script can patch in-place (same input and output path).
+- Step 4 uses `--interactive true` with `pythia8 run_01` / `delphes run_01` commands to run shower and detector simulation on the patched LHE.
+- The `pythia8_card.dat` in the process directory should contain `Check:event = off` and `Check:history = off` to prevent Pythia8 from rejecting the patched events due to charge conservation checks (the initial-state photon replacing a lepton changes the total charge balance seen by Pythia8's validator).
+- Without this patching workflow, Pythia8 produces ~67% `partonLevel failed` retries and massive color-tracing errors. With the patch, Pythia8 runs cleanly with zero shower errors.
 
 ## Key MG5 Syntax
 
 ### Process definition
+
+**RULE: For LHC processes, the initial state MUST always be `p p`.** The LHC is a proton-proton collider — never use quark/gluon-level initial states (e.g. `g g >`, `u u~ >`) for LHC processes.
 
 ```
 p p > t t~                                    # Simple
