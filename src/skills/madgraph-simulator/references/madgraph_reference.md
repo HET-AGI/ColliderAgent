@@ -145,7 +145,35 @@ generate p p > h, h > b b~     # Higgs to bb
 generate p p > w+ j            # W + jet
 ```
 
-### 4. Decay Chain Syntax (IMPORTANT)
+#### Process-level particle exclusion
+
+MG5 provides two syntaxes for excluding particles from process diagrams:
+
+| Syntax | Meaning | Use case |
+|--------|---------|----------|
+| `/ X Y` | Completely forbid particles X, Y from all diagrams (internal and external lines) | When you want to fully remove contributions involving specific particles |
+| `$$ X Y` | Forbid particles X, Y only as s-channel propagators | When you only want to remove s-channel resonances but keep t/u-channel contributions |
+
+Examples:
+```
+generate p p > j j / a z w+ w- h        # No photon, Z, W, Higgs in any diagram
+generate p p > j j $$ z                 # No Z in s-channel only
+```
+
+#### Coupling order constraints
+
+| Syntax | Meaning |
+|--------|---------|
+| `NP=N` | Maxium N powers of new-physics (BSM) couplings |
+| `QED=N` | Maximum N powers of QED coupling |
+| `QCD=N` | Maximum N powers of QCD coupling |
+
+These can be combined with particle exclusion. For example, to select only BSM-mediated `p p > e- e+` while excluding all SM gauge bosons and Higgs:
+```
+generate p p > e- e+ NP=2 / a z w+ w- h
+```
+
+#### Decay Chain Syntax (IMPORTANT)
 
 MadGraph supports specifying particle decays using comma syntax. This is essential for processes with specific final states.
 
@@ -191,7 +219,7 @@ add process p p > t t~, t~ > b~ l- vl~, t > j h0, h0 > mu+ mu-
 - Use `add process` to include charge-conjugate processes
 - The decay products must be kinematically allowed
 
-### 5. Add Additional Processes
+#### Add Additional Processes
 
 ```
 add process <process>
@@ -212,7 +240,7 @@ define vl~ = ve~ vm~
 generate p p > t t~, t > b l+ vl, t~ > b~ l- vl~
 ```
 
-### 6. Output Project
+### 4. Output Project
 
 ```
 output <directory>
