@@ -1,0 +1,182 @@
+independent_variables:
+- header: {name: '$m_{\rm T}$', units: GeV}
+  values:
+  - {low: 250, high: 281}
+  - {low: 281, high: 315}
+  - {low: 315, high: 354}
+  - {low: 354, high: 397}
+  - {low: 397, high: 446}
+  - {low: 446, high: 501}
+  - {low: 501, high: 563}
+  - {low: 563, high: 632}
+  - {low: 632, high: 709}
+  - {low: 709, high: 797}
+  - {low: 797, high: 894}
+  - {low: 894, high: 1004}
+  - {low: 1004, high: 1128}
+  - {low: 1128, high: 1266}
+  - {low: 1266, high: 1422}
+  - {low: 1422, high: 1597}
+  - {low: 1597, high: 1793}
+  - {low: 1793, high: 2013}
+  - {low: 2013, high: 2260}
+  - {low: 2260, high: 2538}
+  - {low: 2538, high: 2850}
+  - {low: 2850, high: 3200}
+dependent_variables:
+- header: {name: 'NUM EVENTS'}
+  qualifiers:
+  - {name: SQRT(S), units: GeV, value: 13000}
+  - {name: LUMINOSITY, units: 'fb$^{-1}$', value: 36.1}
+  - {name: Process, value: Data}
+  values:
+  - {value: 382.000000}
+  - {value: 1112.000000}
+  - {value: 1284.000000}
+  - {value: 789.000000}
+  - {value: 486.000000}
+  - {value: 295.000000}
+  - {value: 198.000000}
+  - {value: 111.000000}
+  - {value: 67.000000}
+  - {value: 40.000000}
+  - {value: 24.000000}
+  - {value: 19.000000}
+  - {value: 11.000000}
+  - {value: 4.000000}
+  - {value: 3.000000}
+  - {value: 0.000000}
+  - {value: 2.000000}
+  - {value: 0.000000}
+  - {value: 0.000000}
+  - {value: 0.000000}
+  - {value: 0.000000}
+  - {value: 0.000000}
+- header: {name: 'NUM EVENTS'}
+  qualifiers:
+  - {name: SQRT(S), units: GeV, value: 13000}
+  - {name: LUMINOSITY, units: 'fb$^{-1}$', value: 36.1}
+  - {name: Process, value: SM}
+  values:
+  - value: 373.878906
+    errors: 
+    - {symerror: 56.99}
+  - value: 1030.924072
+    errors: 
+    - {symerror: 154.6}
+  - value: 1182.585938
+    errors: 
+    - {symerror: 175}
+  - value: 763.300476
+    errors: 
+    - {symerror: 116.5}
+  - value: 478.227722
+    errors: 
+    - {symerror: 79.55}
+  - value: 313.606018
+    errors: 
+    - {symerror: 46.45}
+  - value: 179.718262
+    errors: 
+    - {symerror: 29.55}
+  - value: 109.118515
+    errors: 
+    - {symerror: 19.24}
+  - value: 62.649242
+    errors: 
+    - {symerror: 10.7}
+  - value: 36.340065
+    errors: 
+    - {symerror: 6.83}
+  - value: 20.271093
+    errors: 
+    - {symerror: 3.89}
+  - value: 12.187529
+    errors: 
+    - {symerror: 2.482}
+  - value: 6.490509
+    errors: 
+    - {symerror: 1.388}
+  - value: 3.384504
+    errors: 
+    - {symerror: 1.048}
+  - value: 1.793076
+    errors: 
+    - {symerror: 0.5769}
+  - value: 0.876122
+    errors: 
+    - {symerror: 0.3155}
+  - value: 0.428270
+    errors: 
+    - {symerror: 0.1583}
+  - value: 0.213167
+    errors: 
+    - {symerror: 0.08566}
+  - value: 0.087181
+    errors: 
+    - {symerror: 0.03959}
+  - value: 0.037100
+    errors: 
+    - {symerror: 0.01872}
+  - value: 0.015449
+    errors: 
+    - {symerror: 0.008281}
+  - value: 0.005882
+    errors: 
+    - {symerror: 0.003441}
+- header: {name: 'NUM EVENTS'}
+  qualifiers:
+  - {name: SQRT(S), units: GeV, value: 13000}
+  - {name: LUMINOSITY, units: 'fb$^{-1}$', value: 36.1}
+  - {name: Process, value: '$W^{\prime}_{\rm SSM}$ (3 TeV)'}
+  values:
+  - {value: 0.118953}
+  - {value: 0.735475}
+  - {value: 2.023269}
+  - {value: 2.280255}
+  - {value: 2.550775}
+  - {value: 3.095874}
+  - {value: 3.466385}
+  - {value: 4.123557}
+  - {value: 4.639994}
+  - {value: 4.798556}
+  - {value: 4.864174}
+  - {value: 5.689124}
+  - {value: 5.909692}
+  - {value: 5.742692}
+  - {value: 5.887067}
+  - {value: 5.691040}
+  - {value: 4.979562}
+  - {value: 4.869961}
+  - {value: 4.038839}
+  - {value: 3.124022}
+  - {value: 2.020439}
+  - {value: 0.646627}
+- header: {name: 'NUM EVENTS'}
+  qualifiers:
+  - {name: SQRT(S), units: GeV, value: 13000}
+  - {name: LUMINOSITY, units: 'fb$^{-1}$', value: 36.1}
+  - {name: Process, value: '$W^{\prime}_{\rm NU}$ (3 TeV)'}
+  values:
+  - {value: 0.072667}
+  - {value: 0.423295}
+  - {value: 0.885580}
+  - {value: 1.010370}
+  - {value: 1.125544}
+  - {value: 1.178253}
+  - {value: 1.212186}
+  - {value: 1.219351}
+  - {value: 1.194479}
+  - {value: 1.183717}
+  - {value: 1.109745}
+  - {value: 1.094049}
+  - {value: 1.010143}
+  - {value: 0.909828}
+  - {value: 0.801172}
+  - {value: 0.662581}
+  - {value: 0.537134}
+  - {value: 0.426179}
+  - {value: 0.289760}
+  - {value: 0.174697}
+  - {value: 0.092478}
+  - {value: 0.035402}
