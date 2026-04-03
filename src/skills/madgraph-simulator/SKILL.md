@@ -14,6 +14,28 @@ This skill runs MadGraph5_aMC@NLO for Monte Carlo event generation using two Mag
 
 Both steps execute on the Magnus cloud (see magnus skill).
 
+## Output Paths
+
+All paths are **relative to the working directory**. Scripts use relative paths so they can be directly `cp`'d into the reproduction package.
+
+| Output | Path pattern | Example |
+|--------|-------------|---------|
+| MG5 scripts | `scripts/mg5_<label>.mg5` | `scripts/mg5_7TeV.mg5` |
+| Process + events | `events/<process_label>/` | `events/pp_muN_7TeV/` |
+| Event files | `events/<process_label>/Events/run_XX/` | `events/pp_muN_7TeV/Events/run_01/` |
+
+**Naming conventions**:
+- `<label>`: a short, descriptive tag (typically beam energy or scan label), e.g. `7TeV`, `8TeV`, `14TeV`
+- `<process_label>`: MG5 process name + label, e.g. `pp_muN_7TeV`, `pp_ttbar`
+
+When writing MG5 scripts (for local fallback), use relative paths in `output` and `launch` commands:
+```
+import model SM_HeavyN_UFO
+generate p p > mu- n1
+output events/pp_muN_7TeV
+launch events/pp_muN_7TeV
+```
+
 ## Workflow
 
 ### Step 1: Compile the Process
@@ -325,7 +347,7 @@ set param_card DECAY <pdg> Auto                # Auto-calculate width
 set param_card MASS <pdg> scan:[v1,v2,...]     # Mass scan
 ```
 
-Read the UFO model's `particles.py` and `parameters.py` to find the correct PDG codes and block/code values.
+If the caller provides PDG codes and block/code values, use them directly. Otherwise, read the UFO model's `particles.py` and `parameters.py` to find the correct PDG codes and block/code values.
 
 ### param_card duplicate PDG warning
 

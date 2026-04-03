@@ -22,7 +22,7 @@ The main agent will provide:
 - Plot specifications (axes, ranges, styles, bands, contours)
 - Cross section values for each mass point
 
-If any information is missing, check `progress/step2_madgraph.md` and `progress/step3_madanalysis.md` for details from previous steps.
+If any information is missing, check the progress file paths provided by the main agent for details from previous steps.
 
 ## Capabilities
 
@@ -55,19 +55,22 @@ If any information is missing, check `progress/step2_madgraph.md` and `progress/
 ### Step 2: Write Analysis Code
 - Write Python scripts for event selection, template construction, and statistical analysis
 - Use numpy, scipy, matplotlib; use uproot for ROOT file reading
-- Save scripts to `analysis/` directory for reproducibility
+- Save event-level analysis scripts to `analysis/` directory
 
 ### Step 3: Execute Analysis
 - Run the analysis scripts
 - Debug and fix any issues
 
 ### Step 4: Generate Plots
+- Write plotting scripts and save to `scripts/` directory
 - Create the requested figures with proper styling
-- Save plots as PDF and PNG
+- Save plots as PDF and PNG to `output/figures/`
 
 ## Output Requirements
 
-When finished, write a detailed summary to `progress/step4_postprocessing.md` containing:
+**All paths in scripts must be relative to the working directory** (e.g., `analysis/dilepton_mass/...`, `output/figures/...`), even if the main agent provides absolute paths. This ensures scripts are portable and can be copied directly into the reproduction package.
+
+When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step4_postprocessing.md`) containing:
 - Analysis scripts created (with paths)
 - For each analysis:
   - Event selection efficiencies

@@ -11,6 +11,18 @@ This skill runs MadAnalysis5 in normal mode for post-generation analysis of Mont
 
 **CRITICAL: Do NOT write `submit` in your analysis script.** The cloud runner automatically appends `submit analysis_output`. Any user-written `submit` lines are stripped before execution. This differs from standalone MadAnalysis5 usage where `submit` is required.
 
+## Output Paths
+
+All paths are **relative to the working directory**. Scripts use relative paths so they can be directly `cp`'d into the reproduction package.
+
+| Output | Path pattern | Example |
+|--------|-------------|---------|
+| MA5 scripts | `scripts/ma5_<label>.ma5` | `scripts/ma5_dilepton.ma5` |
+| Analysis output | `analysis/<label>/` | `analysis/dilepton_mass/` |
+
+**Naming conventions**:
+- `<label>`: a short, descriptive tag for the analysis (e.g. `dilepton`, `dilepton_mass`, `signal_region`)
+
 ## Workflow
 
 ### Step 1: Locate Event Files

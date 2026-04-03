@@ -25,7 +25,7 @@ The main agent will provide:
 - Luminosity and cross section info
 - Experimental data for comparison (if any)
 
-If any information is missing, check `progress/step2_madgraph.md` for details from the previous step.
+If any information is missing, check the Step 2 progress file path provided by the main agent for details from the previous step.
 
 ## Workflow
 
@@ -50,7 +50,7 @@ If any information is missing, check `progress/step2_madgraph.md` for details fr
 
 ## Output Requirements
 
-When finished, write a detailed summary to `progress/step3_madanalysis.md` containing:
+When finished, write a detailed summary to the progress file path specified by the main agent (default: `progress/step3_madanalysis.md`) containing:
 - Analysis script(s) used
 - For each analysis run:
   - Input event file and analysis level
