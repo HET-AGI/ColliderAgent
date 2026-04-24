@@ -77,11 +77,12 @@ def _compile(micromegas_root: str)-> Dict[str, Any]:
 
     # 4. Compile. First invocation generates annihilation / scattering amplitudes
     # via the pre-built CalcHEP engine, then compiles the user project.
-    nb_core = len(os.sched_getaffinity(0))
-    print(f"\nCPU cores (sched_getaffinity): {nb_core}\n")
-
+    # Serial (-j1) on purpose: micrOmegas's Makefile has parallel make children
+    # race on `ar r ../lib/micromegas.a <obj>`, truncating archive members.
+    # The heavy parallel build already happened in the image layer; user-project
+    # compile is incremental (~15 s) so serial is not a bottleneck.
     make_result = subprocess.run(
-        ["make", "main=main.c", f"-j{nb_core}"],
+        ["make", "main=main.c", "-j1"],
         cwd = project_path,
         capture_output = True,
         text = True,
