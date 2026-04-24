@@ -2,6 +2,7 @@
 __all__ = [
     "feynrules_validation_template",
     "ufo_generation_template",
+    "calchep_generation_template",
 ]
 
 
@@ -243,18 +244,28 @@ bail[];
 """
 
 
-def ufo_generation_template(
+def _feynrules_export_template(
     model_path: str,
-    lagrangian_symbol: str = "LSNP",
-    ufo_output_name: str = "NP_S_UFO",
-    restriction_path: str = "",
-    start_marker: str = "__JSON_START__",
-    end_marker: str = "__JSON_END__",
+    lagrangian_symbol: str,
+    output_name: str,
+    restriction_path: str,
+    start_marker: str,
+    end_marker: str,
+    write_command: str,
+    format_label: str,
 )-> str:
+    """Shared Mathematica template for FeynRules model export (UFO / CalcHEP).
+
+    Parameters
+    ----------
+    write_command : str
+        The FeynRules export function name, e.g. ``"WriteUFO"`` or ``"WriteCHOutput"``.
+    format_label : str
+        Human-readable format name for log messages, e.g. ``"UFO"`` or ``"CalcHEP"``.
+    """
 
     lagrangian_symbol = lagrangian_symbol.strip()
 
-    # Build restriction loading block
     restriction_block = ""
     if restriction_path:
         restriction_block = f'LoadRestriction["{restriction_path}"];'
@@ -266,7 +277,7 @@ def ufo_generation_template(
 (* Result container *)
 result = <|
     "success" -> False,
-    "message" -> "UFO generation did not complete."
+    "message" -> "{format_label} generation did not complete."
 |>;
 
 (* Output result JSON and exit *)
@@ -316,19 +327,61 @@ If[OwnValues[{lagrangian_symbol}] === {{}},
     bail[];
 ];
 
-(* 5. Write UFO *)
+(* 5. Write {format_label} *)
 If[isStandaloneModel,
-    WriteUFO[{lagrangian_symbol}, Output -> "{ufo_output_name}"],
-    WriteUFO[LSM, {lagrangian_symbol}, Output -> "{ufo_output_name}"]
+    {write_command}[{lagrangian_symbol}, Output -> "{output_name}"],
+    {write_command}[LSM, {lagrangian_symbol}, Output -> "{output_name}"]
 ];
 
 (* 6. Check output *)
-If[DirectoryQ["{ufo_output_name}"],
+If[DirectoryQ["{output_name}"],
     result["success"] = True;
-    result["message"] = "UFO model generated successfully.";
+    result["message"] = "{format_label} model generated successfully.";
 ,
-    result["message"] = "WriteUFO completed but output directory '{ufo_output_name}' not found.";
+    result["message"] = "{write_command} completed but output directory '{output_name}' not found.";
 ];
 
 bail[];
 """
+
+
+def ufo_generation_template(
+    model_path: str,
+    lagrangian_symbol: str = "LSNP",
+    ufo_output_name: str = "NP_S_UFO",
+    restriction_path: str = "",
+    start_marker: str = "__JSON_START__",
+    end_marker: str = "__JSON_END__",
+)-> str:
+
+    return _feynrules_export_template(
+        model_path = model_path,
+        lagrangian_symbol = lagrangian_symbol,
+        output_name = ufo_output_name,
+        restriction_path = restriction_path,
+        start_marker = start_marker,
+        end_marker = end_marker,
+        write_command = "WriteUFO",
+        format_label = "UFO",
+    )
+
+
+def calchep_generation_template(
+    model_path: str,
+    lagrangian_symbol: str = "LSNP",
+    calchep_output_name: str = "NP_S_CH",
+    restriction_path: str = "",
+    start_marker: str = "__JSON_START__",
+    end_marker: str = "__JSON_END__",
+)-> str:
+
+    return _feynrules_export_template(
+        model_path = model_path,
+        lagrangian_symbol = lagrangian_symbol,
+        output_name = calchep_output_name,
+        restriction_path = restriction_path,
+        start_marker = start_marker,
+        end_marker = end_marker,
+        write_command = "WriteCHOutput",
+        format_label = "CalcHEP",
+    )

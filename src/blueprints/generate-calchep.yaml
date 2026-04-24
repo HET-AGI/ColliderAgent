@@ -1,0 +1,78 @@
+id: generate-calchep
+title: Generate CalcHEP
+description: |
+  从 FeynRules 模型文件生成 CalcHEP 格式模型输出。
+  自动检测独立模型与 BSM 扩展，支持 .rst 限制文件。
+  CalcHEP 模型文件供 CalcHEP/micrOmegas 使用。
+code: |
+  Model = Annotated[FileSecret, {
+      "placeholder": "114514-apple-banana-cat",
+      "description": "FeynRules 模型文件的传输密钥（远端可直接输入机上路径）",
+  }]
+
+  Lagrangian = Annotated[str, {
+      "placeholder": "LSNP",
+      "description": "拉氏量符号名（.fr 文件中定义的变量名）",
+  }]
+
+  TargetPath = Annotated[str, {
+      "placeholder": "models/MyModel_CH",
+      "description": "CalcHEP 模型目录的输出路径",
+  }]
+
+  Restriction = Annotated[Optional[FileSecret], {
+      "placeholder": "114514-apple-banana-cat",
+      "description": ".rst 限制文件的传输密钥（可选）",
+  }]
+
+  def blueprint(
+      model: Model,
+      lagrangian: Lagrangian,
+      output: TargetPath,
+      restriction: Restriction = None,
+  ):
+      description = "## FeynRules CalcHEP 生成任务"
+
+      safe_secret = model.replace("'", "'\\''")
+      safe_lagrangian = lagrangian.replace("'", "'\\''")
+      safe_target = output.replace("'", "'\\''")
+
+      restriction_arg = ""
+      if restriction is not None:
+          safe_restriction = restriction.replace("'", "'\\''")
+          restriction_arg = f" --restriction_secret '{safe_restriction}'"
+
+      system_entry_command = """
+  mounts=(
+      "$HOME/.wolfram-container-license:$HOME/.WolframEngine/Licensing"
+  )
+  export APPTAINER_BIND="${APPTAINER_BIND:+$APPTAINER_BIND,}$(IFS=,; echo "${mounts[*]}")"
+  """
+
+      entry_command = f"""
+  REAL_HOME=$(getent passwd $(whoami) | cut -d: -f6)
+  if [ "$REAL_HOME" != "/root" ] && [ -d /root/.WolframEngine/Applications ]; then
+      mkdir -p "$REAL_HOME/.WolframEngine"
+      ln -sf /root/.WolframEngine/Applications "$REAL_HOME/.WolframEngine/Applications"
+      ln -sf /root/.WolframEngine/Kernel "$REAL_HOME/.WolframEngine/Kernel"
+  fi
+
+  uv pip install --python /usr/local/bin/python3 --break-system-packages --quiet "magnus-sdk>=0.5.7"
+
+  export PYTHONPATH=$PWD
+  python3 scripts/run_calchep_generation.py --secret '{safe_secret}' --lagrangian '{safe_lagrangian}' --target_path '{safe_target}'{restriction_arg}
+  """
+
+      submit_job(
+          task_name="[Blueprint] Generate CalcHEP",
+          description=description,
+          namespace="HET-AGI",
+          repo_name="ColliderAgent",
+          commit_sha="HEAD",
+          system_entry_command=system_entry_command,
+          entry_command=entry_command,
+          container_image="docker://git.pku.edu.cn/het-agi/mma-het:latest",
+          job_type=JobType.A2,
+          memory_demand="10G",
+          cpu_count=10,
+      )

@@ -29,10 +29,10 @@ The `scripts/` directory contains Python entry points for [Magnus](https://githu
 |---|---|---|
 | `run_feynrules_validation.py` | `validate-feynrules` | Validate `.fr` models via Mathematica (Hermiticity, mass terms, kinetic normalisation) |
 | `run_ufo_generation.py` | `generate-ufo` | Export FeynRules models to UFO format via Wolfram Engine |
+| `run_calchep_generation.py` | `generate-calchep` | Export FeynRules models to CalcHEP format via Wolfram Engine |
 | `run_madgraph_compile.py` | `madgraph-compile` | Import UFO model, generate diagrams, compile matrix elements |
 | `run_madgraph_launch.py` | `madgraph-launch` | Run event generation with beam energy, shower, and detector settings |
 | `run_madanalysis_process.py` | `madanalysis-process` | Execute MadAnalysis5 normal-mode analysis on event files |
-| `run_demo.py` | `transfer-file` | Demo: write a file and upload it via Magnus (connectivity test) |
 
 ## Usage
 
@@ -108,6 +108,21 @@ Returns JSON with `success`, `ufo_path`, and any validation warnings.
 
 ---
 
+### `generate-calchep`
+
+Exports a validated FeynRules model to CalcHEP format using Wolfram Engine. Produces `.mdl` files (`vars1.mdl`, `func1.mdl`, `prtcls1.mdl`, `lgrng1.mdl`) for CalcHEP and micrOmegas.
+
+| Flag | Required | Description |
+|---|---|---|
+| `--secret` | Yes | FileSecret for the `.fr` model file |
+| `--lagrangian` | Yes | Lagrangian symbol (e.g. `LSNP`, `LBSM`) |
+| `--target_path` | Yes | Download path for the generated CalcHEP directory |
+| `--restriction_secret` | No | FileSecret for an optional `.rst` restriction file |
+
+Returns JSON with `success`, `calchep_path`.
+
+---
+
 ### `madgraph-compile`
 
 Imports a UFO model into MadGraph5, defines processes, generates Feynman diagrams, and produces a compiled process directory.
@@ -152,12 +167,6 @@ Runs MadAnalysis5 in normal mode on Monte Carlo event files. Produces histograms
 
 Returns JSON with `success`, `output_dir`.
 
----
-
-### `run_demo.py` (`transfer-file`)
-
-Writes `"Hello world."` to a file and uploads it via Magnus custody. Use this to verify that Magnus connectivity and authentication are working correctly.
-
 ## Reference Templates
 
 The `ref/` subdirectory contains Wolfram Mathematica script templates used by the FeynRules blueprints:
@@ -166,6 +175,7 @@ The `ref/` subdirectory contains Wolfram Mathematica script templates used by th
 |---|---|
 | `feynrules_validation_template()` | `run_feynrules_validation.py` |
 | `ufo_generation_template()` | `run_ufo_generation.py` |
+| `calchep_generation_template()` | `run_calchep_generation.py` |
 
 Templates are rendered and injected into the cloud container at runtime — they are not executed on the host machine.
 
@@ -186,14 +196,14 @@ Magnus sets the following environment variables inside the container at runtime:
 scripts/
 ├── ref/
 │   ├── __init__.py
-│   └── wolfram_script_templates.py    # Mathematica templates for FeynRules & UFO
+│   └── wolfram_script_templates.py    # Mathematica templates for FeynRules, UFO & CalcHEP
 │
 ├── run_feynrules_validation.py        # Blueprint: validate-feynrules
 ├── run_ufo_generation.py              # Blueprint: generate-ufo
+├── run_calchep_generation.py          # Blueprint: generate-calchep
 ├── run_madgraph_compile.py            # Blueprint: madgraph-compile
 ├── run_madgraph_launch.py             # Blueprint: madgraph-launch
-├── run_madanalysis_process.py         # Blueprint: madanalysis-process
-└── run_demo.py                        # Blueprint: transfer-file (connectivity demo)
+└── run_madanalysis_process.py         # Blueprint: madanalysis-process
 ```
 
 ## See Also

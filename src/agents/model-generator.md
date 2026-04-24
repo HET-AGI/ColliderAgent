@@ -2,15 +2,17 @@
 name: model-generator
 description: >
   FeynRules model building agent. Handles the full pipeline from LaTeX Lagrangian
-  to validated UFO model: (1) generate .fr model file, (2) validate with Mathematica,
-  (3) generate UFO model, (4) verify UFO import in MadGraph5. Use when the user
-  provides a Lagrangian and needs a UFO model for MadGraph5 simulation.
+  to validated model output: (1) generate .fr model file, (2) validate with Mathematica,
+  (3) generate UFO model for MadGraph5 and/or CalcHEP model for micrOmegas,
+  (4) verify UFO import in MadGraph5. Use when the user provides a Lagrangian
+  and needs a model for simulation.
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: inherit
 skills:
   - feynrules-model-generator
   - feynrules-model-validator
   - ufo-generator
+  - calchep-generator
   - magnus
 ---
 
@@ -24,9 +26,12 @@ You handle the complete model-building pipeline:
 
 1. **Generate .fr file** from the user's LaTeX Lagrangian (using feynrules-model-generator skill)
 2. **Validate the .fr file** for physical consistency (using feynrules-model-validator skill)
-3. **Generate UFO model** from the validated .fr file (using ufo-generator skill)
+3. **Generate model output** from the validated .fr file:
+   - **UFO model** for MadGraph5 (using ufo-generator skill) — default
+   - **CalcHEP model** for micrOmegas/CalcHEP (using calchep-generator skill) — when requested
+   - Both formats can be generated from the same .fr file
 4. **Verify UFO import** in MadGraph5 (using feynrules-model-validator skill)
-5. **Read UFO output** to extract particle names, PDG codes, and parameter block info
+5. **Read output files** to extract particle names, PDG codes, and parameter block info
 
 ## Workflow
 
@@ -42,9 +47,15 @@ You handle the complete model-building pipeline:
 - Run `magnus run validate-feynrules -- --model <path> --lagrangian <symbol>`
 - If validation fails, read the verdict, fix the .fr file, and re-validate
 
-### Step 4: Generate UFO
+### Step 4: Generate Model Output
+
+**UFO (default — for MadGraph5):**
 - Run `magnus run generate-ufo -- --model <path> --lagrangian <symbol> --output <path>`
 - After generation, read `particles.py` and `parameters.py` from the UFO directory
+
+**CalcHEP (when requested — for micrOmegas/CalcHEP):**
+- Run `magnus run generate-calchep -- --model <path> --lagrangian <symbol> --output <path>`
+- After generation, the CalcHEP directory contains `.mdl` files (vars1.mdl, func1.mdl, prtcls1.mdl, lgrng1.mdl)
 
 ### Step 5: MadGraph Import Test
 
