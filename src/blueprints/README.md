@@ -18,6 +18,8 @@ magnus blueprint save <id> --file src/blueprints/<id>.yaml
 | `madgraph-compile.yaml` | `madgraph-compile` | Import UFO model, compile MadGraph5 process |
 | `madgraph-launch.yaml` | `madgraph-launch` | Run Monte Carlo event generation |
 | `madanalysis-process.yaml` | `madanalysis-process` | MadAnalysis5 event analysis |
+| `micromegas-compile.yaml` | `micromegas-compile` | Build a micrOmegas project from CalcHEP model + user `main.c` |
+| `micromegas-calc.yaml` | `micromegas-calc` | Execute the compiled `./main`, capture `results.json` |
 
 ## Syncing
 

@@ -14,6 +14,7 @@ Each skill is a directory containing a `SKILL.md` (frontmatter + workflow) plus 
 | [`calchep-generator`](calchep-generator/) | 将 `.fr` 模型转换为 CalcHEP 格式，供 CalcHEP / micrOmegas 使用 |
 | [`madgraph-simulator`](madgraph-simulator/) | 用 MadGraph5 生成蒙特卡洛事件，支持 Pythia8 簇射与 Delphes 探测器模拟 |
 | [`madanalysis-analyzer`](madanalysis-analyzer/) | 用 MadAnalysis5 分析蒙卡事件，产出运动学分布与 cutflow 表 |
+| [`micromegas-calculator`](micromegas-calculator/) | 用 micrOmegas 计算暗物质遗迹丰度、直接探测与间接探测观测量 |
 | [`magnus`](magnus/) | 通过 `magnus` CLI 在云集群上调度蓝图任务 |
 | [`pheno-pipeline-orchestrator`](pheno-pipeline-orchestrator/) | 编排从拉氏量到图表的完整唯象流水线，支持多阶段与增量任务 |
 | [`reproduction-guide-generator`](reproduction-guide-generator/) | 为已完成的分析生成可复现的实验包（含 `run_all.sh` 与 README） |

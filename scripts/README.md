@@ -33,6 +33,8 @@ The `scripts/` directory contains Python entry points for [Magnus](https://githu
 | `run_madgraph_compile.py` | `madgraph-compile` | Import UFO model, generate diagrams, compile matrix elements |
 | `run_madgraph_launch.py` | `madgraph-launch` | Run event generation with beam energy, shower, and detector settings |
 | `run_madanalysis_process.py` | `madanalysis-process` | Execute MadAnalysis5 normal-mode analysis on event files |
+| `run_micromegas_compile.py` | `micromegas-compile` | Compile a micrOmegas project from a CalcHEP model + user `main.c` |
+| `run_micromegas_calc.py` | `micromegas-calc` | Run the compiled `./main`, surface `results.json` + uploaded artifacts |
 
 ## Usage
 
@@ -167,6 +169,36 @@ Runs MadAnalysis5 in normal mode on Monte Carlo event files. Produces histograms
 
 Returns JSON with `success`, `output_dir`.
 
+---
+
+### `micromegas-compile`
+
+Compiles a micrOmegas project: places the four CalcHEP `.mdl` files into a fresh project skeleton, installs the user's `main.c`, and runs `make`. The CalcHEP symbolic engine is pre-built in the image, so only user code and auto-generated matrix elements get compiled here.
+
+| Flag | Required | Description |
+|---|---|---|
+| `--calchep_secret` | Yes | FileSecret for the CalcHEP model directory (from `generate-calchep`) |
+| `--main_secret` | Yes | FileSecret for the user's `main.c` |
+| `--target_path` | Yes | Download path for the compiled project directory |
+| `--project` | No | micrOmegas project name (default: `dm_project`) |
+
+Returns JSON with `success`, `project_dir`, `main_binary`, and on failure `make_log_tail`.
+
+---
+
+### `micromegas-calc`
+
+Runs the compiled `./main` once. If the user's `main.c` writes `results.json` to its working directory, the blueprint parses and surfaces it under the `results` field of the response.
+
+| Flag | Required | Description |
+|---|---|---|
+| `--project_secret` | Yes | FileSecret for the compiled project directory |
+| `--target_path` | Yes | Download path for the run output |
+| `--slha_secret` | No | FileSecret for an SLHA parameter card (passed as `argv[1]`) |
+| `--extra_args` | No | Additional positional arguments for `./main` (space-separated) |
+
+Returns JSON with `success`, `output_dir`, `stdout_tail`, and `results` (parsed from `results.json` when present).
+
 ## Reference Templates
 
 The `ref/` subdirectory contains Wolfram Mathematica script templates used by the FeynRules blueprints:
@@ -203,7 +235,9 @@ scripts/
 ├── run_calchep_generation.py          # Blueprint: generate-calchep
 ├── run_madgraph_compile.py            # Blueprint: madgraph-compile
 ├── run_madgraph_launch.py             # Blueprint: madgraph-launch
-└── run_madanalysis_process.py         # Blueprint: madanalysis-process
+├── run_madanalysis_process.py         # Blueprint: madanalysis-process
+├── run_micromegas_compile.py          # Blueprint: micromegas-compile
+└── run_micromegas_calc.py             # Blueprint: micromegas-calc
 ```
 
 ## See Also

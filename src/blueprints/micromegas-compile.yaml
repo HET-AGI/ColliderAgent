@@ -1,0 +1,67 @@
+id: micromegas-compile
+title: micrOmegas Compile
+description: |
+  输入 CalcHEP 模型与用户 main.c，在 micrOmegas 项目中编译出暗物质计算二进制。
+  由于 CalcHEP 符号引擎已预编译进镜像，每次调用只编译用户代码与矩阵元，
+  适合一次编译多次扫参的工作流。
+code: |
+  CalcHEP = Annotated[FileSecret, {
+      "placeholder": "114514-apple-banana-cat",
+      "description": "CalcHEP 模型目录的传输密钥（generate-calchep 的产出，含 Z2-odd 标记的 prtcls1.mdl）",
+  }]
+
+  Main = Annotated[FileSecret, {
+      "placeholder": "114514-apple-banana-cat",
+      "description": "用户 main.c（调用 micrOmegas API，约定向 results.json 写出结构化结果）",
+  }]
+
+  TargetPath = Annotated[str, {
+      "placeholder": "tmp/my_dm_project",
+      "description": "编译完成的 micrOmegas 项目目录下载路径",
+  }]
+
+  ProjectName = Annotated[Optional[str], {
+      "placeholder": "my_dm_project",
+      "description": "micrOmegas 项目名（newProject 使用）；留空则用 'dm_project'",
+  }]
+
+  def blueprint(
+      calchep: CalcHEP,
+      main: Main,
+      output: TargetPath,
+      project: ProjectName = None,
+  ):
+      description = "## micrOmegas 项目编译任务"
+
+      safe_calchep = calchep.replace("'", "'\\''")
+      safe_main = main.replace("'", "'\\''")
+      safe_target = output.replace("'", "'\\''")
+
+      project_arg = ""
+      if project is not None and project.strip():
+          safe_project = project.replace("'", "'\\''")
+          project_arg = f" --project '{safe_project}'"
+
+      system_entry_command = """
+  # No system entry command needed.
+  """
+
+      entry_command = f"""
+  export PYTHONPATH=$PWD
+  python3 scripts/run_micromegas_compile.py --calchep_secret '{safe_calchep}' --main_secret '{safe_main}' --target_path '{safe_target}'{project_arg}
+  """
+
+      submit_job(
+          task_name="[Blueprint] micrOmegas Compile",
+          description=description,
+          namespace="HET-AGI",
+          repo_name="ColliderAgent",
+          commit_sha="HEAD",
+          system_entry_command=system_entry_command,
+          entry_command=entry_command,
+          container_image="docker://git.pku.edu.cn/rise-agi/micromegas:latest",
+          job_type=JobType.A2,
+          runner="magnus",
+          cpu_count=8,
+          memory_demand="8G",
+      )
