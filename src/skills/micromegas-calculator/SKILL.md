@@ -18,7 +18,17 @@ Both steps execute on the Magnus cloud (see magnus skill).
 
 ### CalcHEP model with Z₂-odd marking
 
-micrOmegas identifies the dark matter candidate via the `aux` column of `prtcls1.mdl`: candidate particles must be marked `odd`. This is **FeynRules territory**, not a micrOmegas concern — either set it at the `.fr` level before calling `generate-calchep`, or post-process the CalcHEP output by hand before `micromegas-compile`. Without this mark, `sortOddParticles` returns a non-zero error code and every downstream function refuses to run.
+micrOmegas identifies dark-matter candidates by **the `~` prefix on particle names** in the `P` column of `prtcls1.mdl` — there is no separate Z₂ quantum number. Every Z₂-odd particle (the DM candidate plus any coannihilation partners) must appear as `~<name>` in that column.
+
+Concrete verification step after `generate-calchep`:
+
+```bash
+grep -E '\|~[A-Za-z]' path/to/MyModel_CH/prtcls1.mdl
+```
+
+should list every intended Z₂-odd field. Reference examples from shipped micrOmegas projects: SingletDM → `~x1`; IDM → `~H3 ~H+ ~X`; RDM → `~chi0 ~chi1`.
+
+If no `~`-prefixed particles appear, the `.fr` source is wrong — fix it at authoring time, not by hand-editing `.mdl` files (the hand-edit gets lost the next time `generate-calchep` runs). Without the convention, **`sortOddParticles` will fail, `darkOmega` returns `NaN`, and every cross section reads zero — yet the blueprint still returns with exit code 0**. The blueprint detects this failure pattern via stdout markers (`Can not compile`, `Omega=NAN`, `Omega=nan`) and surfaces it as `success: false` in `MAGNUS_RESULT`; the caller should still check `success` before consuming numbers.
 
 ### main.c protocol
 
@@ -203,7 +213,20 @@ int main(int argc, char** argv) {
 
 ## Key conventions
 
-- **Z₂-odd flag is a model-authoring concern**: fix it in the `.fr` file, not here
+- **Z₂-odd flag is a model-authoring concern**: fix it in the `.fr` file (so generated `prtcls1.mdl` carries `~`-prefixed names), not by hand-editing generated `.mdl` files
 - **results.json is a contract**: `main.c` writes, the blueprint reads; keep the JSON flat and typed (floats, strings, arrays of either) for easy downstream plotting
+- **stdout_tail is the fallback physics channel**: if `main.c` does not write `results.json`, the blueprint still surfaces the last 4000 chars of stdout under `stdout_tail` — human-readable, but brittle to parse programmatically. Prefer `results.json` whenever a downstream agent consumes the numbers
 - **Compile-once scan-many**: reuse `--project` across parameter points, never re-call `micromegas-compile` per point unless the model itself changes
-- **micrOmegas prints heavily to stdout**: the last 4000 chars are captured in `stdout_tail`, but authoritative results should always go through `results.json`
+- **Always check `success` before consuming results**: the blueprint returns `success: false` when `./main` exits non-zero **or** when stdout matches the silent-failure markers `Can not compile` / `Omega=NAN` / `Omega=nan` (needed because micrOmegas sometimes prints NaN with exit 0)
+
+## Timing expectations
+
+Empirically on the Magnus `rise-agi/micromegas:latest` container at blueprint-default resources (compile: 8 CPU / 8 GB; calc: 4 CPU / 4 GB):
+
+| Model | `micromegas-compile` | `micromegas-calc` (per point) | Dominant cost in calc |
+|-------|---------------------|------------------------------|-----------------------|
+| SingletDM (1 scalar) | ~30 s | ~60 s | dynamic compile of 2–3 annihilation channels |
+| RDM (2 fermions + leptoquark mediator, coannihilation) | ~45 s | ~2 min | ~χ0 ~χ0 → LQ LQ̃, plus ~χ0 ~χ1 coannihilation channels |
+| IDM (H⁰ + A⁰ + H±, full coannihilation) | ~1 min | **10+ min** | ~30 channels across all scalar pairs, first calc is slowest |
+
+Calc time is dominated by micrOmegas's runtime symbolic compilation of each required subprocess into a `.so` library via CalcHEP. Within one `./main` invocation those `.so` files are cached, but the blueprint re-uploads the pristine compiled project for each scan point, so every `micromegas-calc` run pays the full subprocess-compile cost. The compile-once / scan-many win is in `micromegas-compile` itself — `make main=main.c` plus CalcHEP library linking happens exactly once, not per point.

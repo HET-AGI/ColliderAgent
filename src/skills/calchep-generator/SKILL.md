@@ -57,3 +57,19 @@ After successful generation, the CalcHEP directory contains `.mdl` files used by
 - `extlib1.mdl` — external library references (if any)
 
 These files are plain text in CalcHEP's proprietary format — they are **not** Python files like UFO.
+
+## Z₂-Odd Convention (for micrOmegas consumption)
+
+**If this model will be passed to micrOmegas for dark-matter calculations**, every Z₂-odd particle (the DM candidate plus any coannihilation partners) **must appear with a leading `~` in the particle-name (`P`) column of `prtcls1.mdl`**. micrOmegas identifies the DM sector purely by this naming convention — it does not read a separate Z₂ quantum number.
+
+Examples from shipped micrOmegas models:
+
+| Model | Particle-name column entry | Role |
+|-------|---------------------------|------|
+| SingletDM | `~x1` | scalar singlet DM |
+| IDM | `~H3`, `~H+`, `~X` | inert doublet components (CP-odd, charged, second Higgs) |
+| RDM | `~chi0`, `~chi1` | fermion DM + fermion coannihilator |
+
+**After `generate-calchep` succeeds, verify** `prtcls1.mdl` lists `~`-prefixed names for every particle that should be Z₂-odd. If they come out without the tilde, the `.fr` source needs to be fixed at authoring time so FeynRules emits the tilde into the CalcHEP output — e.g. by declaring a Z₂ discrete symmetry under which the DM fields are odd, or by using the FR→CH interface's conventions for marking odd particles. Hand-editing `prtcls1.mdl` after the fact is not a fix: the edit is lost the next time `generate-calchep` runs.
+
+Without this convention, `sortOddParticles` in the downstream micrOmegas run will fail to locate a DM candidate and every dark-matter observable will silently be zero or `NaN`.
