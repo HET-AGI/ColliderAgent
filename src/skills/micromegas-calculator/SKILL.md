@@ -28,7 +28,9 @@ grep -E '\|~[A-Za-z]' path/to/MyModel_CH/prtcls1.mdl
 
 should list every intended Z₂-odd field. Reference examples from shipped micrOmegas projects: SingletDM → `~x1`; IDM → `~H3 ~H+ ~X`; RDM → `~chi0 ~chi1`.
 
-If no `~`-prefixed particles appear, the `.fr` source is wrong — fix it at authoring time, not by hand-editing `.mdl` files (the hand-edit gets lost the next time `generate-calchep` runs). Without the convention, **`sortOddParticles` will fail, `darkOmega` returns `NaN`, and every cross section reads zero — yet the blueprint still returns with exit code 0**. The blueprint detects this failure pattern via stdout markers (`Can not compile`, `Omega=NAN`, `Omega=nan`) and surfaces it as `success: false` in `MAGNUS_RESULT`; the caller should still check `success` before consuming numbers.
+If no `~`-prefixed particles appear, the `.fr` source is still wrong — fix it at authoring time, not by hand-editing `.mdl` files (the hand-edit gets lost the next time `generate-calchep` runs). Without the convention, **`sortOddParticles` may fail, `darkOmega` may return `NaN`, and every cross section may read zero — yet the blueprint can still see exit code 0**. The blueprint detects the known silent-failure markers (`Can not compile`, `Omega=NAN`, `Omega=nan`) and surfaces them as `success: false` in `MAGNUS_RESULT`; the caller should still check `success` before consuming numbers.
+
+Current repo limitation: `generate-calchep` invokes plain `WriteCHOutput[...]` and does **not** pass a dedicated odd-particle list. Therefore the only reliable contract is the generated `prtcls1.mdl` itself. A FeynRules-side pattern that is verified to work in the current pipeline is to encode the tilde directly in `ParticleName` (and `AntiParticleName` for non-self-conjugate fields). Still, treat the exported `prtcls1.mdl` as the final authority, because export behavior is model-dependent. Likewise, do **not** assume `QuantumNumbers -> {Z2 -> -1}` by itself is enough: custom quantum numbers need explicit model-level declarations, and the CalcHEP writer may still not translate them into micrOmegas odd-particle names. Regenerate and re-check `prtcls1.mdl` until the exported names are correct.
 
 ### main.c protocol
 
@@ -41,25 +43,51 @@ The user-supplied `main.c` is responsible for:
 A minimal skeleton:
 
 ```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
+#include "../include/micromegas.h"
+#include "../include/micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
-    if (argc > 1) slhaRead(argv[1], 0);
+    if (argc > 1 && slhaRead(argv[1], 0)) {
+        fprintf(stderr, "Failed to read SLHA file: %s\n", argv[1]);
+        return 2;
+    }
 
     if (sortOddParticles(NULL)) { return 1; }
+    if (!CDM1) {
+        fprintf(stderr, "CDM1 is null; check ~-prefixed names in prtcls1.mdl\n");
+        return 3;
+    }
 
     double Xf, Omega;
     Omega = darkOmega(&Xf, 1, 1e-4, NULL);
 
     FILE* out = fopen("results.json", "w");
-    fprintf(out, "{\"cdm\": \"%s\", \"omega_h2\": %.6e, \"xf\": %.3f}\n",
-            CDM1, Omega, Xf);
+    if (!out) { return 4; }
+    fprintf(out,
+            "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
+            CDM1, McdmN[1], Omega, Xf);
     fclose(out);
     return 0;
 }
 ```
+
+Use the explicit `../include/...` form shown above. `micromegas-compile` currently runs `make main=main.c` without adding extra `-I` flags, so bare `#include "micromegas.h"` is not portable for a user-authored `main.c`.
+
+Also treat parameter names as data, not guesses: `assignValW("Name", value)` must use the exact `Name` column from `vars1.mdl`, and the function returns nonzero on unknown names while leaving defaults in place. For example:
+
+```c
+if (assignValW("Mdm1", 500.0)) {
+    fprintf(stderr, "Unknown parameter name: Mdm1\n");
+    return 5;
+}
+if (assignValW("laSH", 0.1)) {
+    fprintf(stderr, "Unknown parameter name: laSH\n");
+    return 6;
+}
+```
+
+For anything beyond a protocol smoke test, prefer starting from the closest micrOmegas reference `main.c` for that model and then trimming it down. Some models need extra setup before heavy calls such as `darkOmega` or `nucleonAmplitudes`.
 
 Anything not written to `results.json` is still preserved in the uploaded output directory, and stdout is tailed into `MAGNUS_RESULT` for debugging.
 
@@ -162,17 +190,20 @@ Every run reuses the single compiled binary — the expensive symbolic-amplitude
 `main.c`:
 
 ```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
+#include "../include/micromegas.h"
+#include "../include/micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
-    if (argc > 1) slhaRead(argv[1], 0);
+    if (argc > 1 && slhaRead(argv[1], 0)) return 2;
     if (sortOddParticles(NULL)) return 1;
+    if (!CDM1) return 3;
     double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
     FILE* out = fopen("results.json", "w");
-    fprintf(out, "{\"cdm\":\"%s\",\"omega_h2\":%.6e,\"xf\":%.3f}\n",
-            CDM1, Omega, Xf);
+    if (!out) return 4;
+    fprintf(out,
+            "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
+            CDM1, McdmN[1], Omega, Xf);
     fclose(out);
     return 0;
 }
@@ -181,24 +212,26 @@ int main(int argc, char** argv) {
 ### Relic + direct detection (SI/SD on p/n)
 
 ```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
+#include "../include/micromegas.h"
+#include "../include/micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
-    if (argc > 1) slhaRead(argv[1], 0);
+    if (argc > 1 && slhaRead(argv[1], 0)) return 2;
     if (sortOddParticles(NULL)) return 1;
+    if (!CDM1) return 3;
 
     double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
 
     double pA0[2], pA5[2], nA0[2], nA5[2];
     nucleonAmplitudes(CDM1, pA0, pA5, nA0, nA5);
 
-    double mN = 0.939, Mdm = MassCDM(CDM1);
+    double mN = 0.939, Mdm = McdmN[1];
     double mu = Mdm * mN / (Mdm + mN);
     double pref = 4.0 / M_PI * mu * mu * 2.568e9;   // GeV^-2 → pb
 
     FILE* out = fopen("results.json", "w");
+    if (!out) return 4;
     fprintf(out,
         "{\"cdm\":\"%s\",\"mdm\":%.3f,\"omega_h2\":%.6e,"
         "\"sigma_SI_p\":%.6e,\"sigma_SI_n\":%.6e,"
@@ -214,10 +247,12 @@ int main(int argc, char** argv) {
 ## Key conventions
 
 - **Z₂-odd flag is a model-authoring concern**: fix it in the `.fr` file (so generated `prtcls1.mdl` carries `~`-prefixed names), not by hand-editing generated `.mdl` files
+- **The generated `prtcls1.mdl` is the source of truth**: the current `generate-calchep` blueprint does not inject a special odd-particle list into `WriteCHOutput[...]`, so always validate the exported names instead of trusting a guessed `.fr` convention
 - **results.json is a contract**: `main.c` writes, the blueprint reads; keep the JSON flat and typed (floats, strings, arrays of either) for easy downstream plotting
 - **stdout_tail is the fallback physics channel**: if `main.c` does not write `results.json`, the blueprint still surfaces the last 4000 chars of stdout under `stdout_tail` — human-readable, but brittle to parse programmatically. Prefer `results.json` whenever a downstream agent consumes the numbers
 - **Compile-once scan-many**: reuse `--project` across parameter points, never re-call `micromegas-compile` per point unless the model itself changes
 - **Always check `success` before consuming results**: the blueprint returns `success: false` when `./main` exits non-zero **or** when stdout matches the silent-failure markers `Can not compile` / `Omega=NAN` / `Omega=nan` (needed because micrOmegas sometimes prints NaN with exit 0)
+- **`assignValW` is not self-validating**: use exact names from `vars1.mdl`, check its return code, and read back suspicious parameters before trusting the scan point
 
 ## Timing expectations
 

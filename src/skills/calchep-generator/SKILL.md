@@ -70,6 +70,10 @@ Examples from shipped micrOmegas models:
 | IDM | `~H3`, `~H+`, `~X` | inert doublet components (CP-odd, charged, second Higgs) |
 | RDM | `~chi0`, `~chi1` | fermion DM + fermion coannihilator |
 
-**After `generate-calchep` succeeds, verify** `prtcls1.mdl` lists `~`-prefixed names for every particle that should be Z₂-odd. If they come out without the tilde, the `.fr` source needs to be fixed at authoring time so FeynRules emits the tilde into the CalcHEP output — e.g. by declaring a Z₂ discrete symmetry under which the DM fields are odd, or by using the FR→CH interface's conventions for marking odd particles. Hand-editing `prtcls1.mdl` after the fact is not a fix: the edit is lost the next time `generate-calchep` runs.
+**After `generate-calchep` succeeds, verify** `prtcls1.mdl` lists `~`-prefixed names for every particle that should be Z₂-odd. Hand-editing `prtcls1.mdl` after the fact is not a fix: the edit is lost the next time `generate-calchep` runs.
+
+Current repo limitation: this blueprint calls plain `WriteCHOutput[...]` and does **not** inject a separate odd-particle list. So the only reliable contract is the generated CalcHEP output itself. A FeynRules-side recipe that is verified to work in the current pipeline is to place the tilde directly in `ParticleName` (and `AntiParticleName` for non-self-conjugate fields). Still, treat the generated `prtcls1.mdl` as the final authority, because export behavior is model-dependent. Likewise, do **not** assume `QuantumNumbers -> {Z2 -> -1}` alone is sufficient: custom quantum numbers require explicit model-level declarations, and even then the CalcHEP exporter may not map them to micrOmegas odd-particle names.
+
+Practical rule: iterate on the `.fr`, rerun `generate-calchep`, and re-check `prtcls1.mdl` until the exported names are right. If you need a starting point, copy the naming strategy from a known-good dark-matter FeynRules model rather than inventing a new convention.
 
 Without this convention, `sortOddParticles` in the downstream micrOmegas run will fail to locate a DM candidate and every dark-matter observable will silently be zero or `NaN`.
