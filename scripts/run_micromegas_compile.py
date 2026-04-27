@@ -17,7 +17,7 @@ calchep_input_name = "calchep_input"
 main_source_name = "main.c"
 
 # Resolved at container build time; see src/images/micromegas/Dockerfile.
-_DEFAULT_MICROMEGAS_ROOT = "/opt/micromegas_6.2.3"
+_DEFAULT_MICROMEGAS_ROOT = "/opt/micromegas_6.3.0"
 
 
 def _find_mdl_files(calchep_dir: str) -> list:
@@ -81,11 +81,19 @@ def _compile(micromegas_root: str)-> Dict[str, Any]:
     # race on `ar r ../lib/micromegas.a <obj>`, truncating archive members.
     # The heavy parallel build already happened in the image layer; user-project
     # compile is incremental (~15 s) so serial is not a bottleneck.
+    #
+    # CPATH=<root>/include is exported so the user's main.c can use bare
+    # `#include "micromegas.h"` (matching local installs) instead of the
+    # micrOmegas-template-specific `#include "../include/micromegas.h"`.
+    # GCC consumes CPATH directly; we don't touch CFLAGS (which FlagsForMake
+    # unconditionally reassigns) or invent a new make variable.
+    make_env = {**os.environ, "CPATH": os.path.join(micromegas_root, "include")}
     make_result = subprocess.run(
         ["make", "main=main.c", "-j1"],
         cwd = project_path,
         capture_output = True,
         text = True,
+        env = make_env,
     )
 
     print("=== make stdout ===")

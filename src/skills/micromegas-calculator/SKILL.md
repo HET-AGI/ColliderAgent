@@ -40,11 +40,13 @@ The user-supplied `main.c` is responsible for:
 2. Calling whichever subset of micrOmegas API it needs (`sortOddParticles`, `darkOmega`, `nucleonAmplitudes`, `calcSpectrum`, …)
 3. **Writing structured results to `results.json`** in the working directory. The blueprint parses this file and surfaces it in `MAGNUS_RESULT`.
 
+**6.3.0 API note**: read the dark-matter name from `CDM[1]` (a `char**` array). The legacy globals `CDM1`/`CDM2` are still declared in `micromegas.h` for source compatibility but `sortOddParticles` no longer fills them — they read as `NULL` at runtime. Mass is `McdmN[1]` (still works as before). Same shift applies to `nucleonAmplitudes(CDM[1], …)`.
+
 A minimal skeleton:
 
 ```c
-#include "../include/micromegas.h"
-#include "../include/micromegas_aux.h"
+#include "micromegas.h"
+#include "micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
@@ -54,8 +56,8 @@ int main(int argc, char** argv) {
     }
 
     if (sortOddParticles(NULL)) { return 1; }
-    if (!CDM1) {
-        fprintf(stderr, "CDM1 is null; check ~-prefixed names in prtcls1.mdl\n");
+    if (!CDM[1]) {
+        fprintf(stderr, "CDM[1] is null; check ~-prefixed names in prtcls1.mdl\n");
         return 3;
     }
 
@@ -66,13 +68,13 @@ int main(int argc, char** argv) {
     if (!out) { return 4; }
     fprintf(out,
             "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
-            CDM1, McdmN[1], Omega, Xf);
+            CDM[1], McdmN[1], Omega, Xf);
     fclose(out);
     return 0;
 }
 ```
 
-Use the explicit `../include/...` form shown above. `micromegas-compile` currently runs `make main=main.c` without adding extra `-I` flags, so bare `#include "micromegas.h"` is not portable for a user-authored `main.c`.
+Use bare `#include "micromegas.h"` as shown above. `micromegas-compile` exports `CPATH=<MICROMEGAS_ROOT>/include` to the underlying `make` invocation, so the same `main.c` compiles unchanged on the cloud and against a user's local micrOmegas install — no `../include/...` prefix needed. Either form works (the legacy `#include "../include/micromegas.h"` is still resolvable), but bare include is the preferred convention because it stays portable across install layouts.
 
 Also treat parameter names as data, not guesses: `assignValW("Name", value)` must use the exact `Name` column from `vars1.mdl`, and the function returns nonzero on unknown names while leaving defaults in place. For example:
 
@@ -190,20 +192,20 @@ Every run reuses the single compiled binary — the expensive symbolic-amplitude
 `main.c`:
 
 ```c
-#include "../include/micromegas.h"
-#include "../include/micromegas_aux.h"
+#include "micromegas.h"
+#include "micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
     if (argc > 1 && slhaRead(argv[1], 0)) return 2;
     if (sortOddParticles(NULL)) return 1;
-    if (!CDM1) return 3;
+    if (!CDM[1]) return 3;
     double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
     FILE* out = fopen("results.json", "w");
     if (!out) return 4;
     fprintf(out,
             "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
-            CDM1, McdmN[1], Omega, Xf);
+            CDM[1], McdmN[1], Omega, Xf);
     fclose(out);
     return 0;
 }
@@ -212,19 +214,19 @@ int main(int argc, char** argv) {
 ### Relic + direct detection (SI/SD on p/n)
 
 ```c
-#include "../include/micromegas.h"
-#include "../include/micromegas_aux.h"
+#include "micromegas.h"
+#include "micromegas_aux.h"
 #include <stdio.h>
 
 int main(int argc, char** argv) {
     if (argc > 1 && slhaRead(argv[1], 0)) return 2;
     if (sortOddParticles(NULL)) return 1;
-    if (!CDM1) return 3;
+    if (!CDM[1]) return 3;
 
     double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
 
     double pA0[2], pA5[2], nA0[2], nA5[2];
-    nucleonAmplitudes(CDM1, pA0, pA5, nA0, nA5);
+    nucleonAmplitudes(CDM[1], pA0, pA5, nA0, nA5);
 
     double mN = 0.939, Mdm = McdmN[1];
     double mu = Mdm * mN / (Mdm + mN);
@@ -236,7 +238,7 @@ int main(int argc, char** argv) {
         "{\"cdm\":\"%s\",\"mdm\":%.3f,\"omega_h2\":%.6e,"
         "\"sigma_SI_p\":%.6e,\"sigma_SI_n\":%.6e,"
         "\"sigma_SD_p\":%.6e,\"sigma_SD_n\":%.6e}\n",
-        CDM1, Mdm, Omega,
+        CDM[1], Mdm, Omega,
         pref * pA0[0]*pA0[0], pref * nA0[0]*nA0[0],
         3.0 * pref * pA5[0]*pA5[0], 3.0 * pref * nA5[0]*nA5[0]);
     fclose(out);

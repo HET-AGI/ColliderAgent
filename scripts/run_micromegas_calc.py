@@ -23,7 +23,7 @@ RESULTS_FILENAME = "results.json"
 
 # `make main=main.c` bakes the compile-time absolute path of <project>/work/
 # into <project>/work/path.c as:
-#     char * WORK="/opt/micromegas_6.2.3/<project>/work";
+#     char * WORK="/opt/micromegas_6.3.0/<project>/work";
 # ./main reads this at runtime to locate CalcHEP's symbolic-compile workspace.
 # After a custody round-trip between containers the path has to be recreated
 # verbatim or dynamic subprocess compilation silently fails (Omega=NAN).

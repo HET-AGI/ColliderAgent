@@ -14,14 +14,14 @@ Each subdirectory is a standalone build context. Images are pushed to
 
 ### What's baked in
 
-All images include `magnus-sdk>=0.7.9` so that blueprint entry commands can
+All images include `magnus-sdk>=0.8.0` so that blueprint entry commands can
 invoke `magnus` CLI and `import magnus` immediately, without paying a
 10–30 s `pip install` cost per job. Bump the version in the Dockerfile and
 rebuild when the station SDK advances.
 
 | Image | Extra bundled tooling |
 |---|---|
-| `micromegas:latest` | `micromegas 6.2.3` with its CalcHEP symbolic engine **pre-compiled**, plus `gcc/g++/gfortran`, `libgsl`, `liblapack`, `libX11` (CalcHEP hard dep) |
+| `micromegas:latest` | `micromegas 6.3.0` with its CalcHEP symbolic engine **pre-compiled**, plus `gcc/g++/gfortran`, `libgsl`, `liblapack`, `libX11` (CalcHEP hard dep) |
 
 ## Build & Push
 
@@ -41,7 +41,7 @@ All bundled software is redistributable under its original license:
 
 | Package | License | Notes |
 |---|---|---|
-| micrOmegas 6.2.3 | CC-BY-4.0 | DOI-backed Zenodo distribution, arXiv:2312.14894 |
+| micrOmegas 6.3.0 | CC-BY-4.0 | DOI-backed Zenodo distribution, arXiv:2312.14894 |
 
 The Dockerfiles fetch upstream tarballs directly; we do not vendor any
 proprietary binaries. Images that depend on licensed software (e.g. Mathematica)

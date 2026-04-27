@@ -1,6 +1,6 @@
 # micrOmegas container for ColliderAgent / Magnus execution
 #
-# Provides micrOmegas 6.2.3 (CC-BY-4.0, arXiv:2312.14894) with its bundled
+# Provides micrOmegas 6.3.0 (CC-BY-4.0, arXiv:2312.14894) with its bundled
 # CalcHEP symbolic engine pre-built, plus the Fortran/C toolchain needed
 # to compile per-model user projects at blueprint runtime.
 #
@@ -13,7 +13,7 @@
 FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MICROMEGAS_VERSION=6.2.3
+ENV MICROMEGAS_VERSION=6.3.0
 ENV MICROMEGAS_ROOT=/opt/micromegas_${MICROMEGAS_VERSION}
 
 # --- Build + runtime toolchain ---
@@ -34,7 +34,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # re-download of the ~40 MB micrOmegas tarball.
 WORKDIR /opt
 RUN wget --progress=dot:mega \
-        "https://zenodo.org/api/records/14978911/files/micromegas_${MICROMEGAS_VERSION}.tgz/content" \
+        "https://zenodo.org/api/records/17597395/files/micromegas_${MICROMEGAS_VERSION}.tgz/content" \
         -O "micromegas_${MICROMEGAS_VERSION}.tgz" \
     && tar -xzf "micromegas_${MICROMEGAS_VERSION}.tgz" \
     && rm "micromegas_${MICROMEGAS_VERSION}.tgz"
@@ -42,13 +42,18 @@ RUN wget --progress=dot:mega \
 # --- Pre-build CalcHEP symbolic engine so per-job compile only handles user code ---
 # Without this, every micromegas-compile blueprint invocation pays a ~2-minute
 # bootstrap cost for building the CalcHEP engine itself.
+# Serial (-j1) on purpose: micrOmegas's CalcHEP_src/c_source/service2 Makefile
+# has parallel siblings race on `ar r ../../lib/serv.a <obj>`, truncating archive
+# members ("error reading getmem.o: file truncated"). Same root cause as the
+# user-project compile in run_micromegas_compile.py. 6.2.3 happened to build
+# clean with -j$(nproc); 6.3.0 trips the race reliably.
 WORKDIR ${MICROMEGAS_ROOT}
-RUN make -j"$(nproc)"
+RUN make -j1
 
 # --- Bake magnus-sdk so blueprint entry_commands can use `magnus` CLI and
 #     the Python API directly, without paying a 10-30s pip install per job.
 #     Placed last because magnus-sdk is bumped more often than micrOmegas.
-RUN pip3 install --no-cache-dir "magnus-sdk>=0.7.9"
+RUN pip3 install --no-cache-dir "magnus-sdk>=0.8.0"
 
 # Make the micrOmegas root discoverable to blueprint scripts
 ENV PATH=${MICROMEGAS_ROOT}:${PATH}
