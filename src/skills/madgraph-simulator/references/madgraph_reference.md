@@ -382,14 +382,20 @@ To enable Delphes for fast detector simulation:
 launch <output_dir>
 shower=Pythia8
 detector=Delphes
-# Then select Delphes card when prompted, or specify path:
-/path/to/delphes_card_CMS.tcl
+done
+# In the State 2 card editor, select a built-in card with `set delphes_card`
+# (or supply a full path on its own line):
+set delphes_card cms
+done
 ```
 
 ### Available Delphes Cards
-- `CMS` - CMS detector card (shortcut)
-- `ATLAS` - ATLAS detector card (shortcut)
-- Full path: `/path/to/MG5/Delphes/cards/delphes_card_CMS.tcl`
+- `set delphes_card cms` - CMS detector card (copies `delphes_card_CMS.dat` from MG5's Delphes templates)
+- `set delphes_card atlas` - ATLAS detector card
+- `set delphes_card default` - default Delphes card
+- Full path on its own line: `/path/to/MG5/Delphes/cards/delphes_card_CMS.tcl` (handled by the `os.path.isfile` branch of `AskforEditCard.default()`)
+
+**WARNING**: Bare card names (`CMS`, `ATLAS`) on their own line are silently swallowed by `AskforEditCard.default()` in MG5 v3.7.0 (`common_run_interface.py:7194`). The line is normalized to `cms` and dropped — no card is copied. Always use `set delphes_card <name>` or a full path.
 
 ### Delphes Output
 With Delphes enabled, you get:
@@ -408,14 +414,13 @@ launch pp_ttbar_dilep
 shower=Pythia8
 detector=Delphes
 done
-CMS
-done
 set nevents 1000
 set ebeam1 7000
 set ebeam2 7000
 set param_card MASS 6 172.76
 set param_card MASS 5 4.2
 set param_card SMINPUTS 1 127.9
+set delphes_card cms
 done
 ```
 
@@ -603,8 +608,6 @@ launch pp_tS_signal
 shower=Pythia8
 detector=Delphes
 done
-CMS
-done
 # Physics parameters
 set nevents 100
 set ebeam1 7000
@@ -622,6 +625,8 @@ set param_card YQLD 3 3 0.0
 set param_card MASS 50001 scan:[20,40,60,80,100,120,140,160]
 # Auto-calculate width
 set param_card DECAY 50001 Auto
+# Detector card (must use `set delphes_card`; bare `CMS` is silently swallowed)
+set delphes_card cms
 done
 ```
 

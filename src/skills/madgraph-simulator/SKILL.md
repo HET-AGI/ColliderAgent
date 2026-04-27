@@ -151,50 +151,45 @@ simulation/pp_ttbar/
 
 ## launch_commands State Machine
 
-The `--commands` string is processed by MG5 as a sequential state machine. Understanding this is critical for correct event generation.
+The `--commands` string is processed by MG5 as a sequential state machine with **exactly two states**, regardless of which optional features (Pythia8, Delphes, MadSpin, Reweight) are enabled. Understanding this is critical for correct event generation.
 
 **CRITICAL: `--commands` is ONLY the launch body.** The `madgraph-compile` blueprint already handles `import model`, `define`, `generate`, `add process`, and `output`. NEVER include these commands in `--commands` — they will cause errors. The `--commands` string starts from the point after `launch <dir>` has been issued.
 
-### State 1: Shower/Detector selection
+### State 1: Feature switches
 
 Lines before the **first** `done`:
 - `shower=Pythia8` — enable Pythia8 parton shower
 - `detector=Delphes` — enable Delphes detector simulation
-- `done` — accept selections (or skip if none specified) and advance
+- `madspin=ON` — enable MadSpin spin-correlated decays (see [references/optional_features.md](references/optional_features.md))
+- `reweight=ON` — enable matrix-element reweighting
+- `done` — accept selections (or skip if none specified) and advance to State 2
 
-### State 2: Card editing (only when shower or detector is enabled)
+### State 2: Card editing (run / param / pythia / delphes / madspin)
 
-Lines between the first `done` and the **second** `done`:
-- For Delphes: specify the detector card (`CMS`, `ATLAS`, or a full path)
-- `done` — accept defaults and move to State 3
-
-**When no shower or detector is selected**, State 1's `done` skips directly to State 3 (parameter setting). State 2 does not appear.
-
-### State 3: Parameter setting
-
-Lines after the preceding `done`:
+Lines between the first `done` and the **second** `done`. MG5 funnels every enabled card through this single editor stage:
 - `set nevents <N>` — number of events
 - `set ebeam1 <GeV>` / `set ebeam2 <GeV>` — beam energies
 - `set param_card <BLOCK> <CODE> <VALUE>` — model parameters
 - `set param_card MASS <PDG> <VALUE>` — particle masses
 - `set param_card DECAY <PDG> <VALUE>` — set decay width (in GeV)
 - `set param_card DECAY <PDG> Auto` — auto-calculate decay width (requires UFO embedded in process dir)
+- `set param_card MASS <PDG> scan:[v1,v2,v3,...]` — mass scan
 - `set use_syst False` — disable systematics (avoids LHAPDF-related failures when Python LHAPDF is unavailable)
 - `set run_card pdlabel lhapdf` — use LHAPDF PDF set (required when using `--pdf`)
 - `set run_card lhaid <ID>` — LHAPDF set ID (e.g. `82400` for LUXlep-NNPDF31_nlo_as_0118_luxqed)
-- `set param_card MASS <PDG> scan:[v1,v2,v3,...]` — mass scan
+- For Delphes: select a built-in card with `set delphes_card cms | atlas | default`, or supply a full path on its own line. Bare card names (`CMS`, `ATLAS`) on their own line are silently swallowed by the v3.7.0 `AskforEditCard` default handler — no card is copied and Delphes runs against whatever `delphes_card.dat` is currently in `Cards/`.
+- For MadSpin: `set spinmode none|onshell|full` and `decay <pdg> > <fs>` (MadSpin must be turned on in State 1 with `madspin=ON`; setting `spinmode`/`decay` here without that switch is a silent no-op)
 - `done` — start the run
 
 ### Summary: number of `done` commands
 
 | Scenario | States visited | `done` count |
 |----------|---------------|-------------|
-| No shower, no detector | 1 → 3 | **2** |
-| Pythia8 and/or Delphes | 1 → 2 → 3 | **3** |
+| Any combination (bare / +Pythia8 / +Delphes / +MadSpin / +Reweight) | 1 → 2 | **2** |
 
-### CRITICAL: no consecutive `done` before `set` commands
+### CRITICAL: exactly two `done` commands, no consecutive `done` before `set` commands
 
-The `done` that ends State 1 (or State 2) transitions into State 3. If you immediately write another `done`, MG5 starts the run **without setting any parameters**. Always place `set` commands before the final `done`:
+There are only two states, so there must be exactly two `done` lines: one to leave State 1, one to launch the run. If you write a second `done` immediately after the first (before any `set` lines), MG5 launches the run **without setting any parameters** and uses defaults.
 
 ```
 done
@@ -210,6 +205,12 @@ done
 done
 set nevents 1000    <-- TOO LATE, run already started
 ```
+
+**CRITICAL: silent-failure mode after the second `done`.** Once the second `done` is issued, MG5 launches the run and any further `set ...` lines are dispatched to the master prompt (where they are unknown commands and silently swallowed). The job will still report `success=true` because the Results Summary is parsed from the completed run — but the parameters from those late `set` lines were **never applied**. Symptoms: cross-section / nevents / mass values that look like defaults instead of what you requested. Always keep every `set`, every detector card line, and every `decay ...` line **above** the final `done`.
+
+### Reproducibility note
+
+Prompts run against the pre-2026-04 version of this skill silently produced `nevents=10000` (MG5 default) regardless of `set nevents N` because of the old 3-done table. Re-running with this guide produces the requested value. For most analyses (cross-sections, kinematic shapes, exclusion limits) this is purely a statistics improvement — central values do not move, error bars shrink as 1/√N. The only place it changes results is if a downstream script normalizes by the **requested** nevents instead of the file's actual event count.
 
 ## Examples
 
@@ -243,13 +244,12 @@ magnus run madgraph-launch -- \
   --commands "shower=Pythia8
 detector=Delphes
 done
-CMS
-done
 set nevents 1000
 set ebeam1 7000
 set ebeam2 7000
 set param_card MASS 6 172.76
 set param_card SMINPUTS 1 127.9
+set delphes_card cms
 done" \
   --output simulation/pp_ttbar
 ```
@@ -277,8 +277,6 @@ magnus run madgraph-launch -- \
   --commands "shower=Pythia8
 detector=Delphes
 done
-CMS
-done
 set nevents 100
 set ebeam1 7000
 set ebeam2 7000
@@ -287,6 +285,7 @@ set param_card MASS 6 172.76
 set param_card YQLU 2 3 0.001
 set param_card MASS 50001 scan:[20,40,60,80,100,120,140,160]
 set param_card DECAY 50001 Auto
+set delphes_card cms
 done" \
   --output simulation/pp_tS
 ```
@@ -315,6 +314,46 @@ done" \
 ```
 
 The `--pdf` flag downloads the specified LHAPDF PDF set into the cloud container before MG5 runs. You must also set `pdlabel` and `lhaid` in `--commands` to tell MG5 to use it.
+
+### MadSpin decays + Pythia8 + Delphes (top-pair, dilepton final state)
+
+Use MadSpin when you want spin-correlated decays applied **after** the hard event is generated (instead of writing the decays into the `--process` string at compile time). MadSpin needs to be switched on in State 1 (`madspin=ON`) **and** configured in State 2 (`set spinmode ...` plus one `decay <pdg> > <fs>` line per unstable particle to decay).
+
+```bash
+# Compile the undecayed process
+magnus run madgraph-compile -- \
+  --model sm \
+  --process "p p > t t~" \
+  --output simulation/pp_ttbar_madspin \
+  --definitions "l+ = e+ mu+
+l- = e- mu-
+vl = ve vm
+vl~ = ve~ vm~"
+
+# Launch with MadSpin + Pythia8 + Delphes
+magnus run madgraph-launch -- \
+  --process simulation/pp_ttbar_madspin \
+  --commands "shower=Pythia8
+detector=Delphes
+madspin=ON
+done
+set nevents 1000
+set ebeam1 6500
+set ebeam2 6500
+set param_card MASS 6 172.76
+set delphes_card cms
+set spinmode onshell
+decay t > b l+ vl
+decay t~ > b~ l- vl~
+done" \
+  --output simulation/pp_ttbar_madspin
+```
+
+Output events (in addition to the usual files):
+- `Events/run_01/unweighted_events.lhe.gz` — original undecayed events
+- `Events/run_01_decayed_1/unweighted_events.lhe.gz` — MadSpin-decayed events fed to Pythia8/Delphes
+- `Events/run_01_decayed_1/tag_1_pythia8_events.hepmc.gz`
+- `Events/run_01_decayed_1/tag_1_delphes_events.root`
 
 ## Key MG5 Syntax
 
