@@ -39,16 +39,31 @@ RUN wget --progress=dot:mega \
     && tar -xzf "micromegas_${MICROMEGAS_VERSION}.tgz" \
     && rm "micromegas_${MICROMEGAS_VERSION}.tgz"
 
-# --- Pre-build CalcHEP symbolic engine so per-job compile only handles user code ---
+# --- Pre-build CalcHEP symbolic engine + physics library so per-job compile
+#     only handles user code ---
 # Without this, every micromegas-compile blueprint invocation pays a ~2-minute
 # bootstrap cost for building the CalcHEP engine itself.
+#
 # Serial (-j1) on purpose: micrOmegas's CalcHEP_src/c_source/service2 Makefile
 # has parallel siblings race on `ar r ../../lib/serv.a <obj>`, truncating archive
 # members ("error reading getmem.o: file truncated"). Same root cause as the
 # user-project compile in run_micromegas_compile.py. 6.2.3 happened to build
 # clean with -j$(nproc); 6.3.0 trips the race reliably.
+#
+# ARFLAGS=Urv preserves real mtimes on archive members. Default `ar rv` on
+# Ubuntu 22.04 binutils silently runs in deterministic mode (D flag) and zeroes
+# every member's timestamp to 1970-01-01. micrOmegas's sources/Makefile uses
+# GNU make's archive-member rule `lib/micromegas.a($(OBJ))` which compares
+# member mtime to source-file mtime — and the bundled .c files carry their
+# tarball mtime (Nov 2024). Without `U`, every member shows mtime=epoch < .c
+# mtime, so make rebuilds the entire 50+ file physics library on every user
+# project's first compile, and floods the user log with -Wformat-overflow noise
+# from upstream printf format-string bugs in the micrOmegas sources. With `U`
+# all members get image-build-time mtimes, the per-job `make -C ../sources`
+# correctly skips with "Nothing to be done", and user logs only show their own
+# main.c compile.
 WORKDIR ${MICROMEGAS_ROOT}
-RUN make -j1
+RUN make -j1 ARFLAGS=Urv
 
 # --- Bake magnus-sdk so blueprint entry_commands can use `magnus` CLI and
 #     the Python API directly, without paying a 10-30s pip install per job.
