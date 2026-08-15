@@ -112,6 +112,15 @@ Add a `parent` field to link incremental runs to their origin:
 
 Execute the following steps **sequentially**, using the specified subagent for each. Pass intermediate results via the `progress/` directory.
 
+### Codex delegation
+
+On the Codex adapter branch, use the project-scoped custom agents with the exact
+names shown below. Spawn only the next required stage, wait for it to finish,
+inspect its concise return and progress artifact, and then construct the next
+stage's prompt. Do not run dependent or write-heavy stages concurrently. If a
+stage needs clarification or a retry, steer that same agent before starting its
+consumer.
+
 ### Step 1: Model Building → `model-generator` subagent
 - Input: the Lagrangian and particle content from the user's task description
 - The subagent generates .fr model → validates → produces UFO model
@@ -142,7 +151,7 @@ Execute the following steps **sequentially**, using the specified subagent for e
 
 1. **Read the task file first** — understand the full scope before starting any step.
 2. **Run steps sequentially** — each step depends on the previous step's output.
-3. **Pass precise information** — when invoking each subagent, include all relevant details from the task description AND the previous step's return summary. Tell the subagent the progress file path to write to (e.g., `progress/<run_label>/step2_madgraph.md`). The subagent has no access to the task file or conversation history.
+3. **Pass precise information** — when invoking each subagent, include all relevant details from the task description AND the previous step's return summary. Tell the subagent the progress file path to write to (e.g., `progress/<run_label>/step2_madgraph.md`). Do not assume that inherited conversation context contains the exact inputs the stage needs.
 4. **If a subagent's return summary is insufficient**, read the corresponding `progress/<run_label>/stepN_*.md` file for complete details before proceeding.
 5. **Skip steps that are not needed** — not every task requires all 4 steps. For example, if the user already has a UFO model, skip step 1.
 6. **Generate execution summary** — after all steps complete, invoke the `execution-summarizer` skill to produce a detailed `execution_summary.md` with prompt-to-code mapping tables and key results.

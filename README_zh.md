@@ -8,6 +8,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-compatible-7c3aed)](https://claude.ai/code)
+[![Codex](https://img.shields.io/badge/Codex-compatible-111827)](https://developers.openai.com/codex/)
 ![Status](https://img.shields.io/badge/状态-beta-orange)
 
 > 从 LaTeX 拉格朗日量到可发表的图像——全流程自动化。
@@ -23,7 +24,10 @@
 
 ## 概述
 
-Collider-Agent 使 AI 编程智能体（Claude Code、Cursor、Windsurf 等）能够自主复现物理论文中的对撞机唯象学结果。它结合了专用子智能体与可复用技能模块，通过 [Magnus](https://github.com/Rise-AGI/magnus) 云平台与标准高能物理工具对接——**无需在本地安装任何 HEP 软件**。
+Collider-Agent 使 AI 编程智能体（Claude Code、Codex、Cursor、Windsurf 等）
+能够自主复现物理论文中的对撞机唯象学结果。它结合了专用子智能体与可复用
+技能模块，通过 [Magnus](https://github.com/Rise-AGI/magnus) 云平台与标准高能
+物理工具对接——**无需在本地安装任何 HEP 软件**。
 
 **完整流程，全程自动化：**
 
@@ -52,9 +56,12 @@ Collider-Agent 使 AI 编程智能体（Claude Code、Cursor、Windsurf 等）�
 
 ### 前提条件
 
-- [Claude Code](https://claude.ai/code) — 推荐使用；完整支持子智能体与技能模块
+- [Codex](https://developers.openai.com/codex/)（`codex-com` 分支）——
+  通过仓库级配置完整支持技能、项目指令与自定义子智能体
+- [Claude Code](https://claude.ai/code) ——完整支持子智能体与技能模块
 
-  > 其他支持技能的智能体也可使用（仅限技能，不含子智能体）：Cursor、Windsurf、Gemini CLI、Cline、Goose、Roo Code 等，[详见下表](#支持的智能体及其全局技能路径)
+  > 其他支持技能的智能体也可使用 skills-only 模式：Cursor、Windsurf、
+  > Gemini CLI、Cline、Goose、Roo Code 等，[详见下表](#支持的智能体及其全局技能路径)
 
 - Python 3.10+（需要 `magnus-sdk>=0.7.0`）
 
@@ -65,6 +72,8 @@ Collider-Agent 使 AI 编程智能体（Claude Code、Cursor、Windsurf 等）�
 ```bash
 git clone https://github.com/HET-AGI/ColliderAgent.git
 cd ColliderAgent
+# 使用 Codex 原生适配层时：
+git switch codex-com
 ```
 
 **2. 连接 Magnus 平台：**
@@ -85,6 +94,14 @@ magnus login
 ```
 
 按提示输入服务器地址和 API 密钥，后续所有命令将自动路由至远端后端。
+
+进行 Claude/Codex harness 对比时，请选择远端 `zhustation`，并在启动任一
+harness 前验证：
+
+```bash
+magnus config
+# 预期：Current: zhustation，且地址为 https://
+```
 
 </details>
 
@@ -116,7 +133,11 @@ magnus run hello-world
 
 > 完整 Magnus 文档及部署选项，请参阅 [github.com/Rise-AGI/magnus](https://github.com/Rise-AGI/magnus)。
 
-**3. 将智能体和技能复制到您的智能体配置目录。**
+**3. 在所用 harness 中加载智能体和技能。**
+
+对于**本分支上的 Codex**（完整支持：自定义子智能体 + 技能），无需复制。
+从仓库根目录启动 Codex 即可；`AGENTS.md`、`.codex/agents/` 与
+`.agents/skills/` 均已作为仓库级配置纳入版本控制。
 
 对于 **Claude Code**（完整支持：子智能体 + 技能）：
 
@@ -147,10 +168,12 @@ cp -r src/skills <skills-path>
 | Goose | `~/.config/goose/skills/` |
 | Roo Code | `~/.roo/skills/` |
 | OpenCode | `~/.config/opencode/skills/` |
-| Codex | `~/.codex/skills/` |
+| Codex | `~/.agents/skills/` |
 
 > [!TIP]
-> 也支持项目级安装。将 `src/skills/` 复制到工作目录根目录下的 `.claude/skills/`（或对应智能体的目录），可将技能限定在该项目范围内使用。
+> Codex 的仓库级技能目录为 `.agents/skills/`；本分支通过受版本控制的符号链接
+> 暴露权威的 `src/skills/`。Claude Code 的等价仓库级目录为
+> `.claude/skills/`。
 
 **4. 重启您的智能体**以加载新的智能体和技能。
 
@@ -234,8 +257,13 @@ claude -p "Execute the analysis following prompt.md"
 
 ```
 ColliderAgent/
+├── AGENTS.md                          # Codex 项目指令
+├── .agents/skills/                    # Codex 技能发现链接
+├── .codex/
+│   ├── config.toml                    # Codex 子智能体设置
+│   └── agents/                        # Codex 自定义智能体适配层
 ├── src/
-│   ├── agents/                        # 子智能体定义（Claude Code）
+│   ├── agents/                        # 权威角色定义
 │   │   ├── model-generator.md
 │   │   ├── collider-simulator.md
 │   │   ├── event-analyzer.md
@@ -261,14 +289,16 @@ ColliderAgent/
 ## 子智能体
 
 > [!NOTE]
-> 子智能体目前仅 Claude Code 支持。其他智能体的用户可直接通过各自的技能调用机制使用技能模块。
+> Claude Code 读取 `src/agents/` 中的角色文件；Codex 读取
+> `.codex/agents/` 中的轻量 TOML 适配层，并复用相同角色正文，将四个角色
+> 暴露为仓库级自定义子智能体。其他 harness 仍可直接使用技能模块。
 
 | 智能体 | 功能描述 |
 | --- | --- |
 | `model-generator` | LaTeX → FeynRules → UFO 完整流程 |
 | `collider-simulator` | MadGraph5 事例产生（含 Pythia8 / Delphes） |
 | `event-analyzer` | MadAnalysis5 截断流与直方图分析 |
-| `pheno-analyzer` | 编排完整唯象学研究流程 |
+| `pheno-analyzer` | 统计后处理与论文级图像生成 |
 
 ## 技能模块
 

@@ -1,0 +1,14 @@
+name = "model-generator"
+description = "Build and validate FeynRules models, then generate UFO or CalcHEP artifacts for downstream simulation."
+developer_instructions = """
+Stay within the model-building stage. Before substantive work, read
+src/agents/model-generator.md completely. Ignore its Claude-specific YAML
+fields (`tools`, `model`, and `skills`) and follow the Markdown role body.
+
+Use the repository skills exposed under .agents/skills. Read the complete
+feynrules-model-generator and magnus SKILL.md files first, then read
+feynrules-model-validator, ufo-generator, and calchep-generator only when their
+corresponding stages or output formats are required. Load linked references as
+needed. Write the requested progress file and return a concise artifact handoff
+to the parent agent. Do not take over event generation or downstream analysis.
+"""

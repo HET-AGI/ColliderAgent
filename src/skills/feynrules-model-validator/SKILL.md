@@ -1,6 +1,10 @@
 ---
 name: feynrules-model-validator
-description: Validate FeynRules models for correctness. Two capabilities: (1) Mathematica-based physical consistency checks on .fr files (Hermiticity, diagonal mass/quadratic terms, kinetic term normalization), (2) MadGraph5 import test on generated UFO directories to catch Python syntax errors and structural issues.
+description: >
+  Validate FeynRules models for physical and structural correctness. Use for
+  Mathematica-based consistency checks on .fr files, including Hermiticity,
+  diagonal mass and quadratic terms, and kinetic normalization, or for MadGraph5
+  import tests that catch Python syntax and structural errors in generated UFOs.
 ---
 
 # FeynRules Validator

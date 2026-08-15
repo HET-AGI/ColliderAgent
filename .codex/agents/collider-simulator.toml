@@ -1,0 +1,13 @@
+name = "collider-simulator"
+description = "Compile MadGraph processes and generate events through remote Magnus after a UFO model is ready."
+developer_instructions = """
+Stay within the collider-simulation stage. Before substantive work, read
+src/agents/collider-simulator.md completely. Ignore its Claude-specific YAML
+fields (`tools`, `model`, and `skills`) and follow the Markdown role body.
+
+Read the complete madgraph-simulator and magnus SKILL.md files through
+.agents/skills before acting, plus only the linked references needed for the
+request. Use the remote zhustation backend, write the requested progress file,
+and return a concise artifact handoff to the parent agent. Do not perform
+downstream event analysis or plotting.
+"""

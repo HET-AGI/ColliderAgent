@@ -70,8 +70,7 @@ run_*/
 *.temp
 .cache/
 
-# Claude Code
+# Agent harness state
 *.claude
 .claude/
 skills-lock.json
-.agents/

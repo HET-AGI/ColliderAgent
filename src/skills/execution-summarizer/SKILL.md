@@ -148,7 +148,7 @@ After writing `execution_summary.md`, inform the user that the summary has been 
 ## Rules
 
 1. **Be precise** — use actual file names, actual parameter values, and actual code snippets from the generated files. Do not paraphrase or approximate.
-2. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, event counts, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always `Read` the actual **code files** (`.fr`, `.mg5`, `.ma5`, `.py`) to extract exact code snippets, line numbers, and parameter values for the mapping tables. In standalone mode, read everything.
+2. **Read scripts, not progress files (orchestrator mode)** — in orchestrator mode, obtain run metadata and physics results (cross sections, event counts, run names) from the conversation context — do NOT re-read `progress/<run_label>/step*.md` files, since the orchestrator already has this information from subagent returns. However, always read the actual **code files** (`.fr`, `.mg5`, `.ma5`, `.py`) to extract exact code snippets, line numbers, and parameter values for the mapping tables. In standalone mode, read everything.
 3. **Keep it concise** — the summary should be informative but not excessively long. Focus on the mapping tables and key results.
 4. **Handle partial pipelines** — if only some steps were executed (e.g., only model building), only include the relevant sections and tables.
 5. **Use LaTeX notation** in the "User Prompt" column of the mapping tables for readability.

@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776ab?logo=python&logoColor=white)](https://www.python.org)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-compatible-7c3aed)](https://claude.ai/code)
+[![Codex](https://img.shields.io/badge/Codex-compatible-111827)](https://developers.openai.com/codex/)
 ![Status](https://img.shields.io/badge/status-beta-orange)
 
 > From a LaTeX Lagrangian to a publication-ready figure — fully automated.
@@ -25,7 +26,12 @@
 
 ## Overview
 
-Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more) to autonomously reproduce collider phenomenology results from physics papers. It combines specialized sub-agents and reusable skill modules that interface with standard HEP tools via the [Magnus](https://github.com/Rise-AGI/magnus) cloud platform — no local HEP software installation required.
+Collider-Agent enables AI coding agents (Claude Code, Codex, Cursor, Windsurf,
+and more) to autonomously reproduce collider phenomenology results from physics
+papers. It combines specialized sub-agents and reusable skill modules that
+interface with standard HEP tools via the
+[Magnus](https://github.com/Rise-AGI/magnus) cloud platform — no local HEP
+software installation required.
 
 **Full pipeline, fully automated:**
 
@@ -54,9 +60,13 @@ Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more
 
 ### Prerequisites
 
-- [Claude Code](https://claude.ai/code) — recommended; provides full support for both sub-agents and skills
-  
-  > Other agents with skills support also work (skills only, no sub-agents): Cursor, Windsurf, Gemini CLI, Cline, Goose, Roo Code, and [more](#supported-agents-and-their-global-skills-paths)
+- [Codex](https://developers.openai.com/codex/) on the `codex-com` branch —
+  repo-scoped support for skills, project instructions, and custom sub-agents
+- [Claude Code](https://claude.ai/code) — full support for sub-agents and skills
+
+  > Other agents with skills support also work in skills-only mode: Cursor,
+  > Windsurf, Gemini CLI, Cline, Goose, Roo Code, and
+  > [more](#supported-agents-and-their-global-skills-paths)
 
 - Python 3.10+ (requires `magnus-sdk>=0.7.0`)
 
@@ -67,6 +77,8 @@ Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more
 ```bash
 git clone https://github.com/HET-AGI/ColliderAgent.git
 cd ColliderAgent
+# For the Codex-native adapter:
+git switch codex-com
 ```
 
 **2. Connect to the Magnus platform:**
@@ -87,6 +99,14 @@ magnus login
 ```
 
 Enter your server URL and API key when prompted. All subsequent commands are routed to the remote backend automatically.
+
+For the Claude/Codex harness comparison, select the remote `zhustation` site
+and verify it before starting either harness:
+
+```bash
+magnus config
+# Expected: Current: zhustation and an https:// address
+```
 
 </details>
 
@@ -118,7 +138,11 @@ A successful run prints `Hello from Magnus!` after pulling the required containe
 
 > For full Magnus documentation and deployment options, see [github.com/Rise-AGI/magnus](https://github.com/Rise-AGI/magnus).
 
-**3. Copy agents and skills to your agent's configuration directory.**
+**3. Load the agents and skills in your harness.**
+
+For **Codex on this branch** (full support: custom sub-agents + skills), no copy
+step is required. Start Codex from the repository root; `AGENTS.md`,
+`.codex/agents/`, and `.agents/skills/` are already project-scoped and tracked.
 
 For **Claude Code** (full support: sub-agents + skills):
 
@@ -149,10 +173,12 @@ cp -r src/skills <skills-path>
 | Goose          | `~/.config/goose/skills/`     |
 | Roo Code       | `~/.roo/skills/`              |
 | OpenCode       | `~/.config/opencode/skills/`  |
-| Codex          | `~/.codex/skills/`            |
+| Codex          | `~/.agents/skills/`           |
 
 > [!TIP]
-> Project-scoped installation is also supported. Copy `src/skills/` into `.claude/skills/` (or the equivalent directory for your agent) at the root of your working directory to scope the skills to that project only.
+> Codex project-scoped skills live in `.agents/skills/`; this branch exposes
+> the canonical `src/skills/` directories there through versioned symlinks.
+> Claude Code can use `.claude/skills/` for the equivalent project scope.
 
 **4. Restart your agent** to load the new agents and skills.
 
@@ -246,8 +272,13 @@ The `paper-reproduction/` directory contains example prompts to reproduce figure
 
 ```
 ColliderAgent/
+├── AGENTS.md                          # Codex project instructions
+├── .agents/skills/                    # Codex skill discovery links
+├── .codex/
+│   ├── config.toml                    # Codex sub-agent settings
+│   └── agents/                        # Codex custom-agent adapters
 ├── src/
-│   ├── agents/                        # Sub-agent definitions (Claude Code)
+│   ├── agents/                        # Canonical role definitions
 │   │   ├── model-generator.md
 │   │   ├── collider-simulator.md
 │   │   ├── event-analyzer.md
@@ -273,14 +304,17 @@ ColliderAgent/
 ## Sub-agents
 
 > [!NOTE]
-> Sub-agents are currently supported by Claude Code only. Users of other agents can use the skills directly via the agent's built-in skill invocation mechanism.
+> Claude Code loads the role files in `src/agents/`. Codex loads the thin TOML
+> adapters in `.codex/agents/`, which reuse those same role bodies and expose
+> all four roles as project-scoped custom agents. Other harnesses can still use
+> the skills directly.
 
 | Agent                | Description                                       |
 | -------------------- | ------------------------------------------------- |
 | `model-generator`    | LaTeX → FeynRules → UFO pipeline                  |
 | `collider-simulator` | MadGraph5 event generation with Pythia8 / Delphes |
 | `event-analyzer`     | MadAnalysis5 cut-flow and histogram analysis      |
-| `pheno-analyzer`     | Orchestrates the full phenomenology study         |
+| `pheno-analyzer`     | Statistical post-processing and figure generation |
 
 ## Skills
 
