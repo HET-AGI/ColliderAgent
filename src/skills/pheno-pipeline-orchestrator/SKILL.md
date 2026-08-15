@@ -1,25 +1,12 @@
 ---
 name: pheno-pipeline-orchestrator
 description: >
-  Orchestrate the full particle physics analysis pipeline using subagents.
-  Triggers when the user asks to "execute an analysis", "run the full pipeline",
-  "execute <filename>.md", or references an analysis prompt/plan .md file to
-  execute end-to-end.
-  Also triggers when the user's request spans multiple pipeline stages simultaneously,
-  such as event generation (simulate, generate events, pp ->, LHC, TeV) combined with
-  event analysis (plot, distribution, invariant mass, cut-flow) and/or post-processing
-  (reproduction guide, summarize, exclusion limit, fit), or when the user describes
-  a complete physics study (e.g. "complete study of...", "full analysis of...",
-  "investigate ... and produce ...").
-  ALSO triggers for incremental or follow-up requests that modify a previous run and
-  propagate changes through downstream stages, such as "add more events and update
-  the plot", "re-run with different parameters", "increase statistics and re-analyze",
-  "change cuts and update figures", or any request that combines a modification to an
-  upstream stage with updating downstream results. These are multi-stage tasks and
-  MUST go through the orchestrator to maintain run labeling, progress tracking, and
-  script generation consistency.
-  Do NOT trigger for single-stage requests that only involve one of: model building,
-  event generation, event analysis, or plotting.
+  Orchestrate full particle-physics analysis pipelines with specialized subagents,
+  run labels, progress tracking, and artifact handoffs. Use when the user asks to
+  execute an analysis, run a full pipeline or analysis-plan Markdown file, combine
+  two or more stages (model building, event generation, event analysis, plotting,
+  statistical analysis, or reproduction packaging), or propagate an upstream change
+  through downstream results. Do not use for a request confined to one pipeline stage.
 ---
 
 # Analysis Pipeline Orchestrator
@@ -170,22 +157,18 @@ The orchestrator manages **paths and scheduling**, not physics results:
 - **Step 3/4 subagents** are responsible for reading the simulation output files themselves and extracting whatever physics results the task requires.
 
 
-## Local Execution
+## Remote Magnus Execution
 
-Local execution is triggered in two cases:
+Use the persisted remote `zhustation` site for every compute stage so harness
+comparisons share the same execution backend.
 
-### Case 1: User requests local execution
-If the user explicitly asks to run locally (e.g., "run locally", "use local MadGraph", "don't use Magnus"), skip Magnus entirely and use local tools directly. Do not attempt Magnus calls.
-
-### Case 2: Magnus is unavailable
-If the Magnus server is unreachable:
-1. **Retry up to 2 times** with a 20-second interval (`sleep 20`) before falling back to local execution. Each failed Magnus call returns a large HTML error page, so limit retries to avoid wasting context.
-2. **Check for local tools** (wolframscript, MadGraph5) and fall back to local execution.
-
-### Local execution guidelines
-When running locally:
-- **Check for local tools** — verify `wolframscript` and MadGraph5 (`mg5_aMC` or `MG5_aMC_v*`) are available before proceeding.
-- **When running MadGraph locally via `Bash(run_in_background=true)`**:
-   - Wait for the `task-notification` to confirm completion. Do NOT use `TaskOutput(block=true)` — it pulls the entire verbose MadGraph log into context.
-   - After the notification, use `Grep` on the task output file to extract only the specific lines needed (e.g., run names, output paths).
-   - Let downstream subagents read the MadGraph output directories directly for physics results.
+1. Run `magnus config` before the first compute stage. Require
+   `Current: zhustation` and an HTTPS address.
+2. Never run `magnus local start`, select a localhost site, or fall back to
+   locally installed HEP tools.
+3. If the remote station is unreachable, retry at most twice with a 20-second
+   interval. Avoid copying a large HTML error response into the conversation.
+4. If both retries fail, stop the affected stage and report the remote-service
+   failure. Preserve the run manifest and completed upstream artifacts so the
+   run can resume without resubmitting successful jobs.
+5. Never print, copy, or commit the Magnus token.

@@ -21,6 +21,12 @@ pip install "magnus-sdk>=0.6.0"
 magnus config                  # check current connection — skip setup if already configured
 ```
 
+For ColliderAgent harness comparisons, use the persisted remote `zhustation`
+site. `magnus config` must report `Current: zhustation` and an HTTPS address
+before any blueprint is submitted. Do not use `magnus local start`, a localhost
+site, or the built-in local default. Do not print, copy, or commit the station
+token.
+
 If not configured, run `magnus login` (saves to `~/.magnus/config.json`, all shells pick up immediately):
 
 ```bash
@@ -40,7 +46,10 @@ magnus login <site> -a <address> -t <token>        # non-interactive (for script
 
 ## Core Workflow
 
-Run `magnus config` first to verify your connection. If not configured, use `magnus login` once — credentials persist across all shells and subsequent commands. Do not inline `MAGNUS_ADDRESS`/`MAGNUS_TOKEN` environment variables before each command.
+Run `magnus config` first to verify the remote `zhustation` connection. If it is
+not selected, use `magnus login` once — credentials persist across all shells
+and subsequent commands. Do not inline `MAGNUS_ADDRESS`/`MAGNUS_TOKEN`
+environment variables before each command.
 
 ```
 magnus list                           # discover available blueprints
