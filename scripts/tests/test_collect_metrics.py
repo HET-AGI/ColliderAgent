@@ -97,7 +97,7 @@ def test_cli_writes_metrics_and_verdict_template(tmp_path):
     metrics = json.loads((sandbox / "metrics.json").read_text())
     assert metrics["magnus_jobs"] == 3 and metrics["table_s3_row"] == r.stdout.strip()
     verdict = (sandbox / "verdict.yaml").read_text()
-    assert verdict == 'success: null\nfailure_mode: null\nnotes: ""\njudged_by: ""\n'
+    assert verdict == 'success: null\nfailure_mode: null\nnotes: ""\nfootnote: ""\njudged_by: ""\n'
     # an existing verdict is never overwritten
     (sandbox / "verdict.yaml").write_text("success: true\n")
     subprocess.run([sys.executable, str(COLLECT), str(sandbox)], capture_output=True, text=True, check=True)

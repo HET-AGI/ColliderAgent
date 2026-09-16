@@ -81,6 +81,8 @@ def load_runs(root: Path) -> list[dict]:
         success = success if isinstance(success, bool) else None
         failure_mode = verdict.get("failure_mode")
         failure_mode = failure_mode if isinstance(failure_mode, str) and failure_mode else None
+        footnote = verdict.get("footnote")
+        footnote = footnote if isinstance(footnote, str) and footnote.strip() else None
         m = metrics or {}
         arxiv = env.get("ARXIV") or m.get("arxiv")
         figure = env.get("FIGURE") or m.get("figure")
@@ -93,6 +95,7 @@ def load_runs(root: Path) -> list[dict]:
             "model_label": model + (" (warm)" if memory == "warm" else ""),
             "success": success,
             "failure_mode": failure_mode,
+            "footnote": footnote,
             "metrics": metrics,
         })
     return runs
@@ -171,6 +174,11 @@ def table_s5(runs: list[dict]) -> str:
         lines.append(f"| {b} | {_cell(rs)} | {text} |")
     if not benchmarks:
         lines.append("| (no runs) | | |")
+    notes = [(r["benchmark"], r["model_label"], r["footnote"]) for r in runs if r.get("footnote")]
+    if notes:
+        lines += ["", "Footnotes (quantitative deviations of runs counted as successful):", ""]
+        for i, (b, ml, fn) in enumerate(notes, 1):
+            lines.append(f"{i}. {b}, {ml}: {fn}")
     return "\n".join(lines)
 
 

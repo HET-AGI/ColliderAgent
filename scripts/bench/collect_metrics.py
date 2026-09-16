@@ -22,7 +22,7 @@ MAGNUS_RE = re.compile(r"\bmagnus\s+(?:run|launch|blueprint\s+run)\b")
 SUBAGENT_TOOLS = {"Agent", "Task"}
 WRITE_TOOLS = {"Write", "Edit", "NotebookEdit"}
 TOKEN_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")
-VERDICT_TEMPLATE = 'success: null\nfailure_mode: null\nnotes: ""\njudged_by: ""\n'
+VERDICT_TEMPLATE = 'success: null\nfailure_mode: null\nnotes: ""\nfootnote: ""\njudged_by: ""\n'
 
 
 def read_json(path: Path):

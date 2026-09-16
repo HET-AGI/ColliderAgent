@@ -44,6 +44,7 @@ lines = [
     f"success: {os.environ['SUCCESS']}",
     f"failure_mode: {fm if fm in ('model', 'generation', 'analysis', 'infrastructure') else 'null'}",
     f"notes: {q(os.environ['NOTES'])}",
+    'footnote: ""',
     f"judged_by: {q(os.environ['JUDGED_BY'])}",
     f"produced_figure: {q(os.environ['PRODUCED'])}",
     f"reference_figure: {q(os.environ['REF'])}",
@@ -96,9 +97,9 @@ Produced figure (image file): $PRODUCED
 Reference figure (image file): $REF
 What the task asked the agent to reproduce (verbatim from the task):
 $TARGET
-Use the Read tool to open both image files, then decide whether the produced figure reproduces the requested part of the reference: same observable and axes, same qualitative shape and normalisation, and the requested features (peaks, cut-offs, the requested curve or panel) in the right place. Reference curves, panels, or backgrounds that the task did not ask for must not count against the produced figure. Cosmetic differences (colours, fonts, legend position, binning, style) do not matter.
+Use the Read tool to open both image files, then decide. Success criterion (deliberately lenient): the run produced the requested figure end to end and it agrees with the requested part of the reference qualitatively — same observable and axes, same overall shape, features (peaks, cut-offs, curves, panels) in roughly the right place. Quantitative deviations (a normalisation offset, a contour tip 20-30% off, a shifted peak) do NOT make it a failure; describe them in the footnote field instead. Mark success=false only when a requested panel or curve is missing, the observable or process is wrong, the shape is qualitatively different, or nothing usable was produced. Reference curves, panels, or backgrounds that the task did not ask for must not count against the produced figure. Cosmetic differences (colours, fonts, legend position, binning, style) do not matter.
 Reply with ONLY one JSON object and nothing else (no prose, no code fence):
-{\"success\": true or false, \"failure_mode\": \"model\" or \"generation\" or \"analysis\" or \"infrastructure\" or null, \"notes\": \"one or two sentences\"}
+{\"success\": true or false, \"failure_mode\": \"model\" or \"generation\" or \"analysis\" or \"infrastructure\" or null, \"notes\": \"one or two sentences\", \"footnote\": \"quantitative deviations from the reference worth a footnote in the paper, or an empty string\"}
 failure_mode is null when success is true; otherwise choose the most likely stage that went wrong: model (Lagrangian/UFO/parameters), generation (process, cuts, beams, event generation), analysis (observable, histogramming, normalisation, plotting), infrastructure (tooling, missing or unreadable output)."
 
 CLAUDE_ARGS=(-p "$PROMPT" --model "$JUDGE_MODEL" --output-format json --allowedTools Read)
@@ -138,13 +139,16 @@ if isinstance(verdict, dict) and isinstance(verdict.get("success"), bool):
     fm = verdict.get("failure_mode")
     fm = fm if fm in ("model", "generation", "analysis", "infrastructure") else "null"
     notes = str(verdict.get("notes") or "")
+    footnote = str(verdict.get("footnote") or "")
 else:
+    footnote = ""
     success, fm = "null", "null"
     notes = "judge output could not be parsed (claude exit %s): %s" % (os.environ["RC"], result_text.strip()[:1500])
 lines = [
     f"success: {success}",
     f"failure_mode: {fm}",
     f"notes: {q(notes)}",
+    f"footnote: {q(footnote)}",
     f"judged_by: {q(os.environ['JUDGED_BY'])}",
     f"produced_figure: {q(os.environ['PRODUCED'])}",
     f"reference_figure: {q(os.environ['REF'])}",
