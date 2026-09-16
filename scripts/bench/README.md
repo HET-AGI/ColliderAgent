@@ -36,3 +36,9 @@ bench_runs/<label>/
 `bench_runs/.gitignore` (written on first use) keeps sandboxes, including the copied
 credentials, out of git. The `warm` mode only copies memory in; harvesting is explicit via
 `distill.py import`, which never lowers a central lesson's support.
+
+## Headless caveat
+
+`run_benchmark.sh` exports `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`. Without it, `claude -p` terminates the
+session 600 s after the orchestrator ends a turn while a stage subagent is still running, which truncates any
+MadGraph or MadAnalysis stage longer than 10 minutes. Set it yourself for any hand-run `claude -p`.
