@@ -74,4 +74,5 @@ run_*/
 *.claude
 .claude/
 skills-lock.json
-.agents/bench_runs/
+.agents/
+bench_runs/
