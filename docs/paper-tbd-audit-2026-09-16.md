@@ -2,19 +2,38 @@
 
 Date: 2026-09-16. Sources: `/home/shiqiu/paper.pdf`, `/home/shiqiu/reply.pdf`, `/home/shiqiu/sm.pdf` (all `[AUTHORS: …]` markers and red TBDs are in the supplemental material; the main text and the reply reference the same four tables).
 
-## Table S2 — software environment (measured today on zhustation)
+## Table S2 — software environment (probed inside the images on zhustation, 2026-09-16, blueprint `collider-env-probe`)
 
-| Image | Package | Version | Evidence |
+| Image / runtime | Package | Version | Evidence |
 |---|---|---|---|
-| collider | MadGraph5_aMC@NLO | 3.7.0 | `MGMEVersion.txt` in a downloaded process dir (job 9cda4f3590e9e9cf) |
-| collider | Pythia8 | 8.316 | `tag_1_pythia8.log` of job 230c4933a9ab3b75 |
-| collider | HepMC | 2.06.09 | header of `tag_1_pythia8_events.hepmc.gz` |
-| collider | Delphes | 3.5.x — exact patch level not printed in the run logs; read it from the container (`docker run --rm git.pku.edu.cn/het-agi/collider:latest cat <delphes>/VERSION` or `DelphesHepMC2 --version`) | `tag_1_delphes.log` prints no version |
-| collider | MadAnalysis5 | 1.11.0 (2025/04/23) | `Output/HTML/MadAnalysis5job_0/index.html` of job b60762c5e7cebfe5 |
-| collider | LHAPDF | 6.5.5 (already in the table) | — |
-| agent runtime (local) | uproot / awkward / numpy / scipy / matplotlib / pyhf | 5.7.4 / 2.9.0 / 2.4.4 / 1.15.3 / 3.10.9 / 0.7.6 | `python3 -c "import …; print(__version__)"` on the analysis host, Python 3.13.12 |
-| agent runtime | Claude Code | 2.1.273 | `claude --version` |
-| agent runtime | LLM | Claude Opus 4.6 (paper's runs); `claude-opus-4-6` is still served — verified with a one-turn `claude -p --model claude-opus-4-6` call today | — |
+| collider (`git.pku.edu.cn/het-agi/collider:latest`, Ubuntu 22.04.5) | MadGraph5_aMC@NLO | 3.7.0 | `/opt/MG5_aMC_v3_7_0` |
+| collider | Pythia8 | 8.316 | `pythia8-config --version`, `PYTHIA_VERSION 8.316` |
+| collider | Delphes | 3.5.1 | `/opt/MG5_aMC_v3_7_0/Delphes/README` (installer tarball Delphes-3.5.1) |
+| collider | MadAnalysis5 | 1.11.0 (2025-04-23) | `/opt/madanalysis5/version.txt`, HTML report banner |
+| collider | LHAPDF | 6.5.5 | `HEPTools/bin/lhapdf-config --version`; sets NNPDF23_lo_as_0130_qed, NNPDF23_nlo_as_0119_qed preinstalled |
+| collider | HepMC | 2.06.09 | event-file header (job 230c4933a9ab3b75) |
+| collider | ROOT | 6.28/10 | `root-config --version` |
+| collider | Python | 3.10.12: numpy 1.26.4, scipy 1.15.3, awkward 2.9.0, matplotlib 3.10.8, pyhf 0.7.6; no uproot | in-image import |
+| mma-het (`het-agi/mma-het:latest`, Ubuntu 22.04.3) | Wolfram Engine | 13.3.0 | `/usr/local/Wolfram/WolframEngine/13.3/.VersionID` |
+| mma-het | FeynRules | 2.3.49 (paper's value; package header has no version string, see probe 4) | `/root/.WolframEngine/Applications/FeynRules` |
+| micromegas (`rise-agi/micromegas:latest`) | micrOmegas / CalcHEP | 6.3.0 / 3.9.2 | `/opt/micromegas_6.3.0`, `CalcHEP_src/VERSION` |
+| agent runtime (this host) | Python analysis stack | 3.13.12: uproot 5.7.4, awkward 2.9.0, numpy 2.4.4, scipy 1.15.3, matplotlib 3.10.9, pyhf 0.7.6 | installed 2026-04-19 … 2026-06-08 |
+| agent runtime | Claude Code | 2.1.273 for the 2026-09-16 re-runs; original April–May runs: not recoverable here (earliest local logs are from 2026-08) | `claude --version` |
+| agent runtime | LLM | Claude Opus 4.6 (`claude-opus-4-6`, still served; accepts `--effort xhigh` through the CLI) | probe calls |
+
+Corrections to the current table: the `uproot, awkward, numpy, scipy` row belongs to the agent runtime, not the collider image; Delphes is 3.5.1.
+
+## Wall-clock attribution (sm.pdf p.5 claim "LLM inference accounts for a minor fraction")
+
+From transcript timestamps (gap before a model message = inference; gap before a tool result = tool execution; main session + subagents), ALP EFT Fig. 8:
+
+| Model | Wall [s] | Model latency [s] | Tool execution [s] | Inside `magnus` calls [s] | Model share |
+|---|---:|---:|---:|---:|---:|
+| Opus 5 | 3147 | 1198 | 3151 | 1878 | 0.38 |
+| Opus 4.8 | 3779 | 2038 | 1947 | 1684 | 0.54 |
+| Sonnet 5 | 4975 | 2527 | 3989 | 2354 | 0.51 |
+
+For this light benchmark the model share is not "a minor fraction"; the sentence should be re-stated with the Opus 4.6 numbers over all eight benchmarks (`metrics.json` carries `llm_share_of_wall`).
 
 ## Tables S3 / S4 / S5 — how to produce the numbers
 

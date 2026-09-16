@@ -5,22 +5,22 @@
 % Compile standalone: pdflatex claims-audit-2026-09-16.tex
 \documentclass[11pt]{article}
 \usepackage[margin=2cm]{geometry}
-\usepackage{booktabs,longtable,array,xcolor,hyperref,amsmath}
-\newcommand{\done}{\textcolor{green!50!black}{\textbf{DONE}}}
-\newcommand{\partial}{\textcolor{orange!80!black}{\textbf{PARTIAL}}}
-\newcommand{\needrun}{\textcolor{blue!70!black}{\textbf{RUNS}}}
-\newcommand{\author}{\textcolor{red!70!black}{\textbf{AUTHOR}}}
+\usepackage{booktabs,longtable,array,xcolor,hyperref,amsmath,slashed}
+\newcommand{\statusdone}{\textcolor{green!50!black}{\textbf{DONE}}}
+\newcommand{\statuspartial}{\textcolor{orange!80!black}{\textbf{PARTIAL}}}
+\newcommand{\statusneedrun}{\textcolor{blue!70!black}{\textbf{RUNS}}}
+\newcommand{\statusauthor}{\textcolor{red!70!black}{\textbf{AUTHOR}}}
 \title{ColliderAgent revision: audit of open placeholders\\ \large measurements of 2026-09-16 and proposed text}
 \date{2026-09-16}
 \begin{document}
 \maketitle
 
 \section*{Legend}
-\done\ = measured today, text below can be pasted. \partial\ = partly measured; the rest is in progress.
-\needrun\ = needs the remaining benchmark runs (Opus 4.6 $\times$3 per benchmark; cross-model). \author\ = a decision or confirmation only the authors can make.
+\statusdone\ = measured today, text below can be pasted. \statuspartial\ = partly measured; the rest is in progress.
+\statusneedrun\ = needs the remaining benchmark runs (Opus 4.6 $\times$3 per benchmark; cross-model). \statusauthor\ = a decision or confirmation only the authors can make.
 
 \section{Table S2 (sm.pdf p.\,4) --- software environment}
-Status: \done\ except the Claude Code version of the \emph{original} runs (see note).
+Status: \statusdone\ except the Claude Code version of the \emph{original} runs (see note).
 All versions were read inside the images on zhustation on 2026-09-16 with a probe blueprint
 (\texttt{collider-env-probe}; job logs are cited per row). Two corrections to the current table: the analysis Python
 stack lives in the \emph{agent runtime}, not in the collider image (the image has no \texttt{uproot}), and Delphes is 3.5.1.
@@ -66,11 +66,11 @@ agent runtime & Claude Code    & 2.1.x (AUTHORS: version of the original runs fr
            & uproot, awkward, numpy, scipy & 5.7.4, 2.9.0, 2.4.4, 1.15.3 \\
 \end{verbatim}
 Note on the Claude Code version: no session log from the April--May runs exists on this machine (the earliest local
-logs are from August 2026), so the original version has to come from the co-author who ran them (\author). The rows
+logs are from August 2026), so the original version has to come from the co-author who ran them (\statusauthor). The rows
 above are otherwise complete.
 
 \section{sm.pdf p.\,5, ``LLM inference accounts for a minor fraction [AUTHORS: fill in numbers ...]''}
-Status: \partial\ --- measured for the ALP EFT benchmark with three current models; the Opus 4.6 numbers for all
+Status: \statuspartial\ --- measured for the ALP EFT benchmark with three current models; the Opus 4.6 numbers for all
 eight benchmarks are being produced now. The claim as written is \emph{not} supported for the light benchmarks:
 attributing every gap before a model message to inference and every gap before a tool result to tool execution
 (main session plus stage subagents), the model share of wall-clock was 38\% (Opus 5), 54\% (Opus 4.8) and 51\%
@@ -83,7 +83,7 @@ time dominates.
 \end{quote}
 
 \section{Table S3 (sm.pdf p.\,6) --- resource usage; also paper.pdf p.\,5 and p.\,7, reply.pdf p.\,4 and p.\,6}
-Status: \needrun\ for the Opus 4.6 column (nine prompts launched 2026-09-16 22:00 UTC at effort \texttt{xhigh};
+Status: \statusneedrun\ for the Opus 4.6 column (nine prompts launched 2026-09-16 22:00 UTC at effort \texttt{xhigh};
 results are appended by \texttt{scripts/bench/aggregate.py}). Already measured with the v2 skills, cold memory, one run each:
 
 \begin{center}
@@ -104,7 +104,7 @@ covers the main session only and under-reports by about $10\times$).
 
 \section{Table S4 (sm.pdf p.\,6; paper.pdf p.\,5 ``fill in cross-model table or state it as future work'';
 reply.pdf p.\,4 ``choose one of the two sentences'')}
-Status: \partial. Recommendation: keep the table with three columns and fill it, because the Referee asked for
+Status: \statuspartial. Recommendation: keep the table with three columns and fill it, because the Referee asked for
 measurement rather than assertion and the runs are cheap (8--13 USD per attempt). Column choices:
 \begin{itemize}
 \item Opus 4.6 (paper's model) --- three attempts per benchmark, in progress.
@@ -121,7 +121,7 @@ Claude Sonnet 5 and GPT-5.3-Codex (via Codex) and report the success rates in Ta
 ``not been able to complete'' alternative once the runs are in.
 
 \section{Table S5 (sm.pdf p.\,6, text p.\,6 ``fill in the per-benchmark counts and failure modes'')}
-Status: \needrun. Three sandboxed attempts per benchmark with Opus 4.6: the first attempt of each is running; two more
+Status: \statusneedrun. Three sandboxed attempts per benchmark with Opus 4.6: the first attempt of each is running; two more
 are one command each (\texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig> claude-opus-4-6 --effort xhigh}).
 Failure modes are recorded in \texttt{verdict.yaml} per run with the paper's four categories; a human confirms each
 verdict. S5 is worth keeping: it is the only place that quantifies the ``occasional failed reproductions'' sentence
@@ -133,16 +133,16 @@ on p.\,6, and the sandbox pipeline the SM describes (clean workspace, one prompt
 Where & Marker & Status & Proposed action \\
 \midrule
 \endhead
-paper.pdf p.\,5 & ``skills-only mode executes the hello-world workflow of Sec.\,S-III [confirm that this has been tested]'' (Codex/Cursor) & \author & The Codex-compatible layout exists (branch \texttt{codex-com}: \texttt{.agents/skills}, \texttt{.codex/agents}, \texttt{AGENTS.md}). Run the hello-world prompt with Codex on that branch once and keep the sentence; otherwise weaken to ``is designed to''. \\
-paper.pdf p.\,7, Table I caption & ``tokens consumed and wall-clock time [fill in]'' & \needrun & Same numbers as Table S3 (Opus 4.6 column); cite Table S3 instead of repeating them. \\
-paper.pdf p.\,9--10 & ``[confirm the extent of human intervention between campaigns]'' & \author & Dark-SMEFT campaigns were not re-run; statement must come from the campaign logs. \\
-paper.pdf p.\,10; reply.pdf p.\,6 & ``several weeks of work for an experienced phenomenologist [adjust estimate]'' & \author & Judgement call; unchanged by measurements. \\
-reply.pdf p.\,1 & checklist (1)--(4): fill S3/S4/S5, confirm human intervention, set \verb|\markupfalse|, remove red markers & \partial & (1) in progress, (2) author, (3)--(4) mechanical once (1)--(2) are done. \\
-reply.pdf p.\,4 & ``the LLM token consumption [fill in from the usage logs]'' & \needrun & From Table S3; note the main+sub-agent definition. \\
-reply.pdf p.\,4 & ``The wall-clock time of a benchmark (1--6 hours) ...'' & \done & Consistent with today's runs (0.9--1.4 h for the lightest benchmark); keep. \\
-sm.pdf p.\,4 & ``archived release ... DOI and per-run provenance packaged as Workflow Run RO-Crates [confirm or remove]'' & \author & No RO-Crate export exists in the repository today; either remove or keep as a plan. \\
-sm.pdf p.\,5 & Table S4 placeholder text ``e.g. Claude Opus 4.6 vs. Claude Sonnet, GPT-5.x via Codex, Gemini via ADK'' & \partial & Replace with the three columns chosen above; drop Gemini/ADK unless the python-agent path is run. \\
-sm.pdf p.\,6 & Table S3 Dark-SMEFT rows (sub-agent calls, tokens) & \author & Not reproducible here; from the campaign logs. \\
+paper.pdf p.\,5 & ``skills-only mode executes the hello-world workflow of Sec.\,S-III [confirm that this has been tested]'' (Codex/Cursor) & \statusauthor & The Codex-compatible layout exists (branch \texttt{codex-com}: \texttt{.agents/skills}, \texttt{.codex/agents}, \texttt{AGENTS.md}). Run the hello-world prompt with Codex on that branch once and keep the sentence; otherwise weaken to ``is designed to''. \\
+paper.pdf p.\,7, Table I caption & ``tokens consumed and wall-clock time [fill in]'' & \statusneedrun & Same numbers as Table S3 (Opus 4.6 column); cite Table S3 instead of repeating them. \\
+paper.pdf p.\,9--10 & ``[confirm the extent of human intervention between campaigns]'' & \statusauthor & Dark-SMEFT campaigns were not re-run; statement must come from the campaign logs. \\
+paper.pdf p.\,10; reply.pdf p.\,6 & ``several weeks of work for an experienced phenomenologist [adjust estimate]'' & \statusauthor & Judgement call; unchanged by measurements. \\
+reply.pdf p.\,1 & checklist (1)--(4): fill S3/S4/S5, confirm human intervention, set \verb|\markupfalse|, remove red markers & \statuspartial & (1) in progress, (2) author, (3)--(4) mechanical once (1)--(2) are done. \\
+reply.pdf p.\,4 & ``the LLM token consumption [fill in from the usage logs]'' & \statusneedrun & From Table S3; note the main+sub-agent definition. \\
+reply.pdf p.\,4 & ``The wall-clock time of a benchmark (1--6 hours) ...'' & \statusdone & Consistent with today's runs (0.9--1.4 h for the lightest benchmark); keep. \\
+sm.pdf p.\,4 & ``archived release ... DOI and per-run provenance packaged as Workflow Run RO-Crates [confirm or remove]'' & \statusauthor & No RO-Crate export exists in the repository today; either remove or keep as a plan. \\
+sm.pdf p.\,5 & Table S4 placeholder text ``e.g. Claude Opus 4.6 vs. Claude Sonnet, GPT-5.x via Codex, Gemini via ADK'' & \statuspartial & Replace with the three columns chosen above; drop Gemini/ADK unless the python-agent path is run. \\
+sm.pdf p.\,6 & Table S3 Dark-SMEFT rows (sub-agent calls, tokens) & \statusauthor & Not reproducible here; from the campaign logs. \\
 \bottomrule
 \end{longtable}
 
