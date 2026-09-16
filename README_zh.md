@@ -152,6 +152,8 @@ cp -r src/skills <skills-path>
 > [!TIP]
 > 也支持项目级安装。将 `src/skills/` 复制到工作目录根目录下的 `.claude/skills/`（或对应智能体的目录），可将技能限定在该项目范围内使用。
 
+也可以直接运行 `scripts/install.sh`（同时复制 agents 与 skills；`scripts/install.sh --check` 检查仓库与已安装副本是否有差异）。
+
 **4. 重启您的智能体**以加载新的智能体和技能。
 
 **5.（可选）激活 Wolfram Engine 许可证：**

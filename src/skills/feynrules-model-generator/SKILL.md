@@ -1,102 +1,37 @@
 ---
 name: feynrules-model-generator
-description: Generate FeynRules .fr model files from LaTeX Lagrangian descriptions. Triggers when the user provides a Lagrangian in LaTeX notation and wants it converted to a FeynRules model file for particle physics simulations.
+description: Write a FeynRules .fr model file for a BSM Lagrangian given in LaTeX — particle classes, parameters, and the Lagrangian in FeynRules syntax — ready for validation and UFO or CalcHEP export. Use whenever a task provides a Lagrangian and needs a FeynRules model.
 ---
 
 # FeynRules Model Generator
 
-## Overview
+Turns a LaTeX Lagrangian into a `.fr` file that defines the BSM extension of the Standard Model. This is pure authoring: no Magnus job is involved until validation (feynrules-model-validator skill) and export (ufo-generator / calchep-generator skills).
 
-This skill converts LaTeX Lagrangian descriptions into complete, validated FeynRules `.fr` model files. These files define Beyond-the-Standard-Model (BSM) particle physics models that extend the Standard Model (SM) with new particles, couplings, and interactions.
+## Paths (relative to the working directory)
 
-The generated `.fr` files are used downstream for validation (feynrules-model-validator skill) and UFO generation (ufo-generator skill).
+- Model file: `models/<Model>.fr`
+- Exported directories later: `models/<Model>_UFO/`, `models/<Model>_CH/`
 
-This is a **pure LLM generation task** — no remote execution or Magnus blueprints are involved.
+## Approach
 
-## Workflow
+Start from `templates/skeleton.fr` (all required sections with TODO markers) and fill it section by section: `M$ModelName` and `M$Information`, index definitions, `M$ClassesDescription`, `M$Parameters`, the Lagrangian. Working one section at a time keeps each FeynRules construct checkable against `references/feynrules_syntax.md` (section 5: particle-class attributes per spin; 6: external/internal parameters and mixing matrices; 7–8: Lagrangian syntax and a complete BSM example). Write only the BSM part: the SM is loaded automatically at validation and export time.
 
-Work through these steps **one at a time**. Do not try to write the complete `.fr` file in one shot — copy the skeleton first, then edit each section incrementally.
+Before writing, settle the physics-to-FeynRules mapping: new fields with quantum numbers and spin, couplings with their chirality structure, whether `+ h.c.` is present, and which SM symbols appear (`ee`, `gw`, `gs`, `g1`, `sw`/`cw`, `vev`, …). BSM PDG codes go above 9000000 unless the particle has an established reservation (5000039 for a KK graviton, 9900012 for a heavy neutrino in existing UFOs).
 
-### Step 1: Analyze the Lagrangian
+## Conventions that decide whether the model validates
 
-- Identify all new fields (scalars, fermions, vectors) and their quantum numbers
-- Identify all coupling constants and their chirality structure (left/right projectors)
-- Determine if "+ h.c." is present (affects Hermitian conjugate handling)
-- Map physics notation to FeynRules symbol conventions
+- **Class names** have at least two characters (`Zp`, `N1`, `Snew`); one-letter names collide with FeynRules internals.
+- **Hermitian conjugate**: when the Lagrangian says `+ h.c.`, write the non-Hermitian part as `LNPtmp := Block[{…}, …]` and `LNP := LNPtmp + HC[LNPtmp]`; when it does not, write the term directly, because adding `HC[]` doubles Hermitian terms and breaks the hermiticity check.
+- **Indices**: declare dummy indices with `Block[{…}, …]`; each spinor index appears exactly twice per monomial; each monomial is electrically neutral; use explicit `*` for every product.
+- **Projectors and bilinears**: `ProjM` = (1−γ5)/2, `ProjP` = (1+γ5)/2; `psibar.Ga[mu].ProjM.psi` or fully indexed `psibar[sp1].Ga[mu,sp1,sp2].ProjM[sp2,sp3].psi[sp3]`.
+- **Chirality flips** (L→R substitutions) replace projectors, fields, and coupling parameters together.
+- **Non-self-conjugate fields**: `X` carries the positive charge, `Xbar` the negative one.
+- **Parameters**: every new coupling is `External` with `BlockName`, `OrderBlock`, `Value`, and `InteractionOrder -> {NP, 1}` (internal derived parameters keep the same order tag). Masses and widths are set in the particle class, not in `M$Parameters`.
+- **Widths of decaying BSM particles** are external parameters (`Width -> {WZp, 0.04}`) or `{WZp, Internal}`; `Width -> 0` marks the particle stable in MG5, which then silently ignores `set param_card DECAY` for it.
+- **micrOmegas targets**: Z₂-odd particles need a leading `~` in `ParticleName` (and `AntiParticleName`), because micrOmegas identifies the dark sector by that prefix in the exported CalcHEP files (calchep-generator skill).
 
-### Step 2: Map Symbols to FeynRules Conventions
+## Next step
 
-- Use the SM symbol conventions built into FeynRules (see reference doc):
-  - `ee` = electromagnetic coupling, `gw` = weak SU(2)_L coupling, `gs` = strong SU(3)_C coupling
-  - `g1` = hypercharge U(1)_Y coupling, `sw`/`cw` = sine/cosine of Weinberg angle
-- Assign PDG codes > 9000000 for generic BSM particles; use established PDG reservations where they exist (e.g. 5000039 for KK graviton)
-- Define new coupling parameters with `InteractionOrder -> {NP, 1}`
+Validate with the feynrules-model-validator skill (`magnus run validate-feynrules -- --model models/<Model>.fr --lagrangian <symbol>`), then export. Also check by eye that every `+ h.c.` decision above matches the Lagrangian; the validator reports hermiticity but not whether you doubled a term that was already Hermitian.
 
-### Step 3: Create the .fr file from the skeleton
-
-Copy [templates/skeleton.fr](templates/skeleton.fr) into `models/<Model>.fr` (e.g. `models/HeavyN.fr`). Fill in `M$ModelName` and `M$Information` with the model name and metadata. Add any needed index definitions.
-
-**Output paths** (all relative to working directory):
-- FeynRules model file: `models/<Model>.fr`
-- UFO directory (after validation + generation): `models/<Model>_UFO/`
-
-### Step 4: Define particle classes
-
-Edit the `M$ClassesDescription` section. For each BSM particle, define the appropriate class (F[], S[], V[], T[]) with all required attributes. See [references/feynrules_syntax.md](references/feynrules_syntax.md) section 5 for the full attribute list for each particle type.
-
-### Step 5: Define parameters
-
-Edit the `M$Parameters` section. For each new coupling constant:
-- Set `ParameterType -> External` with `BlockName`, `OrderBlock`, `Value`
-- Include `InteractionOrder -> {NP, 1}` for every new physics coupling (both External and Internal)
-- Do **NOT** add Mass or Width symbols here — they are already defined by the particle class
-
-For derived parameters, use `ParameterType -> Internal` with a `Value` expression.
-
-See [references/feynrules_syntax.md](references/feynrules_syntax.md) section 6 for External/Internal parameter examples, including mixing matrices with `Unitary -> True`.
-
-### Step 6: Write the Lagrangian
-
-Edit the Lagrangian section. Key rules:
-- Use `Block[{indices}, ...]` to declare dummy indices
-- Use explicit `*` for all multiplication
-- If the Lagrangian has "+ h.c.", use the Ltmp pattern:
-  ```
-  LNPtmp := Block[{...}, <non-hermitian part only>];
-  LNP := LNPtmp + HC[LNPtmp];
-  ```
-- If there is NO "+ h.c.", write the Lagrangian directly (do NOT add HC)
-
-See [references/feynrules_syntax.md](references/feynrules_syntax.md) sections 7-8 for Lagrangian syntax and a complete BSM example.
-
-### Step 7: Validate
-
-After writing the `.fr` file, use the `validate-feynrules` Magnus blueprint (see feynrules-model-validator skill) to validate the model:
-```
-magnus run validate-feynrules -- --model <path-to-fr-file> --lagrangian <lagrangian-symbol>
-```
-
-Additionally, manually verify:
-- Every spinor index appears exactly twice per monomial (proper contraction)
-- Every monomial has zero total electric charge
-- HC[] is only used when the Lagrangian explicitly contains "+ h.c."
-
-## Key Conventions
-
-- **BSM ClassName must be at least 2 characters** (e.g., `Snew`, `Zp`, `N1`)
-- **Do NOT generate the SM part** — only the BSM extension
-- **Use explicit multiplication** (`*`) instead of implicit juxtaposition
-- **Fermion bilinears**: `psibar[sp1].Ga[mu,sp1,sp2].psi[sp2]` or dot notation `psibar.Ga[mu].psi`
-- **Projectors**: `ProjM` = (1-gamma5)/2 (left), `ProjP` = (1+gamma5)/2 (right)
-- **HC[] usage**: Define non-Hermitian part as `Ltmp`, then `L := Ltmp + HC[Ltmp]`
-- **Non-selfconjugate fields**: `X` = positive charge, `Xbar` = negative charge (canonical convention)
-- **(L -> R) substitution**: Replace ALL left-handed objects simultaneously — projectors, fields, AND coupling parameters
-- **Width of BSM particles**: If the particle is expected to decay, define Width as an **external parameter** (e.g. `Width -> {WSnew, 0.04}`) or use `Width -> {WSnew, Internal}`. Do NOT use `Width -> 0` — this tells MG5 the particle is stable, and MG5 will silently override any `set param_card DECAY` attempt to match the model's zero-width expression
-
-## Reference Documentation
-
-- See [references/feynrules_syntax.md](references/feynrules_syntax.md) for the complete FeynRules `.fr` file syntax specification
-
-## Templates
-
-- [templates/skeleton.fr](templates/skeleton.fr) — Copyable starting point for a BSM extension `.fr` file with all required sections and TODO markers
+References: `references/feynrules_syntax.md` (full `.fr` syntax, common errors, PDG conventions), `templates/skeleton.fr`.

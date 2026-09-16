@@ -15,7 +15,7 @@ MadAnalysis5 is a framework for phenomenological analysis at particle colliders.
 
 MadAnalysis5 is executed via the Magnus cloud platform using the `madanalysis-process` blueprint. See the madanalysis-analyzer SKILL.md for the full `magnus run` workflow.
 
-**CRITICAL: Do NOT write `submit` in your analysis script.** The cloud runner automatically appends `submit analysis_output`. Any user-written `submit` lines are stripped before execution.
+Leave `submit` out of scripts sent to the `madanalysis-process` blueprint: the runner appends `submit analysis_output` itself and strips any `submit` you write.
 
 ### Analysis Levels
 
@@ -243,7 +243,7 @@ submit [<output_directory_name>]
 
 This compiles the analysis, runs over all datasets, normalizes histograms, and generates reports (HTML, LaTeX, PDF).
 
-> **When using the `madanalysis-process` blueprint**: Do NOT write `submit` in your script. The cloud runner automatically appends `submit analysis_output`. Any user-written `submit` lines are stripped before execution.
+> With the `madanalysis-process` blueprint, leave `submit` out: the runner appends `submit analysis_output` itself.
 
 ### display - Inspect Session
 
@@ -408,7 +408,7 @@ SCRIPT
   --level reco
 ```
 
-> The runner automatically appends `submit analysis_output` — do NOT include it in the script.
+> The runner appends `submit analysis_output`; the script must not contain its own `submit`.
 
 ---
 

@@ -14,7 +14,7 @@ This document describes optional features that can be applied between `madgraph-
 
 ```bash
 # Use sed to uncomment lines 48-58 in run_delphes3
-sed -i '' '48,58 s/^#//' path/to/pp_ttbar/bin/internal/run_delphes3
+sed -i '48,58 s/^#//' events/pp_ttbar/bin/internal/run_delphes3   # macOS sed: sed -i '' …
 ```
 
 **Output**: The launch step will produce `tag_1_delphes_events.lhco.gz` in `Events/run_XX/` alongside the ROOT file.
@@ -59,7 +59,7 @@ Each `decay` line targets one mother particle (by PDG label, e.g. `t`, `t~`, `w+
 | `onshell` | Spin-correlated decays in the narrow-width approximation (resonances strictly on-shell). Default and recommended for narrow resonances like top, W, Z. |
 | `full` | Spin-correlated decays including off-shell / finite-width effects. Slower and statistically less efficient; use when off-shell tails matter. |
 
-**CRITICAL: silent failure modes.** MadSpin has two ways to be silently skipped while the job still reports `success=true`:
+MadSpin can be skipped without an error while the job still reports `success=true`:
 - **Forgot `madspin=ON` in State 1**: the State 2 `set spinmode` / `decay` lines look syntactically valid and are accepted by the run-card editor, but no MadSpin step runs. You will get the original undecayed `unweighted_events.lhe.gz` only — no `run_XX_decayed_1/` directory.
 - **Put `decay` lines after the second `done`**: MG5 has already launched; the `decay` lines fall through to the master prompt and are swallowed as unknown commands. Same symptom: no `run_XX_decayed_1/` directory.
 

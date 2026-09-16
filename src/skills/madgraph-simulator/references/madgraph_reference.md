@@ -300,6 +300,17 @@ set run_card lhaid <LHAPDF_ID>
 | `NNPDF31_lo_as_0118` | 315000 | NNPDF3.1 LO |
 | `CT18NLO` | 14400 | CT18 NLO |
 
+### Lepton-initiated processes (LUXlep) and the Pythia8 workaround
+
+`--pdf LUXlep-NNPDF31_nlo_as_0118_luxqed` plus `set run_card pdlabel lhapdf` / `set run_card lhaid 82400` lets MG5 draw leptons (and photons) from the proton. Pythia8 cannot backward-evolve an incoming lepton from a proton, so a launch with `shower=Pythia8` on such a process fails or produces no showered events. The working recipe, done between the parton-level launch and a second launch (or a standalone Pythia8/Delphes pass):
+
+1. Generate at parton level (no shower) and download `unweighted_events.lhe.gz`.
+2. In the LHE file, replace every initial-state lepton PDG code (±11, ±13, ±15) with the photon code 22, keeping the momenta.
+3. Shower and simulate the detector with `Check:event = off` in the Pythia8 settings (the replacement breaks charge conservation, and the check would otherwise abort); with the MG5 launch this is `set pythia8_card Check:event off` in the cards state, or the line in `Cards/pythia8_card.dat` when running Pythia8 by hand.
+4. Continue with Delphes/MadAnalysis on the resulting HepMC/ROOT files.
+
+Record the edited LHE as a derived file (`Events/<run>/unweighted_events_photonized.lhe.gz`), never over the original.
+
 ### Standard Model Masses (param_card)
 
 | Parameter | Description | Value (GeV) |
@@ -395,7 +406,7 @@ done
 - `set delphes_card default` - default Delphes card
 - Full path on its own line: `/path/to/MG5/Delphes/cards/delphes_card_CMS.tcl` (handled by the `os.path.isfile` branch of `AskforEditCard.default()`)
 
-**WARNING**: Bare card names (`CMS`, `ATLAS`) on their own line are silently swallowed by `AskforEditCard.default()` in MG5 v3.7.0 (`common_run_interface.py:7194`). The line is normalized to `cms` and dropped — no card is copied. Always use `set delphes_card <name>` or a full path.
+Bare card names (`CMS`, `ATLAS`) on their own line are silently swallowed by `AskforEditCard.default()` in MG5 v3.7.0 (`common_run_interface.py:7194`). The line is normalized to `cms` and dropped — no card is copied. Always use `set delphes_card <name>` or a full path.
 
 ### Delphes Output
 With Delphes enabled, you get:

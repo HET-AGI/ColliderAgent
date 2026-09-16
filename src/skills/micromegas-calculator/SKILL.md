@@ -1,269 +1,72 @@
 ---
 name: micromegas-calculator
-description: Compute dark matter observables (relic density, direct detection, indirect detection) via micrOmegas on the Magnus cloud. Triggers when the user wants to calculate Ωh², DM-nucleon cross sections (SI/SD), annihilation ⟨σv⟩ into SM final states, or indirect-detection γ/ν/e⁺/e⁻ spectra. Consumes a CalcHEP model (from the calchep-generator skill) plus a user-supplied main.c.
+description: Compute dark-matter observables with micrOmegas on the Magnus cloud — relic density Ωh², spin-independent and spin-dependent DM–nucleon cross sections, annihilation ⟨σv⟩, indirect-detection spectra — from a CalcHEP model plus a user-supplied main.c. Use when a task asks for these observables or a scan over them.
 ---
 
 # micrOmegas Calculator
 
-## Overview
+Two blueprints (execution mechanics, upload/download, recovery: magnus skill):
 
-This skill runs micrOmegas for dark matter phenomenology using two Magnus blueprints in sequence:
+1. `micromegas-compile` — drops the CalcHEP model into a fresh micrOmegas project, installs your `main.c`, compiles `./main`. The symbolic engine is prebuilt in the container; only your code and the generated matrix elements compile here.
+2. `micromegas-calc` — runs `./main` once in the compiled project, parses the `results.json` it wrote, uploads the run directory.
 
-1. **`micromegas-compile`** — drops the CalcHEP model into a fresh micrOmegas project, installs the user-supplied `main.c`, and compiles the executable. The symbolic CalcHEP engine is pre-built in the container, so this step only compiles user code and auto-generated matrix elements.
-2. **`micromegas-calc`** — runs the compiled `./main` once, captures its stdout and the structured `results.json` it writes, and uploads any additional output files.
+## Paths (relative to the working directory)
 
-Both steps execute on the Magnus cloud (see magnus skill).
-
-## Prerequisites
-
-### CalcHEP model with Z₂-odd marking
-
-micrOmegas identifies dark-matter candidates by **the `~` prefix on particle names** in the `P` column of `prtcls1.mdl` — there is no separate Z₂ quantum number. Every Z₂-odd particle (the DM candidate plus any coannihilation partners) must appear as `~<name>` in that column.
-
-Concrete verification step after `generate-calchep`:
-
-```bash
-grep -E '\|~[A-Za-z]' path/to/MyModel_CH/prtcls1.mdl
-```
-
-should list every intended Z₂-odd field. Reference examples from shipped micrOmegas projects: SingletDM → `~x1`; IDM → `~H3 ~H+ ~X`; RDM → `~chi0 ~chi1`.
-
-If no `~`-prefixed particles appear, the `.fr` source is still wrong — fix it at authoring time, not by hand-editing `.mdl` files (the hand-edit gets lost the next time `generate-calchep` runs). Without the convention, **`sortOddParticles` may fail, `darkOmega` may return `NaN`, and every cross section may read zero — yet the blueprint can still see exit code 0**. The blueprint detects the known silent-failure markers (`Can not compile`, `Omega=NAN`, `Omega=nan`) and surfaces them as `success: false` in `MAGNUS_RESULT`; the caller should still check `success` before consuming numbers.
-
-Current repo limitation: `generate-calchep` invokes plain `WriteCHOutput[...]` and does **not** pass a dedicated odd-particle list. Therefore the only reliable contract is the generated `prtcls1.mdl` itself. A FeynRules-side pattern that is verified to work in the current pipeline is to encode the tilde directly in `ParticleName` (and `AntiParticleName` for non-self-conjugate fields). Still, treat the exported `prtcls1.mdl` as the final authority, because export behavior is model-dependent. Likewise, do **not** assume `QuantumNumbers -> {Z2 -> -1}` by itself is enough: custom quantum numbers need explicit model-level declarations, and the CalcHEP writer may still not translate them into micrOmegas odd-particle names. Regenerate and re-check `prtcls1.mdl` until the exported names are correct.
-
-### main.c protocol
-
-The user-supplied `main.c` is responsible for:
-
-1. Setting parameters (either by `assignValW` / `assignValC` calls, or by calling `slhaRead` on the SLHA file that `micromegas-calc` passes as `argv[1]`)
-2. Calling whichever subset of micrOmegas API it needs (`sortOddParticles`, `darkOmega`, `nucleonAmplitudes`, `calcSpectrum`, …)
-3. **Writing structured results to `results.json`** in the working directory. The blueprint parses this file and surfaces it in `MAGNUS_RESULT`.
-
-**6.3.0 API note**: read the dark-matter name from `CDM[1]` (a `char**` array). The legacy globals `CDM1`/`CDM2` are still declared in `micromegas.h` for source compatibility but `sortOddParticles` no longer fills them — they read as `NULL` at runtime. Mass is `McdmN[1]` (still works as before). Same shift applies to `nucleonAmplitudes(CDM[1], …)`.
-
-A minimal skeleton:
-
-```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
-#include <stdio.h>
-
-int main(int argc, char** argv) {
-    if (argc > 1 && slhaRead(argv[1], 0)) {
-        fprintf(stderr, "Failed to read SLHA file: %s\n", argv[1]);
-        return 2;
-    }
-
-    if (sortOddParticles(NULL)) { return 1; }
-    if (!CDM[1]) {
-        fprintf(stderr, "CDM[1] is null; check ~-prefixed names in prtcls1.mdl\n");
-        return 3;
-    }
-
-    double Xf, Omega;
-    Omega = darkOmega(&Xf, 1, 1e-4, NULL);
-
-    FILE* out = fopen("results.json", "w");
-    if (!out) { return 4; }
-    fprintf(out,
-            "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
-            CDM[1], McdmN[1], Omega, Xf);
-    fclose(out);
-    return 0;
-}
-```
-
-Use bare `#include "micromegas.h"` as shown above. `micromegas-compile` exports `CPATH=<MICROMEGAS_ROOT>/include` to the underlying `make` invocation, so the same `main.c` compiles unchanged on the cloud and against a user's local micrOmegas install — no `../include/...` prefix needed. Either form works (the legacy `#include "../include/micromegas.h"` is still resolvable), but bare include is the preferred convention because it stays portable across install layouts.
-
-Also treat parameter names as data, not guesses: `assignValW("Name", value)` must use the exact `Name` column from `vars1.mdl`, and the function returns nonzero on unknown names while leaving defaults in place. For example:
-
-```c
-if (assignValW("Mdm1", 500.0)) {
-    fprintf(stderr, "Unknown parameter name: Mdm1\n");
-    return 5;
-}
-if (assignValW("laSH", 0.1)) {
-    fprintf(stderr, "Unknown parameter name: laSH\n");
-    return 6;
-}
-```
-
-For anything beyond a protocol smoke test, prefer starting from the closest micrOmegas reference `main.c` for that model and then trimming it down. Some models need extra setup before heavy calls such as `darkOmega` or `nucleonAmplitudes`.
-
-Anything not written to `results.json` is still preserved in the uploaded output directory, and stdout is tailed into `MAGNUS_RESULT` for debugging.
-
-## Output Paths
-
-All paths are **relative to the working directory**.
-
-| Output | Path pattern | Example |
-|--------|-------------|---------|
+| Output | Path | Example |
+|---|---|---|
 | Compiled project | `dm/<project_label>/` | `dm/singlet_scalar/` |
 | Run output | `dm/<project_label>/<run_label>/` | `dm/singlet_scalar/mS_700GeV/` |
 | Structured result | `dm/<project_label>/<run_label>/results.json` | |
 
-**Naming conventions**:
-- `<project_label>`: short model name, e.g. `singlet_scalar`, `IDM`
-- `<run_label>`: benchmark-point tag, e.g. `mS_700GeV`, `tanb_10`, `point1`
+## Prerequisites
 
-## Workflow
+- A CalcHEP model whose `prtcls1.mdl` lists every Z₂-odd particle with a leading `~` (calchep-generator skill explains why and how to check). Without it every observable is zero or NaN with no error.
+- A `main.c` following the protocol below.
 
-### Step 1: Compile the project
+## main.c protocol
+
+`main.c` sets the parameters (`assignValW`/`assignValC`, or `slhaRead(argv[1], 0)` on the SLHA card the calc blueprint passes as `argv[1]`), calls the micrOmegas API it needs (`sortOddParticles`, `darkOmega`, `nucleonAmplitudes`, `calcSpectrum`, …), and writes flat, typed JSON to `results.json` in the working directory. Rules that come from the 6.3.0 API and the container:
+
+- `#include "micromegas.h"` and `"micromegas_aux.h"` with bare names: compile exports `CPATH=<MICROMEGAS_ROOT>/include`, so the same file also compiles locally.
+- Read the DM name from `CDM[1]` (a `char**`); the legacy `CDM1`/`CDM2` globals are declared but no longer filled. Treat a null `CDM[1]` after `sortOddParticles` as "no odd particle found" and exit non-zero.
+- `assignValW("Name", v)` returns non-zero for an unknown name and leaves the default in place; use the exact names from `vars1.mdl` and check the return value, otherwise a scan silently runs at defaults.
+- Anything not in `results.json` is still preserved in the uploaded run directory; the blueprint also returns the last 4000 characters of stdout, which is a fallback, not a parsing target.
+- For anything beyond a smoke test, start from the closest micrOmegas reference `main.c` for that model class and trim it; some models need extra setup before heavy calls.
+
+Minimal skeleton and two complete programs (relic only; relic + SI/SD): `references/examples.md`.
+
+## Step 1: compile
 
 ```bash
 magnus run micromegas-compile -- \
-  --calchep path/to/MyModel_CH \
-  --main path/to/main.c \
-  --output dm/my_model \
-  --project my_model
+  --calchep models/MyModel_CH --main src/main.c \
+  --output dm/my_model --project my_model
 ```
 
-**Parameters**:
+| Parameter | Required | Meaning |
+|---|---|---|
+| `--calchep` | yes | CalcHEP directory (uploaded); `vars1/func1/prtcls1/lgrng1.mdl` at the top level or one directory down |
+| `--main` | yes | your `main.c` (uploaded) |
+| `--output` | yes | where the compiled project (with `./main` and generated matrix-element code) is downloaded |
+| `--project` | no | micrOmegas project name (default `dm_project`) |
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `--calchep` | Yes | Path to CalcHEP model directory (from `generate-calchep`). Must contain `vars1.mdl`, `func1.mdl`, `prtcls1.mdl`, `lgrng1.mdl` at top level or one subdirectory down. |
-| `--main` | Yes | Path to the user's `main.c` |
-| `--output` | Yes | Where to download the compiled project directory |
-| `--project` | No | micrOmegas project name (used by `newProject`); defaults to `dm_project` |
+Result: `success`, `project_dir`, `main_binary`, and on failure `make_log_tail` (last 3000 characters of `make`).
 
-The CalcHEP directory and `main.c` are uploaded via FileSecret. On success, the compiled project — including the `./main` binary and the auto-generated matrix-element code — is downloaded to `--output`.
-
-**WARNING**: If `--output` points to an existing directory it will be **deleted and replaced**.
-
-**Result** (`magnus job result <job-id>`):
-- `success` (bool)
-- `project_dir` (str): path to the compiled project
-- `main_binary` (str): path to `./main` inside the container (informational)
-- `make_log_tail` (str, only on failure): last 3000 chars of `make` output
-
-### Step 2: Run the calculation
+## Step 2: run points
 
 ```bash
-magnus run micromegas-calc -- \
-  --project dm/my_model \
-  --output dm/my_model/run1 \
-  --slha path/to/params.slha
+magnus run micromegas-calc -- --project dm/my_model --output dm/my_model/run1 --slha params.slha
 ```
 
-**Parameters**:
+| Parameter | Required | Meaning |
+|---|---|---|
+| `--project` | yes | the compiled project from step 1 (uploaded) |
+| `--output` | yes | download path for the run directory (contains `results.json`) |
+| `--slha` | no | SLHA card passed as `argv[1]` (only when `main.c` calls `slhaRead`) |
+| `--extra_args` | no | extra positional arguments appended to `./main` |
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `--project` | Yes | Path to the compiled project directory (Step 1's output) |
-| `--output` | Yes | Where to download the run output (includes `results.json`) |
-| `--slha` | No | SLHA parameter card (only if `main.c` calls `slhaRead(argv[1], 0)`) |
-| `--extra_args` | No | Extra positional arguments appended to `./main` (space-separated) |
+Result: `success`, `output_dir`, `results` (the parsed JSON), `stdout_tail`, and `stderr_tail` on failure. `success` is false when `./main` exits non-zero **or** when stdout matches `Can not compile`, `Omega=NAN`, or `Omega=nan`; check it before reading `results`.
 
-**Result** (`magnus job result <job-id>`):
-- `success` (bool)
-- `output_dir` (str): path to uploaded run output
-- `results` (object, if `results.json` present): the parsed JSON written by `main.c`
-- `stdout_tail` (str): last 4000 chars of `./main` stdout
-- `stderr_tail` (str, on failure only)
+Compile once, run many: a scan is one compile job followed by one calc job per point (different SLHA cards or `--extra_args`), which can be submitted in parallel; the expensive symbolic step is paid once. Recompile only when the model or `main.c` changes.
 
-### Parameter scans: compile once, run many
-
-Because the compiled project is returned as a directory and consumed by `--project`, a typical scan looks like:
-
-```bash
-# Compile once
-magnus run micromegas-compile -- \
-  --calchep models/Singlet_CH --main src/main.c \
-  --output dm/singlet --project singlet
-
-# Scan points by feeding different SLHA cards (or --extra_args if main.c parses argv)
-for m in 200 400 600 800 1000 1200; do
-  render_slha $m > params_$m.slha
-  magnus run micromegas-calc -- \
-    --project dm/singlet \
-    --slha params_$m.slha \
-    --output dm/singlet/mS_${m}GeV
-done
-```
-
-Every run reuses the single compiled binary — the expensive symbolic-amplitude step is paid only once.
-
-## Examples
-
-### Relic density only
-
-`main.c`:
-
-```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
-#include <stdio.h>
-
-int main(int argc, char** argv) {
-    if (argc > 1 && slhaRead(argv[1], 0)) return 2;
-    if (sortOddParticles(NULL)) return 1;
-    if (!CDM[1]) return 3;
-    double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
-    FILE* out = fopen("results.json", "w");
-    if (!out) return 4;
-    fprintf(out,
-            "{\"cdm\":\"%s\",\"cdm_mass_GeV\":%.6e,\"omega_h2\":%.6e,\"xf\":%.3f}\n",
-            CDM[1], McdmN[1], Omega, Xf);
-    fclose(out);
-    return 0;
-}
-```
-
-### Relic + direct detection (SI/SD on p/n)
-
-```c
-#include "micromegas.h"
-#include "micromegas_aux.h"
-#include <stdio.h>
-
-int main(int argc, char** argv) {
-    if (argc > 1 && slhaRead(argv[1], 0)) return 2;
-    if (sortOddParticles(NULL)) return 1;
-    if (!CDM[1]) return 3;
-
-    double Xf, Omega = darkOmega(&Xf, 1, 1e-4, NULL);
-
-    double pA0[2], pA5[2], nA0[2], nA5[2];
-    nucleonAmplitudes(CDM[1], pA0, pA5, nA0, nA5);
-
-    double mN = 0.939, Mdm = McdmN[1];
-    double mu = Mdm * mN / (Mdm + mN);
-    double pref = 4.0 / M_PI * mu * mu * 2.568e9;   // GeV^-2 → pb
-
-    FILE* out = fopen("results.json", "w");
-    if (!out) return 4;
-    fprintf(out,
-        "{\"cdm\":\"%s\",\"mdm\":%.3f,\"omega_h2\":%.6e,"
-        "\"sigma_SI_p\":%.6e,\"sigma_SI_n\":%.6e,"
-        "\"sigma_SD_p\":%.6e,\"sigma_SD_n\":%.6e}\n",
-        CDM[1], Mdm, Omega,
-        pref * pA0[0]*pA0[0], pref * nA0[0]*nA0[0],
-        3.0 * pref * pA5[0]*pA5[0], 3.0 * pref * nA5[0]*nA5[0]);
-    fclose(out);
-    return 0;
-}
-```
-
-## Key conventions
-
-- **Z₂-odd flag is a model-authoring concern**: fix it in the `.fr` file (so generated `prtcls1.mdl` carries `~`-prefixed names), not by hand-editing generated `.mdl` files
-- **The generated `prtcls1.mdl` is the source of truth**: the current `generate-calchep` blueprint does not inject a special odd-particle list into `WriteCHOutput[...]`, so always validate the exported names instead of trusting a guessed `.fr` convention
-- **results.json is a contract**: `main.c` writes, the blueprint reads; keep the JSON flat and typed (floats, strings, arrays of either) for easy downstream plotting
-- **stdout_tail is the fallback physics channel**: if `main.c` does not write `results.json`, the blueprint still surfaces the last 4000 chars of stdout under `stdout_tail` — human-readable, but brittle to parse programmatically. Prefer `results.json` whenever a downstream agent consumes the numbers
-- **Compile-once scan-many**: reuse `--project` across parameter points, never re-call `micromegas-compile` per point unless the model itself changes
-- **Always check `success` before consuming results**: the blueprint returns `success: false` when `./main` exits non-zero **or** when stdout matches the silent-failure markers `Can not compile` / `Omega=NAN` / `Omega=nan` (needed because micrOmegas sometimes prints NaN with exit 0)
-- **`assignValW` is not self-validating**: use exact names from `vars1.mdl`, check its return code, and read back suspicious parameters before trusting the scan point
-
-## Timing expectations
-
-Empirically on the Magnus `rise-agi/micromegas:latest` container at blueprint-default resources (compile: 8 CPU / 8 GB; calc: 4 CPU / 4 GB):
-
-| Model | `micromegas-compile` | `micromegas-calc` (per point) | Dominant cost in calc |
-|-------|---------------------|------------------------------|-----------------------|
-| SingletDM (1 scalar) | ~30 s | ~60 s | dynamic compile of 2–3 annihilation channels |
-| RDM (2 fermions + leptoquark mediator, coannihilation) | ~45 s | ~2 min | ~χ0 ~χ0 → LQ LQ̃, plus ~χ0 ~χ1 coannihilation channels |
-| IDM (H⁰ + A⁰ + H±, full coannihilation) | ~1 min | **10+ min** | ~30 channels across all scalar pairs, first calc is slowest |
-
-Calc time is dominated by micrOmegas's runtime symbolic compilation of each required subprocess into a `.so` library via CalcHEP. Within one `./main` invocation those `.so` files are cached, but the blueprint re-uploads the pristine compiled project for each scan point, so every `micromegas-calc` run pays the full subprocess-compile cost. The compile-once / scan-many win is in `micromegas-compile` itself — `make main=main.c` plus CalcHEP library linking happens exactly once, not per point.
+Timing expectations per model class (compile ~30 s to 1 min; calc from ~1 min for a scalar singlet to 10+ min for a full inert doublet with co-annihilation) are tabulated in `references/examples.md`.
