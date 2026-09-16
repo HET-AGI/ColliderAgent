@@ -61,8 +61,16 @@ if [[ -d "$FIG_DIR" ]]; then
             | sort -rn | head -n 1 | cut -d' ' -f2-)"
 fi
 if [[ -z "$NEWEST" ]]; then
-  write_verdict false null "no figure found under output/figures (nothing to judge)" "-"
-  exit 0
+  # Fallback: a run that bypassed the orchestrator may have written its figure elsewhere in the
+  # sandbox (e.g. analysis/ or the sandbox root); pick the newest image outside events/ and configs.
+  NEWEST="$(find "$SANDBOX" -type f \( -iname '*.png' -o -iname '*.pdf' \) \
+      -not -path '*/.claude-config/*' -not -path '*/events/*' -not -path '*/models/*' \
+      -not -path '*/transcript*' -not -name 'judge_figure.png' -printf '%T@ %p\n' 2>/dev/null \
+      | sort -n | tail -1 | cut -d' ' -f2-)"
+  if [[ -z "$NEWEST" ]]; then
+    write_verdict false null "no figure found in the sandbox (nothing to judge)" "-"
+    exit 0
+  fi
 fi
 PRODUCED="$NEWEST"
 if [[ "${NEWEST,,}" == *.pdf ]]; then
