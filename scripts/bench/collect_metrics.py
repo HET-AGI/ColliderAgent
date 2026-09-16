@@ -87,6 +87,20 @@ def iter_entries(path: Path):
                 yield d
 
 
+GAP_CAP_S = 1800.0
+
+
+def _parse_ts(v):
+    """ISO-8601 timestamp ('2026-09-16T18:22:03.123Z') -> aware datetime, or None."""
+    if not isinstance(v, str) or not v:
+        return None
+    try:
+        from datetime import datetime
+        return datetime.fromisoformat(v.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
 def scan_transcripts(paths: list[Path]) -> dict:
     """Count tool_use blocks over all transcript files; sum assistant usage once per request."""
     counts: dict[str, int] = {}
@@ -94,9 +108,29 @@ def scan_transcripts(paths: list[Path]) -> dict:
     magnus = subagents = entries = 0
     usage = {k: 0 for k in TOKEN_KEYS}
     seen_requests: set = set()
+    # Time accounting from entry timestamps, per transcript file: the gap before an assistant entry is
+    # model latency (LLM), the gap before a tool_result entry is tool execution; gaps longer than
+    # GAP_CAP_S are treated as idle (e.g. waiting for a background subagent) and not attributed.
+    llm_s = tool_s = magnus_s = 0.0
+    magnus_tool_ids: set[str] = set()
     for path in paths:
+        prev_ts = None
         for n, d in enumerate(iter_entries(path)):
             msg = d.get("message")
+            ts = _parse_ts(d.get("timestamp"))
+            if isinstance(msg, dict) and ts is not None and prev_ts is not None:
+                gap = (ts - prev_ts).total_seconds()
+                if 0 <= gap <= GAP_CAP_S:
+                    if d.get("type") == "assistant":
+                        llm_s += gap
+                    elif d.get("type") == "user" and isinstance(msg.get("content"), list) and any(
+                            isinstance(b, dict) and b.get("type") == "tool_result" for b in msg["content"]):
+                        tool_s += gap
+                        if any(isinstance(b, dict) and b.get("type") == "tool_result"
+                               and b.get("tool_use_id") in magnus_tool_ids for b in msg["content"]):
+                            magnus_s += gap
+            if ts is not None:
+                prev_ts = ts
             if not isinstance(msg, dict):
                 continue
             entries += 1
@@ -125,6 +159,9 @@ def scan_transcripts(paths: list[Path]) -> dict:
                     cmd = inp.get("command")
                     if isinstance(cmd, str):
                         magnus += len(MAGNUS_RE.findall(cmd))
+                        if MAGNUS_RE.search(cmd) or re.search(r"magnus (status|job result|logs|jobs)", cmd):
+                            if isinstance(block.get("id"), str):
+                                magnus_tool_ids.add(block["id"])
                 elif name in WRITE_TOOLS:
                     fp = inp.get("file_path") or inp.get("notebook_path")
                     if isinstance(fp, str) and fp:
@@ -136,6 +173,9 @@ def scan_transcripts(paths: list[Path]) -> dict:
         "files_written": len(files),
         "files_written_paths": sorted(files),
         "usage_crosscheck": usage,
+        "llm_time_s": round(llm_s, 1),
+        "tool_time_s": round(tool_s, 1),
+        "magnus_call_time_s": round(magnus_s, 1),
         "entries": entries,
     }
 
@@ -224,6 +264,9 @@ def compute(sandbox: Path, config_dir: Path | None = None) -> dict:
         "files_written": scan["files_written"] if scan else None,
         "files_written_paths": scan["files_written_paths"] if scan else [],
         "tool_calls": scan["tool_calls"] if scan else {},
+        "llm_time_s": scan["llm_time_s"] if scan else None,
+        "tool_time_s": scan["tool_time_s"] if scan else None,
+        "magnus_call_time_s": scan["magnus_call_time_s"] if scan else None,
         "transcript": {
             "found": src is not None or local_main.is_file(),
             "source": str(src) if src else None,
@@ -245,6 +288,9 @@ def compute(sandbox: Path, config_dir: Path | None = None) -> dict:
         xout = int(xc.get("output_tokens", 0))
         if tokens_in is None or xin >= tokens_in:
             m["tokens_in_total"], m["tokens_out_total"], m["tokens_scope"] = xin, xout, "main+subagents"
+    if scan and wall:
+        m["llm_share_of_wall"] = round(min(1.0, scan["llm_time_s"] / wall), 3)
+        m["magnus_share_of_wall"] = round(min(1.0, scan["magnus_call_time_s"] / wall), 3)
     m["table_s3_row"] = table_row(m)
     return m
 
