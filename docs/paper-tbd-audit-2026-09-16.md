@@ -15,7 +15,7 @@ Date: 2026-09-16. Sources: `/home/shiqiu/paper.pdf`, `/home/shiqiu/reply.pdf`, `
 | collider | ROOT | 6.28/10 | `root-config --version` |
 | collider | Python | 3.10.12: numpy 1.26.4, scipy 1.15.3, awkward 2.9.0, matplotlib 3.10.8, pyhf 0.7.6; no uproot | in-image import |
 | mma-het (`het-agi/mma-het:latest`, Ubuntu 22.04.3) | Wolfram Engine | 13.3.0 | `/usr/local/Wolfram/WolframEngine/13.3/.VersionID` |
-| mma-het | FeynRules | 2.3.49 (paper's value; package header has no version string, see probe 4) | `/root/.WolframEngine/Applications/FeynRules` |
+| mma-het | FeynRules | 2.3.49 (29 Sep 2021) | `FeynRulesPackage.m`: `FR$VersionNumber = "2.3.49"` |
 | micromegas (`rise-agi/micromegas:latest`) | micrOmegas / CalcHEP | 6.3.0 / 3.9.2 | `/opt/micromegas_6.3.0`, `CalcHEP_src/VERSION` |
 | agent runtime (this host) | Python analysis stack | 3.13.12: uproot 5.7.4, awkward 2.9.0, numpy 2.4.4, scipy 1.15.3, matplotlib 3.10.9, pyhf 0.7.6 | installed 2026-04-19 … 2026-06-08 |
 | agent runtime | Claude Code | 2.1.273 for the 2026-09-16 re-runs; original April–May runs: not recoverable here (earliest local logs are from 2026-08) | `claude --version` |

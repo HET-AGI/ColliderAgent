@@ -20,7 +20,7 @@
 \statusneedrun\ = needs the remaining benchmark runs (Opus 4.6 $\times$3 per benchmark; cross-model). \statusauthor\ = a decision or confirmation only the authors can make.
 
 \section{Table S2 (sm.pdf p.\,4) --- software environment}
-Status: \statusdone\ except the Claude Code version of the \emph{original} runs (see note).
+Status: \statusdone\ for every package (all read inside the images); only the Claude Code version of the \emph{original} runs is open (see note).
 All versions were read inside the images on zhustation on 2026-09-16 with a probe blueprint
 (\texttt{collider-env-probe}; job logs are cited per row). Two corrections to the current table: the analysis Python
 stack lives in the \emph{agent runtime}, not in the collider image (the image has no \texttt{uproot}), and Delphes is 3.5.1.
@@ -39,8 +39,8 @@ collider & HepMC & 2.06.09 & header of \texttt{tag\_1\_pythia8\_events.hepmc.gz}
 collider & ROOT & 6.28/10 & \texttt{root-config --version} \\
 collider & Python & 3.10.12; numpy 1.26.4, scipy 1.15.3, awkward 2.9.0, matplotlib 3.10.8, pyhf 0.7.6 & in-image \texttt{import} \\
 mma-het & Wolfram Engine & 13.3.0 & \texttt{/usr/local/Wolfram/WolframEngine/13.3/.VersionID} \\
-mma-het & FeynRules & 2.3.49 & paper's value; in-image header check pending (probe 3) \\
-micromegas & micrOmegas & 6.3.0 & \texttt{/opt/micromegas\_6.3.0} (image \texttt{rise-agi/micromegas}) \\
+mma-het & FeynRules & 2.3.49 (29 Sep 2021) & \texttt{FeynRulesPackage.m}: \texttt{FR\$VersionNumber = "2.3.49"} \\
+micromegas & micrOmegas / CalcHEP & 6.3.0 / 3.9.2 & \texttt{/opt/micromegas\_6.3.0}, \texttt{CalcHEP\_src/VERSION} (image \texttt{rise-agi/micromegas}) \\
 agent runtime & Python analysis stack & Python 3.13.12; uproot 5.7.4, awkward 2.9.0, numpy 2.4.4, scipy 1.15.3, matplotlib 3.10.9, pyhf 0.7.6 & host \texttt{import}; installed 2026-04-19 .. 2026-06-08 \\
 agent runtime & Claude Code & 2.1.273 (re-runs of 2026-09-16); original runs: see note & \texttt{claude --version} \\
 agent runtime & LLM & Claude Opus 4.6 (\texttt{claude-opus-4-6}), still served on 2026-09-16 & one-turn probe call \\
