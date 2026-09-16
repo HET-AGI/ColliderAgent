@@ -187,7 +187,7 @@ The license file (`mathpass`) is written to `~/.wolfram-container-license/` on t
 The fastest way to try Collider-Agent is to run a standard-model dilepton invariant mass plot — a classic parton-level check — directly from the command line:
 
 ```bash
-claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-bypass-permissions
+claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-skip-permissions
 ```
 
 This runs the full pipeline non-interactively: MadGraph5 generates the events via [Magnus](https://github.com/rise-agi/magnus), and the agent produces a normalized $m_{\ell\ell}$ histogram in your working directory.

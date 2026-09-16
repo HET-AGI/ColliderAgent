@@ -167,7 +167,7 @@ no secrets / no task physics · promotions never bypass the smoke gate or the hu
     copied from `~/.claude`, agent-memory empty for `cold` or copied from the central store for
     `warm`), and `hepdata/` inputs if the prompt needs them.
   - runs `claude -p "$(cat prompt.md)" --model <id> --effort <E> --output-format json
-    --dangerously-bypass-permissions` with `nohup`, records wall-clock, saves `result.json`.
+    --dangerously-skip-permissions` with `nohup`, records wall-clock, saves `result.json`.
   - post-run: `collect_metrics.py`, and copies the session transcript next to the sandbox.
 - `collect_metrics.py <sandbox>` → `metrics.json` + one Markdown row:
   wall-clock, sub-agent calls (`Agent` tool_use count), Magnus jobs (`Bash` inputs matching

@@ -185,7 +185,7 @@ docker run -it --rm \
 最快的体验方式是直接运行一个标准模型双轻子不变质量图——经典的部分子级验证——从命令行一键执行：
 
 ```bash
-claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-bypass-permissions
+claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-skip-permissions
 ```
 
 此命令以非交互方式运行完整流程：MadGraph5 通过 [Magnus](https://github.com/rise-agi/magnus) 产生事例，智能体在当前工作目录生成归一化的 $m_{\ell\ell}$ 直方图。
