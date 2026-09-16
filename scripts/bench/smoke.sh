@@ -40,7 +40,12 @@ SMOKE_DIR="${SMOKE_DIR:-/tmp/collider-smoke-$$}"
 TIMEOUT="${SMOKE_TIMEOUT:-1800}"
 FR="$REPO_ROOT/python-agent/tests/assets/minimal_Zp.fr"
 [[ -f "$FR" ]] || { echo "smoke.sh: model file not found: $FR" >&2; exit 2; }
-SYMBOL="$(grep -m1 -oE '^L[A-Za-z0-9]+' "$FR" || true)"
+# Prefer the total Lagrangian (the symbol defined as a sum of the others); fall back to the first L* assignment.
+SYMBOL="${SMOKE_LAGRANGIAN:-}"
+if [[ -z "$SYMBOL" ]]; then
+  SYMBOL="$(grep -m1 -oE '^L[A-Za-z0-9]+(?=\s*:?=\s*L[A-Za-z0-9]+\s*\+)' -P "$FR" 2>/dev/null || true)"
+fi
+[[ -z "$SYMBOL" ]] && SYMBOL="$(grep -m1 -oE '^L[A-Za-z0-9]+' "$FR" || true)"
 [[ -n "$SYMBOL" ]] || { echo "smoke.sh: no Lagrangian symbol (^L[A-Za-z0-9]+) found in $FR" >&2; exit 2; }
 mkdir -p "$SMOKE_DIR"
 
