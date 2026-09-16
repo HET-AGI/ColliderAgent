@@ -94,7 +94,15 @@ def test_smoke_dry_run_never_calls_magnus(tmp_path):
     # same rule as smoke.sh: first line of the asset starting with L<alnum> (LYuk on 2026-09-16; the
     # earlier " LGauge = ..." line has a leading space and is deliberately not matched)
     fr = (REPO / "python-agent" / "tests" / "assets" / "minimal_Zp.fr").read_text(errors="replace")
-    symbol = next(re.match(r"^L[A-Za-z0-9]+", ln).group(0) for ln in fr.splitlines() if re.match(r"^L[A-Za-z0-9]+", ln))
+    # smoke.sh picks the L* symbol whose definition sums the most sub-Lagrangians (the total Lagrangian).
+    best, symbol = 0, None
+    for ln in fr.splitlines():
+        m = re.match(r"^(L[A-Za-z0-9]+)\s*:?=(.*)$", ln)
+        if m:
+            n = len(re.findall(r"\+\s*L[A-Za-z0-9]+", m.group(2)))
+            if n > best:
+                best, symbol = n, m.group(1)
+    assert symbol == "LmZp"
     assert f"--lagrangian {symbol}" in r.stdout
     assert "madgraph-compile" in r.stdout and "madanalysis-process" in r.stdout and "validate-feynrules" in r.stdout
     assert r.stdout.count("| DRY |") == 5

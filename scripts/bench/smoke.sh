@@ -38,6 +38,10 @@ done
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 SMOKE_DIR="${SMOKE_DIR:-/tmp/collider-smoke-$$}"
 TIMEOUT="${SMOKE_TIMEOUT:-1800}"
+# `magnus run` takes no leading options before the blueprint id (a leading --timeout is parsed as the id),
+# so bound each step with coreutils timeout instead.
+if command -v timeout >/dev/null 2>&1; then TIMEOUT_CMD=(timeout "$TIMEOUT"); else TIMEOUT_CMD=(); fi
+
 FR="$REPO_ROOT/python-agent/tests/assets/minimal_Zp.fr"
 [[ -f "$FR" ]] || { echo "smoke.sh: model file not found: $FR" >&2; exit 2; }
 # Prefer the total Lagrangian: the L* symbol whose definition sums the most other L* symbols
@@ -105,17 +109,17 @@ fi
 
 # 2. compile
 COMPILE_OK=0
-if run_step compile magnus run --timeout "$TIMEOUT" madgraph-compile -- \
+if run_step compile ${TIMEOUT_CMD[@]} magnus run madgraph-compile -- \
      --process "p p > e+ e-" --output "$SMOKE_DIR/pp_ee"; then COMPILE_OK=1; fi
 
 # 3./4. launch + ma5 (skipped with --quick)
 if [[ $QUICK -eq 0 ]]; then
   if [[ $COMPILE_OK -eq 1 || $DRY -eq 1 ]]; then
     LAUNCH_OK=0
-    if run_step launch magnus run --timeout "$TIMEOUT" madgraph-launch -- \
+    if run_step launch ${TIMEOUT_CMD[@]} magnus run madgraph-launch -- \
          --process "$SMOKE_DIR/pp_ee" --commands "$LAUNCH_CMDS" --output "$SMOKE_DIR/pp_ee"; then LAUNCH_OK=1; fi
     if [[ $LAUNCH_OK -eq 1 || $DRY -eq 1 ]]; then
-      run_step ma5 magnus run --timeout "$TIMEOUT" madanalysis-process -- \
+      run_step ma5 ${TIMEOUT_CMD[@]} magnus run madanalysis-process -- \
         --events "$SMOKE_DIR/pp_ee" --script "$MA5_SCRIPT" --output "$SMOKE_DIR/ma5_out" --level parton || true
     else
       record ma5 "FAIL (skipped: launch failed)"
@@ -127,7 +131,7 @@ if [[ $QUICK -eq 0 ]]; then
 fi
 
 # 5. validate
-run_step validate magnus run --timeout "$TIMEOUT" validate-feynrules -- \
+run_step validate ${TIMEOUT_CMD[@]} magnus run validate-feynrules -- \
   --model "$FR" --lagrangian "$SYMBOL" || true
 
 print_table
