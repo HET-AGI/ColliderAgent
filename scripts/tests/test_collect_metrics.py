@@ -81,6 +81,8 @@ def test_compute_counts_and_row(tmp_path):
     assert m["tool_calls"] == {"Agent": 1, "Bash": 4, "Edit": 1, "Read": 1, "Task": 1, "Write": 3}
     assert m["table_s3_row"] == "| opus5-fig8 | 2.00 | 2 | 3 | 3 | 1.50 | 12.3 |"
     assert m["transcript"]["found"] and m["transcript"]["subagent_files"] == 1
+    # the synthetic transcripts carry fewer tokens than result.json, so the main-session numbers stand
+    assert m["tokens_scope"] == "main_session" and m["tokens_in_total"] == m["tokens_in"]
     # usage cross-check sums each requestId once (r4 appears on two lines)
     assert m["transcript"]["usage_crosscheck"]["input_tokens"] == 10 * (5 + 4)
     assert (sandbox / "transcript.jsonl").is_file()
@@ -127,3 +129,18 @@ def test_slug_rule():
 
 def test_help():
     assert subprocess.run([sys.executable, str(COLLECT), "--help"], capture_output=True).returncode == 0
+
+
+def test_subagent_totals_override_main_session_tokens(tmp_path):
+    sandbox = make_sandbox(tmp_path)
+    sub = next((sandbox / ".claude-config").rglob("agent-abc.jsonl"))
+    big = _assistant([_tool("Read", file_path="/w/x")], req="big")
+    big["message"]["usage"] = {"input_tokens": 5, "cache_creation_input_tokens": 400000,
+                               "cache_read_input_tokens": 3000000, "output_tokens": 50000}
+    sub.write_text(sub.read_text() + json.dumps(big) + "\n")
+    m = collect_metrics.compute(sandbox)
+    assert m["tokens_scope"] == "main+subagents"
+    assert m["tokens_in_total"] >= 3400000 and m["tokens_out_total"] >= 50000
+    assert m["tokens_in"] == 1000 + 200000 + 1300000  # main-session figure is kept as-is
+    assert m["table_s3_row"].split("|")[6].strip() == f"{m['tokens_in_total']/1e6:.2f}"
+

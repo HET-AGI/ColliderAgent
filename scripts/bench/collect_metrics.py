@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Collect resource metrics for one benchmark sandbox created by run_benchmark.sh.
 
-Reads result.json (authoritative for tokens, cost, turns), status.json (timing, exit code)
+Reads result.json (authoritative for cost and turns; its usage covers the main session only, so token totals come from the main + subagent transcripts when available), status.json (timing, exit code)
 and run.env, locates the session transcript under the sandbox's private config dir
 (<config>/projects/<slug>/<session_id>.jsonl, slug = sandbox path with every
 non-alphanumeric character replaced by '-') plus its subagent transcripts
@@ -150,8 +150,10 @@ def _fmt(v, spec: str) -> str:
 
 def table_row(m: dict) -> str:
     wall_h = None if m.get("wall_clock_s") is None else m["wall_clock_s"] / 3600.0
-    tin = None if m.get("tokens_in") is None else m["tokens_in"] / 1e6
-    tout = None if m.get("tokens_out") is None else m["tokens_out"] / 1e3
+    tin_v = m.get("tokens_in_total", m.get("tokens_in"))
+    tout_v = m.get("tokens_out_total", m.get("tokens_out"))
+    tin = None if tin_v is None else tin_v / 1e6
+    tout = None if tout_v is None else tout_v / 1e3
     return (f"| {m['label']} | {_fmt(wall_h, '.2f')} | {_fmt(m.get('subagent_calls'), 'd')} | "
             f"{_fmt(m.get('magnus_jobs'), 'd')} | {_fmt(m.get('files_written'), 'd')} | "
             f"{_fmt(tin, '.2f')} | {_fmt(tout, '.1f')} |")
@@ -231,6 +233,18 @@ def compute(sandbox: Path, config_dir: Path | None = None) -> dict:
             "usage_crosscheck": scan["usage_crosscheck"] if scan else None,
         },
     }
+    # result.json's usage covers the main session only; subagent stages (where most tokens are spent)
+    # are visible only in their transcripts. When the transcript scan covers subagent files and its
+    # per-request sums exceed the main-session numbers, report those totals in the S3 row.
+    xc = scan["usage_crosscheck"] if scan else None
+    m["tokens_scope"] = "main_session"
+    m["tokens_in_total"], m["tokens_out_total"] = tokens_in, tokens_out
+    if xc and m["transcript"]["subagent_files"] > 0:
+        xin = int(xc.get("input_tokens", 0) + xc.get("cache_creation_input_tokens", 0)
+                  + xc.get("cache_read_input_tokens", 0))
+        xout = int(xc.get("output_tokens", 0))
+        if tokens_in is None or xin >= tokens_in:
+            m["tokens_in_total"], m["tokens_out_total"], m["tokens_scope"] = xin, xout, "main+subagents"
     m["table_s3_row"] = table_row(m)
     return m
 
