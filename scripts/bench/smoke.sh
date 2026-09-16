@@ -40,10 +40,11 @@ SMOKE_DIR="${SMOKE_DIR:-/tmp/collider-smoke-$$}"
 TIMEOUT="${SMOKE_TIMEOUT:-1800}"
 FR="$REPO_ROOT/python-agent/tests/assets/minimal_Zp.fr"
 [[ -f "$FR" ]] || { echo "smoke.sh: model file not found: $FR" >&2; exit 2; }
-# Prefer the total Lagrangian (the symbol defined as a sum of the others); fall back to the first L* assignment.
+# Prefer the total Lagrangian: the L* symbol whose definition sums the most other L* symbols
+# (LmZp := LGauge + LHiggs + LFermions + LYukawa + LGhost in minimal_Zp.fr); fall back to the first L* assignment.
 SYMBOL="${SMOKE_LAGRANGIAN:-}"
 if [[ -z "$SYMBOL" ]]; then
-  SYMBOL="$(grep -m1 -oE '^L[A-Za-z0-9]+(?=\s*:?=\s*L[A-Za-z0-9]+\s*\+)' -P "$FR" 2>/dev/null || true)"
+  SYMBOL="$(awk '/^L[A-Za-z0-9]+[[:space:]]*:?=/ { sym=$1; sub(/:?=.*/, "", sym); n=gsub(/\+[[:space:]]*L[A-Za-z0-9]+/, "&"); if (n>best) {best=n; bestsym=sym} } END { if (best>0) print bestsym }' "$FR" || true)"
 fi
 [[ -z "$SYMBOL" ]] && SYMBOL="$(grep -m1 -oE '^L[A-Za-z0-9]+' "$FR" || true)"
 [[ -n "$SYMBOL" ]] || { echo "smoke.sh: no Lagrangian symbol (^L[A-Za-z0-9]+) found in $FR" >&2; exit 2; }
