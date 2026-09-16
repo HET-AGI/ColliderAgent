@@ -77,10 +77,18 @@ if [[ "${NEWEST,,}" == *.pdf ]]; then
 fi
 
 # --- ask the judge model ---------------------------------------------------------------
+# The task usually asks for a subset of what the paper figure shows (one curve, one panel);
+# hand the judge the task's Target section so it compares only what was requested.
+TARGET=""
+if [[ -f "$SANDBOX/prompt.md" ]]; then
+  TARGET="$(awk '/^# *1\. *Target/{f=1; next} /^# /{if(f) exit} f' "$SANDBOX/prompt.md" | head -40)"
+fi
 PROMPT="You are an assistive judge for a particle-physics paper-reproduction benchmark.
 Produced figure (image file): $PRODUCED
 Reference figure (image file): $REF
-Use the Read tool to open both image files, then decide whether the produced figure reproduces the reference: same observable and axes, same qualitative shape and normalisation, and the labelled features (peaks, cut-offs, curves, legend entries) in the right place. Cosmetic differences (colours, fonts, legend position, binning, style) do not matter.
+What the task asked the agent to reproduce (verbatim from the task):
+$TARGET
+Use the Read tool to open both image files, then decide whether the produced figure reproduces the requested part of the reference: same observable and axes, same qualitative shape and normalisation, and the requested features (peaks, cut-offs, the requested curve or panel) in the right place. Reference curves, panels, or backgrounds that the task did not ask for must not count against the produced figure. Cosmetic differences (colours, fonts, legend position, binning, style) do not matter.
 Reply with ONLY one JSON object and nothing else (no prose, no code fence):
 {\"success\": true or false, \"failure_mode\": \"model\" or \"generation\" or \"analysis\" or \"infrastructure\" or null, \"notes\": \"one or two sentences\"}
 failure_mode is null when success is true; otherwise choose the most likely stage that went wrong: model (Lagrangian/UFO/parameters), generation (process, cuts, beams, event generation), analysis (observable, histogramming, normalisation, plotting), infrastructure (tooling, missing or unreadable output)."

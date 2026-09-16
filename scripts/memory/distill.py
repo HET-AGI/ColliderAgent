@@ -331,6 +331,38 @@ def load_lesson(path: Path) -> tuple[Lesson, list[str]]:
     return Lesson(path, meta, body), warnings
 
 
+SYMPTOM_MAX = 200
+
+
+def load_lesson_lenient(path: Path) -> tuple[Lesson, list[str]]:
+    """Like load_lesson, but repairs the two format drifts subagents produce: extra top-level keys
+    (e.g. the harness's auto-memory `name/description/metadata` block) are dropped, and an over-long
+    symptom is truncated to SYMPTOM_MAX with the full text kept in the body. Raises LessonError when
+    the file is still invalid afterwards. Returns (lesson, repairs)."""
+    text = path.read_text(encoding="utf-8")
+    fm, body = split_frontmatter(text)
+    known = set(load_schema().get("properties", {}).keys())
+    kept, repairs, keep_block = [], [], False
+    for ln in fm.splitlines():
+        if ln and not ln[0].isspace() and not ln.startswith("-"):
+            key = ln.split(":", 1)[0].strip()
+            keep_block = key in known
+            if not keep_block:
+                repairs.append(f"dropped unknown key {key!r}")
+        if keep_block:
+            kept.append(ln)
+    meta = parse_frontmatter("\n".join(kept))
+    sym = meta.get("symptom")
+    if isinstance(sym, str) and len(sym) > SYMPTOM_MAX:
+        meta["symptom"] = sym[:SYMPTOM_MAX - 1].rstrip() + "…"
+        body = f"Full symptom: {sym}\n\n" + body.lstrip("\n")
+        repairs.append(f"truncated symptom from {len(sym)} to {SYMPTOM_MAX} characters")
+    errs = validate(meta, load_schema())
+    if errs:
+        raise LessonError("; ".join(errs))
+    return Lesson(path, meta, body), repairs
+
+
 def dump_lesson(lesson: Lesson) -> str:
     body = lesson.body.strip("\n")
     return dump_frontmatter(lesson.meta) + (body + "\n" if body else "")
@@ -620,8 +652,14 @@ def cmd_import(args) -> int:
         cmap = central.setdefault(name, {})
         s_lessons, s_errors, _ = read_agent(sdir)
         for path, msg in s_errors:
-            print(f"skipping invalid {path}: {msg}", file=sys.stderr)
-            skipped += 1
+            try:
+                fixed, repairs = load_lesson_lenient(path)
+            except (LessonError, Exception) as e:  # noqa: BLE001 - any parse failure means skip
+                print(f"skipping invalid {path}: {msg} (repair failed: {e})", file=sys.stderr)
+                skipped += 1
+                continue
+            print(f"repaired {path}: {'; '.join(repairs) or msg}", file=sys.stderr)
+            s_lessons.append(fixed)
         for sl in s_lessons:
             cl = cmap.get(sl.key)
             if cl is None:

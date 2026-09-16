@@ -329,3 +329,43 @@ def test_help_and_flag_aliases(tmp_path):
         assert run(cmd, "--help").returncode == 0, cmd
     write_lesson(tmp_path, "a", "madgraph-x.md", lesson_text(support=3))
     assert run("--propose", "--root", tmp_path).returncode == 0
+
+
+def test_import_repairs_extra_keys_and_long_symptom(tmp_path):
+    """Files written in the harness auto-memory format (name/description/metadata) or with an over-long
+    symptom are repaired on import instead of being skipped."""
+    import subprocess, sys
+    src = tmp_path / "sandbox_mem" / "model-generator" / "lessons"
+    src.mkdir(parents=True)
+    long_symptom = "generate-ufo " + "x" * 260
+    (src / "drift.md").write_text(
+        "---\n"
+        "name: drift\n"
+        "description: harness auto-memory style header\n"
+        "metadata:\n"
+        "  type: feedback\n"
+        "stage: ufo\n"
+        "blueprint: generate-ufo\n"
+        f"symptom: \"{long_symptom}\"\n"
+        "root_cause: \"flaky export\"\n"
+        "fix: \"retry once\"\n"
+        "evidence: [\"job:abc\"]\n"
+        "generalizable: true\n"
+        "support: 1\n"
+        "first_seen: 2026-09-16\n"
+        "last_confirmed: 2026-09-16\n"
+        "---\n"
+        "body line\n")
+    root = tmp_path / "central"
+    root.mkdir()
+    r = subprocess.run([sys.executable, str(DISTILL), "import", "--from", str(tmp_path / "sandbox_mem"),
+                        "--root", str(root)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr + r.stdout
+    assert "repaired" in r.stderr and "1 added" in r.stdout
+    imported = list((root / "model-generator" / "lessons").glob("*.md"))
+    assert len(imported) == 1
+    text = imported[0].read_text()
+    assert "metadata" not in text.split("---")[1]
+    assert "Full symptom: generate-ufo xxx" in text
+    assert len(text.split("symptom: ")[1].split("\n")[0]) <= 205
+

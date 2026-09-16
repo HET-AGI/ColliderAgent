@@ -118,8 +118,9 @@ def table_s3(runs: list[dict]) -> str:
              "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for (bench, model), ms in sorted(groups.items()):
         wall = _mean(m.get("wall_clock_s") for m in ms)
-        tin = _mean(m.get("tokens_in") for m in ms)
-        tout = _mean(m.get("tokens_out") for m in ms)
+        # prefer main+subagent totals (collect_metrics.py) over the main-session-only usage
+        tin = _mean(m.get("tokens_in_total", m.get("tokens_in")) for m in ms)
+        tout = _mean(m.get("tokens_out_total", m.get("tokens_out")) for m in ms)
         lines.append(
             f"| {bench} | {model} | {len(ms)} | {_fmt(None if wall is None else wall / 3600, '.2f')} | "
             f"{_fmt(_mean(m.get('subagent_calls') for m in ms), '.1f')} | "

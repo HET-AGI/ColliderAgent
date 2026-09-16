@@ -38,6 +38,42 @@ Cost expectation per full run (to size the S4 matrix): the paper's Dark-SMEFT ca
 - Headless `claude -p` terminates the session 600 s after the orchestrator ends a turn while a stage subagent is still running (`Background tasks still running after 600s; terminating`). Every S3–S5 run must set `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; `scripts/bench/run_benchmark.sh` does. Runs made without it under-report wall-clock and fail at the first stage longer than 10 minutes.
 - The quickstart integration run (Sonnet 5, v2 skills) produced 100 000 events with the requested parameters, a correct `step2_madgraph.json` sidecar, and one memory lesson in the collider-simulator store before the ceiling killed the MadAnalysis stage — evidence that the handoff and memory contracts are followed by a current model.
 
-## First cross-model row (in progress today)
+## First cross-model row — ALP EFT, 1701.05379 Fig. 8 (2026-09-16, v2 skills, cold memory, one attempt each)
 
-ALP EFT Fig. 8 with `claude-opus-5`, `claude-opus-4-8`, `claude-sonnet-5`, cold memory, one attempt each, on the v2 skills. Results are appended below by `aggregate.py` when the runs finish.
+| Model | Success | Wall-clock [h] | Sub-agent calls | Magnus jobs | Files written | Tokens in [M] | Tokens out [k] | Cost [USD] | Main-session turns |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| claude-opus-5 | yes | 0.87 | 3 | 5 | 17 | 5.72 | 37.5 | 9.06 | 15 |
+| claude-opus-4-8 | yes | 1.05 | 3 | 9 | 16 | 10.96 | 43.3 | 12.55 | 7 |
+| claude-sonnet-5 | yes | 1.38 | 3 | 14 | 24 | 18.19 | 34.3 | 7.54 | 15 |
+
+Success = the produced normalized E_T^miss distribution matches the paper's c_W̃ curve (peak ≈ 0.18 per 20 GeV bin at 40–80 GeV, tail ≈ 3×10⁻⁴ at 1 TeV), confirmed by side-by-side inspection and by the assistive judge (`scripts/bench/judge.sh`, target-aware prompt). Tokens count the main session plus all stage subagents (the CLI's own `usage` field covers only the main session and would under-report by ~10×). All three runs applied the requested parameters (c_W̃ = 1, f_a = 1 TeV, m_a = 1 MeV, 500 000 events); Opus 5 and Opus 4.8 obtained identical cross sections (0.04135 pb) while Sonnet 5's 0.04909 pb reflects looser generation-level η cuts (5 instead of 2.5), which the normalization removes.
+
+Observations for Tables S3–S5:
+- One attempt is not a success rate; the harness makes the remaining two attempts per model one command each (`scripts/bench/run_benchmark.sh 1701.05379 8 <model>`), and `aggregate.py` recomputes the tables from `bench_runs/`.
+- The assistive judge is not stable when the reference figure contains curves the task did not ask for; the target-aware prompt fixed one false negative today. Keep the human confirmation step.
+- The experience loop produced 11 schema-valid lessons across the three runs (MG5 `cut_decays` semantics, the 10-minute shell timeout on long launches, FeynRules `FeynmanGauge = False` for UFO export, a FeynRules adjoint-index export corruption, and others); support is 1 each, so none is auto-promoted yet. One lesson (long jobs vs the shell timeout) was promoted by hand into the magnus skill.
+
+`aggregate.py` output for the record:
+
+Runs found: 3 (successful 3, failed 0, unjudged 0)
+
+### Table S3: resource usage (successful runs, mean over runs)
+
+| Benchmark | Model | Runs | Wall-clock (h) | Subagent calls | Magnus jobs | Files written | Tokens in (M) | Tokens out (k) | Cost (USD) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1701.05379 Fig. 8 | claude-opus-4-8 | 1 | 1.05 | 3.0 | 9.0 | 16.0 | 10.96 | 43.3 | 12.55 |
+| 1701.05379 Fig. 8 | claude-opus-5 | 1 | 0.87 | 3.0 | 5.0 | 17.0 | 5.72 | 37.5 | 9.06 |
+| 1701.05379 Fig. 8 | claude-sonnet-5 | 1 | 1.38 | 3.0 | 14.0 | 24.0 | 18.19 | 34.3 | 7.54 |
+
+### Table S4: successful/attempted per benchmark and model (`?` = attempted, not yet judged)
+
+| Benchmark | claude-opus-4-8 | claude-opus-5 | claude-sonnet-5 |
+|---|---:|---:|---:|
+| 1701.05379 Fig. 8 | 1/1 | 1/1 | 1/1 |
+
+### Table S5: successful/attempted per benchmark with failure modes
+
+| Benchmark | Successful/attempted | Failure modes |
+|---|---:|---|
+| 1701.05379 Fig. 8 | 3/3 | - |
+
