@@ -1,0 +1,155 @@
+% Audit of every [AUTHORS: ...] marker and red TBD in paper.pdf, reply.pdf, sm.pdf
+% (versions compiled 2026-09-16 04:10 / 05:53 EDT). Each item names the document, the page in
+% that PDF, the table/section, what is asked, the status after the 2026-09-16 measurements, and the
+% text or numbers proposed. Items marked AUTHOR need a decision that no measurement can supply.
+% Compile standalone: pdflatex claims-audit-2026-09-16.tex
+\documentclass[11pt]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{booktabs,longtable,array,xcolor,hyperref,amsmath}
+\newcommand{\done}{\textcolor{green!50!black}{\textbf{DONE}}}
+\newcommand{\partial}{\textcolor{orange!80!black}{\textbf{PARTIAL}}}
+\newcommand{\needrun}{\textcolor{blue!70!black}{\textbf{RUNS}}}
+\newcommand{\author}{\textcolor{red!70!black}{\textbf{AUTHOR}}}
+\title{ColliderAgent revision: audit of open placeholders\\ \large measurements of 2026-09-16 and proposed text}
+\date{2026-09-16}
+\begin{document}
+\maketitle
+
+\section*{Legend}
+\done\ = measured today, text below can be pasted. \partial\ = partly measured; the rest is in progress.
+\needrun\ = needs the remaining benchmark runs (Opus 4.6 $\times$3 per benchmark; cross-model). \author\ = a decision or confirmation only the authors can make.
+
+\section{Table S2 (sm.pdf p.\,4) --- software environment}
+Status: \done\ except the Claude Code version of the \emph{original} runs (see note).
+All versions were read inside the images on zhustation on 2026-09-16 with a probe blueprint
+(\texttt{collider-env-probe}; job logs are cited per row). Two corrections to the current table: the analysis Python
+stack lives in the \emph{agent runtime}, not in the collider image (the image has no \texttt{uproot}), and Delphes is 3.5.1.
+
+\begin{center}
+\begin{tabular}{lll l}
+\toprule
+Image / runtime & Package & Version & Evidence (2026-09-16) \\
+\midrule
+collider & MadGraph5\_aMC@NLO & 3.7.0 & \texttt{/opt/MG5\_aMC\_v3\_7\_0}, \texttt{MGMEVersion.txt} \\
+collider & Pythia8 & 8.316 & \texttt{pythia8-config --version}; \texttt{PYTHIA\_VERSION 8.316} \\
+collider & Delphes & 3.5.1 & \texttt{/opt/MG5\_aMC\_v3\_7\_0/Delphes/README} (installer tarball Delphes-3.5.1) \\
+collider & MadAnalysis5 & 1.11.0 (2025-04-23) & \texttt{/opt/madanalysis5/version.txt}; HTML report banner \\
+collider & LHAPDF & 6.5.5 & \texttt{HEPTools/bin/lhapdf-config --version} \\
+collider & HepMC & 2.06.09 & header of \texttt{tag\_1\_pythia8\_events.hepmc.gz} (job 230c4933a9ab3b75) \\
+collider & ROOT & 6.28/10 & \texttt{root-config --version} \\
+collider & Python & 3.10.12; numpy 1.26.4, scipy 1.15.3, awkward 2.9.0, matplotlib 3.10.8, pyhf 0.7.6 & in-image \texttt{import} \\
+mma-het & Wolfram Engine & 13.3.0 & \texttt{/usr/local/Wolfram/WolframEngine/13.3/.VersionID} \\
+mma-het & FeynRules & 2.3.49 & paper's value; in-image header check pending (probe 3) \\
+micromegas & micrOmegas & 6.3.0 & \texttt{/opt/micromegas\_6.3.0} (image \texttt{rise-agi/micromegas}) \\
+agent runtime & Python analysis stack & Python 3.13.12; uproot 5.7.4, awkward 2.9.0, numpy 2.4.4, scipy 1.15.3, matplotlib 3.10.9, pyhf 0.7.6 & host \texttt{import}; installed 2026-04-19 .. 2026-06-08 \\
+agent runtime & Claude Code & 2.1.273 (re-runs of 2026-09-16); original runs: see note & \texttt{claude --version} \\
+agent runtime & LLM & Claude Opus 4.6 (\texttt{claude-opus-4-6}), still served on 2026-09-16 & one-turn probe call \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Proposed replacement rows (booktabs, same layout as the current table):
+\begin{verbatim}
+collider   & MadGraph5_aMC@NLO & 3.7.0 \\
+           & Pythia8           & 8.316 \\
+           & Delphes           & 3.5.1 \\
+           & MadAnalysis5      & 1.11.0 \\
+           & LHAPDF            & 6.5.5 \\
+           & HepMC             & 2.06.09 \\
+           & ROOT              & 6.28/10 \\
+           & pyhf              & 0.7.6 \\
+mma-het    & Wolfram Engine    & 13.3.0 \\
+           & FeynRules         & 2.3.49 \\
+agent runtime & Claude Code    & 2.1.x (AUTHORS: version of the original runs from the usage logs;
+                                  the 2026-09-16 re-runs used 2.1.273) \\
+           & LLM               & Claude Opus 4.6 \\
+           & uproot, awkward, numpy, scipy & 5.7.4, 2.9.0, 2.4.4, 1.15.3 \\
+\end{verbatim}
+Note on the Claude Code version: no session log from the April--May runs exists on this machine (the earliest local
+logs are from August 2026), so the original version has to come from the co-author who ran them (\author). The rows
+above are otherwise complete.
+
+\section{sm.pdf p.\,5, ``LLM inference accounts for a minor fraction [AUTHORS: fill in numbers ...]''}
+Status: \partial\ --- measured for the ALP EFT benchmark with three current models; the Opus 4.6 numbers for all
+eight benchmarks are being produced now. The claim as written is \emph{not} supported for the light benchmarks:
+attributing every gap before a model message to inference and every gap before a tool result to tool execution
+(main session plus stage subagents), the model share of wall-clock was 38\% (Opus 5), 54\% (Opus 4.8) and 51\%
+(Sonnet 5); time inside \texttt{magnus run}/\texttt{status} calls was 60\%, 45\% and 47\% (the two overlap when a
+stage polls a running job). Proposed wording, to be finalised with the Opus 4.6 numbers:
+\begin{quote}
+For the light benchmarks of Table S3 the wall-clock time splits roughly evenly between LLM inference and cluster
+jobs (model share XX--YY\%); for the Dark-SMEFT campaigns, where each campaign submits more than 100 jobs, cluster
+time dominates.
+\end{quote}
+
+\section{Table S3 (sm.pdf p.\,6) --- resource usage; also paper.pdf p.\,5 and p.\,7, reply.pdf p.\,4 and p.\,6}
+Status: \needrun\ for the Opus 4.6 column (nine prompts launched 2026-09-16 22:00 UTC at effort \texttt{xhigh};
+results are appended by \texttt{scripts/bench/aggregate.py}). Already measured with the v2 skills, cold memory, one run each:
+
+\begin{center}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ALP EFT, $\slashed{E}_T$ [Fig.\,2(b)] & Wall [h] & Sub-agents & Magnus jobs & Files & Tokens in [M] & Tokens out [k] & USD \\
+\midrule
+Claude Opus 5   & 0.87 & 3 & 5  & 17 & 5.72  & 37.5 & 9.06 \\
+Claude Opus 4.8 & 1.05 & 3 & 9  & 16 & 10.96 & 43.3 & 12.55 \\
+Claude Sonnet 5 & 1.38 & 3 & 14 & 24 & 18.19 & 34.3 & 7.54 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Definitions to state in the caption: sub-agent calls = \texttt{Agent} tool invocations; Magnus jobs = \texttt{magnus run}
+submissions; files written = distinct paths written or edited by the agent (progress records and memory files included);
+tokens = main session plus all sub-agents, input = uncached + cache-write + cache-read (the CLI's own usage field
+covers the main session only and under-reports by about $10\times$).
+
+\section{Table S4 (sm.pdf p.\,6; paper.pdf p.\,5 ``fill in cross-model table or state it as future work'';
+reply.pdf p.\,4 ``choose one of the two sentences'')}
+Status: \partial. Recommendation: keep the table with three columns and fill it, because the Referee asked for
+measurement rather than assertion and the runs are cheap (8--13 USD per attempt). Column choices:
+\begin{itemize}
+\item Opus 4.6 (paper's model) --- three attempts per benchmark, in progress.
+\item Model B = GPT-5.3-Codex via the Codex CLI, released 2026-02-05, the same day as Claude Opus 4.6
+  (OpenAI system card dated February 5, 2026; Anthropic Opus 4.6 announcement February 5, 2026). It is the
+  contemporaneous Codex-native model and exercises the skills-only mode (branch \texttt{codex-com}). GPT-5.1 (November
+  2025) predates Opus 4.6 and is not a Codex-tuned model; GPT-5.3-Codex is the better match. To be run by the authors
+  with Codex.
+\item Model C = Claude Sonnet 5 (or Opus 5) --- one attempt already succeeded on the ALP benchmark; a same-vendor
+  smaller model answers the ``does a cheaper model follow the skills'' question the Referee raised.
+\end{itemize}
+Reply sentence to keep: ``We have therefore run the four main-text benchmarks with Claude Opus 4.6 (three attempts each),
+Claude Sonnet 5 and GPT-5.3-Codex (via Codex) and report the success rates in Table S4 of the SM.'' Delete the
+``not been able to complete'' alternative once the runs are in.
+
+\section{Table S5 (sm.pdf p.\,6, text p.\,6 ``fill in the per-benchmark counts and failure modes'')}
+Status: \needrun. Three sandboxed attempts per benchmark with Opus 4.6: the first attempt of each is running; two more
+are one command each (\texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig> claude-opus-4-6 --effort xhigh}).
+Failure modes are recorded in \texttt{verdict.yaml} per run with the paper's four categories; a human confirms each
+verdict. S5 is worth keeping: it is the only place that quantifies the ``occasional failed reproductions'' sentence
+on p.\,6, and the sandbox pipeline the SM describes (clean workspace, one prompt) is exactly what the harness does.
+
+\section{Other markers}
+\begin{longtable}{p{3.2cm}p{5.6cm}p{1.6cm}p{6.2cm}}
+\toprule
+Where & Marker & Status & Proposed action \\
+\midrule
+\endhead
+paper.pdf p.\,5 & ``skills-only mode executes the hello-world workflow of Sec.\,S-III [confirm that this has been tested]'' (Codex/Cursor) & \author & The Codex-compatible layout exists (branch \texttt{codex-com}: \texttt{.agents/skills}, \texttt{.codex/agents}, \texttt{AGENTS.md}). Run the hello-world prompt with Codex on that branch once and keep the sentence; otherwise weaken to ``is designed to''. \\
+paper.pdf p.\,7, Table I caption & ``tokens consumed and wall-clock time [fill in]'' & \needrun & Same numbers as Table S3 (Opus 4.6 column); cite Table S3 instead of repeating them. \\
+paper.pdf p.\,9--10 & ``[confirm the extent of human intervention between campaigns]'' & \author & Dark-SMEFT campaigns were not re-run; statement must come from the campaign logs. \\
+paper.pdf p.\,10; reply.pdf p.\,6 & ``several weeks of work for an experienced phenomenologist [adjust estimate]'' & \author & Judgement call; unchanged by measurements. \\
+reply.pdf p.\,1 & checklist (1)--(4): fill S3/S4/S5, confirm human intervention, set \verb|\markupfalse|, remove red markers & \partial & (1) in progress, (2) author, (3)--(4) mechanical once (1)--(2) are done. \\
+reply.pdf p.\,4 & ``the LLM token consumption [fill in from the usage logs]'' & \needrun & From Table S3; note the main+sub-agent definition. \\
+reply.pdf p.\,4 & ``The wall-clock time of a benchmark (1--6 hours) ...'' & \done & Consistent with today's runs (0.9--1.4 h for the lightest benchmark); keep. \\
+sm.pdf p.\,4 & ``archived release ... DOI and per-run provenance packaged as Workflow Run RO-Crates [confirm or remove]'' & \author & No RO-Crate export exists in the repository today; either remove or keep as a plan. \\
+sm.pdf p.\,5 & Table S4 placeholder text ``e.g. Claude Opus 4.6 vs. Claude Sonnet, GPT-5.x via Codex, Gemini via ADK'' & \partial & Replace with the three columns chosen above; drop Gemini/ADK unless the python-agent path is run. \\
+sm.pdf p.\,6 & Table S3 Dark-SMEFT rows (sub-agent calls, tokens) & \author & Not reproducible here; from the campaign logs. \\
+\bottomrule
+\end{longtable}
+
+\section{Provenance of today's numbers}
+Branch \texttt{feat/skill-evolution-v2} of the ColliderAgent repository: \texttt{docs/paper-tbd-audit-2026-09-16.md}
+(measurements and observations), \texttt{bench\_runs/<label>/metrics.json} and \texttt{verdict.yaml} per run,
+\texttt{scripts/bench/aggregate.py} for the tables, probe blueprint \texttt{collider-env-probe} on zhustation for the
+image versions. Skills used for the re-runs are the v2 skills (context-lean rewrite of 2026-09-16), not the April
+versions; the Opus 4.6 re-runs therefore measure the current system.
+\end{document}
