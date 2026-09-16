@@ -33,6 +33,11 @@ Benchmark ↔ prompt mapping: Scalar LQ m_ej → `2005.06475/prompt_figure_2.md`
 
 Cost expectation per full run (to size the S4 matrix): the paper's Dark-SMEFT campaigns list >100 Magnus jobs and 24–36 h; the eight figure benchmarks are one to two orders smaller. Run the cheapest (ALP EFT, parton level) first with each candidate model, then decide the matrix.
 
+## Findings from the first headless runs (2026-09-16)
+
+- Headless `claude -p` terminates the session 600 s after the orchestrator ends a turn while a stage subagent is still running (`Background tasks still running after 600s; terminating`). Every S3–S5 run must set `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0`; `scripts/bench/run_benchmark.sh` does. Runs made without it under-report wall-clock and fail at the first stage longer than 10 minutes.
+- The quickstart integration run (Sonnet 5, v2 skills) produced 100 000 events with the requested parameters, a correct `step2_madgraph.json` sidecar, and one memory lesson in the collider-simulator store before the ceiling killed the MadAnalysis stage — evidence that the handoff and memory contracts are followed by a current model.
+
 ## First cross-model row (in progress today)
 
 ALP EFT Fig. 8 with `claude-opus-5`, `claude-opus-4-8`, `claude-sonnet-5`, cold memory, one attempt each, on the v2 skills. Results are appended below by `aggregate.py` when the runs finish.
