@@ -28,7 +28,7 @@ Format (the frontmatter is validated by `scripts/memory/distill.py`; keep the bo
 ---
 stage: madgraph              # feynrules | ufo | calchep | madgraph | madanalysis | micromegas | pheno | orchestrator
 blueprint: madgraph-launch   # or none
-symptom: "success=true but nevents=10000 instead of the requested 50000"
+symptom: "success=true but nevents=10000 instead of the requested 50000"   # at most 200 characters
 root_cause: "set lines were placed after the second done"
 fix: "keep every set/decay/card line above the final done; compare result nevents with the request"
 evidence: ["job:ca68f501890c2786", "progress/dy_14tev/step2_madgraph.md"]

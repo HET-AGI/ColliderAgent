@@ -23,6 +23,17 @@ magnus run <id> -- --key value ...    # submit and wait; prints the job ID and M
 - Blueprints that produce files append a `magnus receive` action; `magnus run` executes it and downloads into the blueprint's `--output` path. The download **replaces** that path: an existing directory is deleted first. Point `--output` at a directory you still need only when you want the new files to land inside it (launch writing `Events/` into the compiled process directory is the normal case).
 - Every result is JSON with at least `success` (bool) and `message`. Read `success` before consuming anything else, and compare the reported values (`nevents`, `cross_section`, `run_name`, output paths) with what you requested: a blueprint can finish with `success: true` after MG5 silently ignored a parameter.
 
+## Jobs longer than the shell timeout
+
+A Bash tool call is cut off after 10 minutes by default, and `magnus run` blocks until the job and its download finish, so a large event-generation or micrOmegas job started in the foreground gets interrupted client-side while the job keeps running. For anything that may take longer than a few minutes, start it detached with its output in a log file, read the job ID from that log, poll `magnus status <job-id>` with short calls, and treat the `[Magnus] Saved to …` line in the log as the signal that the download is complete:
+
+```bash
+nohup magnus run madgraph-launch -- … > events/pp_x/launch.log 2>&1 &
+grep -m1 "Job submitted" events/pp_x/launch.log     # job ID
+magnus status <job-id>                               # repeat until completed
+grep -q "Saved to" events/pp_x/launch.log && echo downloaded
+```
+
 ## Inspecting and recovering
 
 ```bash
