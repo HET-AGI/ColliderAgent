@@ -147,6 +147,9 @@ if [[ ${#EXTRA[@]} -gt 0 ]]; then CLAUDE_REST+=("${EXTRA[@]}"); fi
   cat <<'BODY'
 cd "$SANDBOX"
 export CLAUDE_CONFIG_DIR="$SANDBOX/.claude-config"
+# Headless claude -p exits ~600 s after the main agent ends a turn while background subagents
+# (the pipeline stages) are still running; 0 = wait for them indefinitely.
+export CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS="${CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS:-0}"
 PROMPT="$(cat prompt.md)"
 START=$(date +%s)
 echo "$START" > start.ts
