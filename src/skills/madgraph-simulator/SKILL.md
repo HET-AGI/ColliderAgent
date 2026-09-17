@@ -68,7 +68,19 @@ Files per run, in `Events/<run_name>/`: `unweighted_events.lhe.gz` always; `tag_
 
 ### Output size and the job's storage limit
 
-A launch job has about 10 GB of scratch space for the run directory plus its tarball. A showered and detector-simulated run writes roughly 1 GB per 10 000 events (HepMC ~70 MB per 1000 events, Delphes ROOT ~60 MB per 1000 events), so a `scan:` with several points inside one Delphes launch fills the disk during the final `tar`/upload and the job fails after all the CPU time was spent. Keep one Delphes launch to at most 3 runs of 10 000 events or one run of 100 000 events; split larger scans into separate launch jobs (they run in parallel) and disable the HepMC copy when only the Delphes output is needed. Parton-level runs (LHE only, ~15 MB per 10 000 events) are not affected.
+A launch job has about 10 GB of scratch space for the run directory plus the tarball it uploads at the end. Showered and detector-simulated output is large: Delphes ROOT ≈ 270 MB and HepMC ≈ 70 MB per 1000 events (a 100 000-event Delphes run wrote a 27 GB ROOT file), so the upload fails with "No space left on device" after all the CPU time was spent, and the job is lost. Two ways to stay inside the limit:
+
+- Keep a Delphes launch to ≤ 3 runs of 10 000 events, and split larger scans into separate launch jobs (they run in parallel).
+- For a large sample, delete what the analysis does not need before the job packs the directory: MG5 runs shell commands given with a leading `!`, and lines after the final `done` reach the master prompt only after the run has finished, so append cleanup lines there, e.g.
+
+```
+done
+! rm -f process_output/Events/run_01/tag_1_pythia8_events.hepmc.gz
+! rm -f process_output/Events/run_01/tag_1_delphes_events.root      # keep the LHCO
+! rm -rf process_output/Events/run_01/PY8_*
+```
+
+(`process_output` is the process directory's name inside the job.) Re-showering an existing parton-level run instead of regenerating it is `launch -i <dir>` followed by `pythia8 run_01 --laststep=delphes`. Parton-level runs (LHE only, ~15 MB per 10 000 events) are not affected.
 
 ### The launch body has exactly two states
 
