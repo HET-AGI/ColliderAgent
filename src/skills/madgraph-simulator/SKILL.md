@@ -66,6 +66,10 @@ Result: `success`, `output_dir`, `cross_section` (e.g. `"0.1234 +- 0.005 pb"`), 
 
 Files per run, in `Events/<run_name>/`: `unweighted_events.lhe.gz` always; `tag_1_pythia8_events.hepmc.gz` with Pythia8; `tag_1_delphes_events.root` with Delphes; `tag_1_delphes_events.lhco.gz` only after enabling LHCO (below); `run_XX_decayed_1/` with the decayed events when MadSpin ran. `run_name` increments (`run_02`, …) when the directory already holds runs.
 
+### Output size and the job's storage limit
+
+A launch job has about 10 GB of scratch space for the run directory plus its tarball. A showered and detector-simulated run writes roughly 1 GB per 10 000 events (HepMC ~70 MB per 1000 events, Delphes ROOT ~60 MB per 1000 events), so a `scan:` with several points inside one Delphes launch fills the disk during the final `tar`/upload and the job fails after all the CPU time was spent. Keep one Delphes launch to at most 3 runs of 10 000 events or one run of 100 000 events; split larger scans into separate launch jobs (they run in parallel) and disable the HepMC copy when only the Delphes output is needed. Parton-level runs (LHE only, ~15 MB per 10 000 events) are not affected.
+
 ### The launch body has exactly two states
 
 MG5 v3.7.0 reads the body as two prompts separated by `done`, whatever features you enable:

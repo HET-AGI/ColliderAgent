@@ -30,9 +30,11 @@ A Bash tool call is cut off after 10 minutes by default, and `magnus run` blocks
 ```bash
 nohup magnus run madgraph-launch -- … > events/pp_x/launch.log 2>&1 &
 grep -m1 "Job submitted" events/pp_x/launch.log     # job ID
-magnus status <job-id>                               # repeat until completed
-grep -q "Saved to" events/pp_x/launch.log && echo downloaded
+until grep -q "Saved to\|Error" events/pp_x/launch.log; do sleep 300; done   # one call, ~9 min max per call
+tail -3 events/pp_x/launch.log
 ```
+
+Poll inside a single tool call with a `sleep 300` loop (a call may run up to 10 minutes), then repeat the same call until the log shows `Saved to` (downloaded) or an error. Dozens of short status calls in a row cost far more tokens than they save: every call re-reads the whole context, and the job does not finish sooner.
 
 ## Inspecting and recovering
 
