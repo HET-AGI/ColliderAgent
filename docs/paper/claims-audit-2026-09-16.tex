@@ -10,8 +10,8 @@
 \newcommand{\statuspartial}{\textcolor{orange!80!black}{\textbf{PARTIAL}}}
 \newcommand{\statusneedrun}{\textcolor{blue!70!black}{\textbf{RUNS}}}
 \newcommand{\statusauthor}{\textcolor{red!70!black}{\textbf{AUTHOR}}}
-\title{ColliderAgent revision: audit of open placeholders\\ \large measurements of 2026-09-16 and proposed text}
-\date{2026-09-16}
+\title{ColliderAgent revision: audit of open placeholders\\ \large measurements of 2026-09-16/17 and proposed text}
+\date{2026-09-17}
 \begin{document}
 \maketitle
 
@@ -83,49 +83,86 @@ time dominates.
 \end{quote}
 
 \section{Table S3 (sm.pdf p.\,6) --- resource usage; also paper.pdf p.\,5 and p.\,7, reply.pdf p.\,4 and p.\,6}
-Status: \statusneedrun\ for the Opus 4.6 column (nine prompts launched 2026-09-16 22:00 UTC at effort \texttt{xhigh};
-results are appended by \texttt{scripts/bench/aggregate.py}). Already measured with the v2 skills, cold memory, one run each:
+Status: \statuspartial\ --- one run of every benchmark with Claude Opus 4.6 (effort \texttt{xhigh}, v2 skills, cold memory,
+launched 2026-09-16 22:00 UTC); seven of nine prompts completed, two are TBD (footnotes a, b) and are handed over.
+Tokens = main session + all sub-agents (uncached + cache-write + cache-read); files = distinct paths written or edited;
+Magnus jobs = \texttt{magnus run} submissions; USD from the CLI's \texttt{total\_cost\_usd}.
 
-\begin{center}
-\begin{tabular}{lrrrrrrr}
+\begin{center}\small
+\begin{tabular}{lrrrrrrrl}
 \toprule
-ALP EFT, $\slashed{E}_T$ [Fig.\,2(b)] & Wall [h] & Sub-agents & Magnus jobs & Files & Tokens in [M] & Tokens out [k] & USD \\
+Benchmark & Wall [h] & Sub-agents & Magnus jobs & Files & Tokens in [M] & Tokens out [k] & USD & Result \\
 \midrule
-Claude Opus 5   & 0.87 & 3 & 5  & 17 & 5.72  & 37.5 & 9.06 \\
-Claude Opus 4.8 & 1.05 & 3 & 9  & 16 & 10.96 & 43.3 & 12.55 \\
-Claude Sonnet 5 & 1.38 & 3 & 14 & 24 & 18.19 & 34.3 & 7.54 \\
+Scalar LQ, $m_{ej}$ [Fig.\,2(a)] & 6.41 & 2 & 42 & 28 & 214.0 & 220 & -- & TBD$^{a}$ \\
+ALP EFT, $\slashed{E}_T$ [Fig.\,2(b)] & 0.86 & 3 & 6 & 17 & 36.9 & 56 & 22 & success \\
+U(1)$'$ scan [Fig.\,2(c)] & 1.05 & 3 & 17 & 25 & 5.1 & 16 & 9 & success$^{*}$ \\
+U1 LQ mono-$\tau$ [Fig.\,2(d)] & 4.00 & 2 & 29 & 19 & 181.4 & 219 & 106 & TBD$^{b}$ \\
+Heavy N [Fig.\,S2(a,b)] & 0.40 & 3 & 7 & 18 & 3.2 & 13 & 4 & success \\
+General $Z'$ [Fig.\,S2(c)] & 0.66 & 3 & 7 & 16 & 19.4 & 38 & 13 & success \\
+KK graviton [Fig.\,S2(d)] & 1.35 & 2 & 16 & 14 & 4.2 & 51 & 6 & success$^{*}$ \\
+U1 LQ at MuC, $\eta$ [Fig.\,S2(e)] & 0.55 & 0 & 14 & 2 & 1.3 & 5 & 6 & success \\
+U1 LQ at MuC, reach [Fig.\,S2(f)] & 1.41 & 3 & 25 & 23 & 27.3 & 52 & 21 & success$^{*}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
-Definitions to state in the caption: sub-agent calls = \texttt{Agent} tool invocations; Magnus jobs = \texttt{magnus run}
-submissions; files written = distinct paths written or edited by the agent (progress records and memory files included);
-tokens = main session plus all sub-agents, input = uncached + cache-write + cache-read (the CLI's own usage field
-covers the main session only and under-reports by about $10\times$).
 
-\section{Table S4 (sm.pdf p.\,6; paper.pdf p.\,5 ``fill in cross-model table or state it as future work'';
-reply.pdf p.\,4 ``choose one of the two sentences'')}
-Status: \statuspartial. Recommendation: keep the table with three columns and fill it, because the Referee asked for
-measurement rather than assertion and the runs are cheap (8--13 USD per attempt). Column choices:
-\begin{itemize}
-\item Opus 4.6 (paper's model) --- three attempts per benchmark, in progress.
-\item Model B = GPT-5.3-Codex via the Codex CLI, released 2026-02-05, the same day as Claude Opus 4.6
-  (OpenAI system card dated February 5, 2026; Anthropic Opus 4.6 announcement February 5, 2026). It is the
-  contemporaneous Codex-native model and exercises the skills-only mode (branch \texttt{codex-com}). GPT-5.1 (November
-  2025) predates Opus 4.6 and is not a Codex-tuned model; GPT-5.3-Codex is the better match. To be run by the authors
-  with Codex.
-\item Model C = Claude Sonnet 5 (or Opus 5) --- one attempt already succeeded on the ALP benchmark; a same-vendor
-  smaller model answers the ``does a cheaper model follow the skills'' question the Referee raised.
-\end{itemize}
-Reply sentence to keep: ``We have therefore run the four main-text benchmarks with Claude Opus 4.6 (three attempts each),
-Claude Sonnet 5 and GPT-5.3-Codex (via Codex) and report the success rates in Table S4 of the SM.'' Delete the
-``not been able to complete'' alternative once the runs are in.
+\noindent$^{*}$ end-to-end reproduction with a quantitative deviation recorded as a footnote (see \S\,Footnotes).\\
+$^{a}$ \textbf{TBD (handed over).} Run stopped by the operator after 6.4\,h without a figure. Model, validation and the
+100\,000-event LUXlep parton sample (lepton$\to$photon LHE workaround) were done; two Pythia8+Delphes launches of the
+full sample finished on the cluster but failed at upload with ``No space left on device'' (the Delphes ROOT file alone is
+27\,GB against the job's 10\,GB packing space); a third launch that deletes HepMC/ROOT after the run (MG5 \texttt{!} shell
+lines after the final \texttt{done}, keeping the LHCO) was running when stopped. The v2 skills now document the limit and
+the cleanup (commit \texttt{61800a9}); a rerun is expected to take 1.5--2\,h.\\
+$^{b}$ \textbf{TBD (handed over).} Attempt 1 generated all 18 Delphes runs (4.0\,h, 106\,USD; four 9-run launches were lost
+to the same disk limit before the agent split them), then the orchestrator ended its turn with ``waiting for event file
+downloads'' and the headless session terminated without the analysis stage (failure mode (iv) in the paper's
+classification). A continuation session in the same workspace produced the figure in 1.7\,h / 29.5\,USD with the reference's
+shape but a 20--35\,\% weaker exclusion. The orchestrator skill now forbids ending a turn to wait (commit \texttt{e7c5b61}).
 
-\section{Table S5 (sm.pdf p.\,6, text p.\,6 ``fill in the per-benchmark counts and failure modes'')}
-Status: \statusneedrun. Three sandboxed attempts per benchmark with Opus 4.6: the first attempt of each is running; two more
-are one command each (\texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig> claude-opus-4-6 --effort xhigh}).
-Failure modes are recorded in \texttt{verdict.yaml} per run with the paper's four categories; a human confirms each
-verdict. S5 is worth keeping: it is the only place that quantifies the ``occasional failed reproductions'' sentence
-on p.\,6, and the sandbox pipeline the SM describes (clean workspace, one prompt) is exactly what the harness does.
+Model-latency share of wall-clock (transcript timestamps): 0.33--0.80 across the nine runs, above 0.6 in seven of them; the
+sentence ``LLM inference accounts for a minor fraction'' (sm.pdf p.\,5) should be replaced by, e.g.:
+\begin{quote}
+For the figure benchmarks of Table S3 the wall-clock time is shared between LLM inference and cluster jobs (model share
+30--80\,\%, median 0.68); cluster time dominates only for the Delphes-level benchmarks and the Dark-SMEFT campaigns.
+\end{quote}
+
+\section{Tables S4 and S5 --- state and plan (handed over)}
+Current counts (one attempt per cell unless noted; Opus 4.6 at \texttt{xhigh}, Opus 4.8 / Opus 5 / Sonnet 5 at default effort):
+
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+Benchmark & Opus 4.6 & Opus 4.8 & Opus 5 & Sonnet 5 \\
+\midrule
+Scalar LQ & TBD$^{a}$ & -- & -- & -- \\
+ALP EFT & 1/1 & 1/1 & 1/1 & 1/1 \\
+U(1)$'$ scan & 1/1$^{*}$ & -- & 1/1$^{*}$ & -- \\
+U1 LQ mono-$\tau$ & TBD$^{b}$ & -- & -- & -- \\
+Heavy N & 1/1 & -- & -- & -- \\
+General $Z'$ & 1/1 & -- & -- & -- \\
+KK graviton & 1/1$^{*}$ & -- & -- & -- \\
+U1 LQ at MuC (2 figures) & 2/2$^{*}$ & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Success criterion used (agreed 2026-09-16): the run completes end to end and the figure agrees with the requested part of
+the reference qualitatively; quantitative deviations go to a footnote ($^{*}$). Failure modes follow the paper's four
+classes; every verdict is in \texttt{bench\_runs/<label>/verdict.yaml} with the assistive judge's reasoning and a human note.
+
+Plan to complete S4/S5:
+\begin{enumerate}
+\item \textbf{S5 (Opus 4.6 $\times$3).} Two more attempts per benchmark: \texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig>
+  claude-opus-4-6 --effort high} (\texttt{high} rather than \texttt{xhigh}: the two Delphes benchmarks cost 106 USD and
+  ~200 USD at \texttt{xhigh}, the others 4--22 USD). Launch at most 4 in parallel (cluster and 10\,GB job storage). Then
+  \texttt{judge.sh} with the reference PNGs listed in the handover, confirm each verdict, \texttt{aggregate.py}.
+\item \textbf{S4 column B = GPT-5.3-Codex via Codex} on branch \texttt{codex-com} (skills-only mode; same day of release as
+  Opus 4.6, 2026-02-05). Same prompts, one clean directory per attempt, same judge; record wall-clock, jobs and tokens
+  from the Codex session logs.
+\item \textbf{S4 column C = Claude Sonnet 5} (or Opus 5) with the harness, one attempt per benchmark first.
+\item Fill the two TBD cells: rerun Scalar LQ and mono-$\tau$ with the current skills (both root causes are fixed in the
+  skills; expected 1.5--2\,h each).
+\end{enumerate}
 
 \section{Other markers}
 \begin{longtable}{p{3.2cm}p{5.6cm}p{1.6cm}p{6.2cm}}

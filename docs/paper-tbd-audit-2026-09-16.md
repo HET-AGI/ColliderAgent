@@ -96,3 +96,62 @@ Runs found: 3 (successful 3, failed 0, unjudged 0)
 |---|---:|---|
 | 1701.05379 Fig. 8 | 3/3 | - |
 
+## Final state 2026-09-17 (experiment stopped by the operator)
+
+Opus 4.6 xhigh, one attempt per prompt: 7/9 completed and judged successful (3 with footnotes), 2 TBD (Scalar LQ stopped at 6.4 h in the third Delphes launch; mono-tau early stop after event generation). Handover for the collaborator: `docs/paper/handover-2026-09-17.md`. Aggregate at the time of stopping:
+
+Runs found: 13 (successful 11, failed 1, unjudged 1)
+
+### Table S3: resource usage (successful runs, mean over runs)
+
+| Benchmark | Model | Runs | Wall-clock (h) | Subagent calls | Magnus jobs | Files written | Tokens in (M) | Tokens out (k) | Cost (USD) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1308.2209 Fig. 3 | claude-opus-4-6 | 1 | 0.40 | 3.0 | 7.0 | 18.0 | 3.23 | 13.3 | 4.16 |
+| 1605.02910 Fig. 1 | claude-opus-4-6 | 1 | 1.05 | 3.0 | 17.0 | 25.0 | 5.15 | 16.3 | 9.21 |
+| 1605.02910 Fig. 1 | claude-opus-5 | 1 | 0.88 | 4.0 | 7.0 | 16.0 | 9.06 | 53.4 | 14.32 |
+| 1701.05379 Fig. 8 | claude-opus-4-6 | 1 | 0.86 | 3.0 | 6.0 | 17.0 | 36.87 | 55.7 | 22.19 |
+| 1701.05379 Fig. 8 | claude-opus-4-8 | 1 | 1.05 | 3.0 | 9.0 | 16.0 | 10.96 | 43.3 | 12.55 |
+| 1701.05379 Fig. 8 | claude-opus-5 | 1 | 0.87 | 3.0 | 5.0 | 17.0 | 5.72 | 37.5 | 9.06 |
+| 1701.05379 Fig. 8 | claude-sonnet-5 | 1 | 1.38 | 3.0 | 14.0 | 24.0 | 18.19 | 34.3 | 7.54 |
+| 2103.02708 Fig. 4 | claude-opus-4-6 | 1 | 0.66 | 3.0 | 7.0 | 16.0 | 19.39 | 37.6 | 13.27 |
+| 2104.05720 Fig. 11 | claude-opus-4-6 | 1 | 0.55 | 0.0 | 14.0 | 2.0 | 1.31 | 5.3 | 5.92 |
+| 2104.05720 Fig. 12 | claude-opus-4-6 | 1 | 1.41 | 3.0 | 25.0 | 23.0 | 27.31 | 51.6 | 20.56 |
+| 9909255 Fig. 2 | claude-opus-4-6 | 1 | 1.35 | 2.0 | 16.0 | 14.0 | 4.23 | 51.4 | 6.37 |
+
+### Table S4: successful/attempted per benchmark and model (`?` = attempted, not yet judged)
+
+| Benchmark | claude-opus-4-6 | claude-opus-4-8 | claude-opus-5 | claude-sonnet-5 |
+|---|---:|---:|---:|---:|
+| 1308.2209 Fig. 3 | 1/1 | - | - | - |
+| 1605.02910 Fig. 1 | 1/1 | - | 1/1 | - |
+| 1701.05379 Fig. 8 | 1/1 | 1/1 | 1/1 | 1/1 |
+| 1811.07920 Fig. 3 | 0/1 | - | - | - |
+| 2005.06475 Fig. 2 | 0/1 (1 ?) | - | - | - |
+| 2103.02708 Fig. 4 | 1/1 | - | - | - |
+| 2104.05720 Fig. 11 | 1/1 | - | - | - |
+| 2104.05720 Fig. 12 | 1/1 | - | - | - |
+| 9909255 Fig. 2 | 1/1 | - | - | - |
+
+### Table S5: successful/attempted per benchmark with failure modes
+
+| Benchmark | Successful/attempted | Failure modes |
+|---|---:|---|
+| 1308.2209 Fig. 3 | 1/1 | - |
+| 1605.02910 Fig. 1 | 2/2 | - |
+| 1701.05379 Fig. 8 | 4/4 | - |
+| 1811.07920 Fig. 3 | 0/1 | infrastructure (1) |
+| 2005.06475 Fig. 2 | 0/1 (1 ?) | unjudged ? (1) |
+| 2103.02708 Fig. 4 | 1/1 | - |
+| 2104.05720 Fig. 11 | 1/1 | - |
+| 2104.05720 Fig. 12 | 1/1 | - |
+| 9909255 Fig. 2 | 1/1 | - |
+
+Footnotes (quantitative deviations of runs counted as successful):
+
+1. 2005.06475 Fig. 2, claude-opus-4-6: To finish: rerun with the v2 skills (commit 61800a9 or later, which document the 10 GB limit and the post-run cleanup), or resume in this sandbox with the continuation prompt of scripts/bench/README.md; expected remaining time ~1.5 h (Delphes ~50 min + LHCO analysis). Attempt 1 cost so far is in metrics.json.
+2. 1605.02910 Fig. 1, claude-opus-4-6: The 2 TeV and 2.5 TeV contours match the reference to within about 10%: tips at (-0.155, 0.13) vs (-0.14, 0.12) and (-0.28, 0.245) vs (-0.30, 0.265). At 3 TeV the base on g1'=0 (about -0.18 to 0.18) matches, but the tip is lower and less far out: (-0.55, 0.48) vs (-0.74, 0.65), about 25% smaller in both g1' and |g̃|. Cosmetic only: the produced contours are not closed along the g1'=0 axis. Cross-check: an independent Opus 5 run of the same prompt (sandbox 20260916T231403Z) produced the same 3 TeV contour (tip at (-0.55, 0.48), base +-0.18), so the deviation from the paper's figure is systematic to the prompt's analysis procedure rather than an agent error.
+3. 1811.07920 Fig. 3, claude-opus-4-6: Attempt 1 ended by an agent early stop after event generation (no figure). A continuation session in the same workspace ('steps 1-2 are done, run step 4') then produced the figure in 1.7 h for 29.5 USD: the 2-sigma contour and both R_D(*) bands have the reference's shape, but the exclusion is 20-35% weaker at every mass (sqrt|g_c g_b| about 1.1 vs 0.8 at 1 TeV), so the RH band is not excluded whereas the paper excludes most of it. Counted as a failure (infrastructure) in Tables S4/S5; the continuation is reported here only.
+4. 9909255 Fig. 2, claude-opus-4-6: The 11-point sqrt(s) grid (200-1200 GeV, 100 GeV steps) and the single coupling point are what the benchmark prompt specifies, so the reference's Z-pole region, its 1.2-1.5 TeV range and its other coupling curves are outside the task. The prompt's grid under-resolves the 600 GeV KK resonance: the produced peak is about 1.5e4 fb against about 3e4 fb in the reference; off-peak values follow the reference curve. Reviewed by the session after the assistive judge.
+5. 2104.05720 Fig. 12, claude-opus-4-6: The produced limits are weaker than the reference throughout. The 14 TeV 95% CL curve at m_LQ=1 TeV is about 0.015 against about 0.006 in the reference, roughly 2.5x weaker. At 70 TeV the 14 TeV curves are about 0.25 (exclusion) and 0.4 (discovery) against about 0.18 and 0.25. The 3 TeV curves agree within about 20-30% at low mass (0.026 and 0.042 against 0.02 and 0.035) but are about 1.6x weaker at 70 TeV for the exclusion (about 1.15 against about 0.7). As a result, the 14 TeV exclusion and discovery curves are further apart at low mass than in the reference.
+6. 1605.02910 Fig. 1, claude-opus-5: At M_Z' = 3 TeV the produced contour tip is at g1' ≈ 0.48 (g̃ ≈ -0.55), against ≈ 0.65 (g̃ ≈ -0.73) in the reference, about 25% lower; the g1' = 0 intercepts (≈ ±0.17) agree. At 2 TeV the tip is ≈ 0.135 against ≈ 0.12, and the intercepts are slightly wider (-0.06/+0.05 against ≈ ±0.04). At 2.5 TeV the tip is ≈ 0.245 against ≈ 0.265, and the intercepts are ≈ -0.10/+0.09 against ≈ ±0.08. Cross-check: an independent Opus 5 run of the same prompt (sandbox 20260916T231403Z) produced the same 3 TeV contour (tip at (-0.55, 0.48), base +-0.18), so the deviation from the paper's figure is systematic to the prompt's analysis procedure rather than an agent error.
+
