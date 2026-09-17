@@ -58,6 +58,8 @@ Each stage writes a human-readable `stepN_<stage>.md` and a small `stepN_<stage>
 
 Stages run one after another because each depends on the previous outputs. Inside a stage, ask the subagent to submit independent work in parallel: different mass points, detector cards, or datasets are separate Magnus jobs. Do not do a stage's work in your own context because it looks small; the subagent's context is where the skill and its cross-run memory live.
 
+A headless run ends the moment you end a turn with nothing running in the background. Never reply that you will wait for a download, a job, or a file to appear: wait inside a tool call (a bounded polling loop, or `magnus status` calls), or dispatch the next stage and let its completion wake you. A turn that ends with "waiting for …" is a lost run.
+
 ## After the last stage
 
 1. Update the manifest step statuses.
