@@ -102,6 +102,7 @@ for f in .credentials.json settings.json; do
     echo "run_benchmark.sh: note: $SRC_CFG/$f not found, skipped" >&2
   fi
 done
+python3 "$REPO_ROOT/scripts/check_env.py" --quiet || echo "run_benchmark.sh: warning: environment incomplete (python3 scripts/check_env.py)" >&2
 "$REPO_ROOT/scripts/install.sh" --target "$CFG" >/dev/null
 if [[ "$MEMORY" == "warm" ]]; then
   if [[ -d "$SRC_CFG/agent-memory" ]]; then

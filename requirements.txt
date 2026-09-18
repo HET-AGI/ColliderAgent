@@ -1,0 +1,16 @@
+# Python stack of the *agent runtime* host (the machine running Claude Code / Codex): the pheno-analyzer
+# stage runs its analysis here, and the benchmark harness and memory maintainer live here too.
+# HEP tools (MadGraph5, Pythia8, Delphes, MadAnalysis5, FeynRules, micrOmegas) run in the Magnus containers
+# and are never installed locally.
+magnus-sdk>=0.8
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+uproot>=5.3
+awkward>=2.6
+pyhf>=0.7.6
+pylhe>=0.9          # LHE reading (the 1701.05379 run failed on `import pylhe` before this was added)
+pyhepmc>=2.13       # HepMC reading
+pytest>=8           # scripts/tests
+# Optional, not pip: poppler-utils (pdftoppm) and ghostscript for scripts/bench/judge.sh reference figures;
+# tectonic or pdflatex only to compile docs/paper/*.tex. matplotlib's text.usetex needs a full LaTeX and is not used.

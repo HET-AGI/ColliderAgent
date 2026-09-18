@@ -58,7 +58,7 @@ Collider-Agent enables AI coding agents (Claude Code, Cursor, Windsurf, and more
   
   > Other agents with skills support also work (skills only, no sub-agents): Cursor, Windsurf, Gemini CLI, Cline, Goose, Roo Code, and [more](#supported-agents-and-their-global-skills-paths)
 
-- Python 3.10+ (requires `magnus-sdk>=0.7.0`)
+- Python 3.10+ with `magnus-sdk>=0.8` and the analysis stack used by the post-processing stage: `pip install -r requirements.txt` (numpy, scipy, matplotlib, uproot, awkward, pyhf, pylhe, pyhepmc). Check everything with `python3 scripts/check_env.py`.
 
 ### Setup
 
@@ -74,7 +74,7 @@ cd ColliderAgent
 First, install the Magnus SDK:
 
 ```bash
-pip install magnus-sdk
+pip install -r requirements.txt      # magnus-sdk plus the analysis stack
 ```
 
 <details>

@@ -44,4 +44,4 @@ It catches what cost a cloud round-trip in earlier runs: the literal name of the
 
 Validate with the feynrules-model-validator skill (`magnus run validate-feynrules -- --model models/<Model>.fr --lagrangian <symbol>`), then export. Also check by eye that every `+ h.c.` decision above matches the Lagrangian; the validator reports hermiticity but not whether you doubled a term that was already Hermitian.
 
-References: `references/feynrules_syntax.md` (full `.fr` syntax, common errors, PDG conventions), `templates/skeleton.fr`.
+References: `references/feynrules_syntax.md` (full `.fr` syntax, common errors, PDG conventions), `templates/skeleton.fr`, and `references/examples/` (validated models to copy from when the task's model resembles one: W', top-philic Z', scalar mixing, and the standalone SM).

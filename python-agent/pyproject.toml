@@ -42,7 +42,20 @@ semantic = [
 
 # Optional: LHE file parsing (we provide custom parser)
 lhe = [
-    "pylhe>=0.7.0",
+    "pylhe>=0.9",
+]
+
+# Optional: the analysis-host stack used by the pheno-analyzer stage and the benchmark harness
+# (same list as the repository-level requirements.txt)
+analysis = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+    "uproot>=5.3",
+    "awkward>=2.6",
+    "pyhf>=0.7.6",
+    "pylhe>=0.9",
+    "pyhepmc>=2.13",
 ]
 
 [build-system]

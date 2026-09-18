@@ -56,7 +56,7 @@ Collider-Agent 使 AI 编程智能体（Claude Code、Cursor、Windsurf 等）�
 
   > 其他支持技能的智能体也可使用（仅限技能，不含子智能体）：Cursor、Windsurf、Gemini CLI、Cline、Goose、Roo Code 等，[详见下表](#支持的智能体及其全局技能路径)
 
-- Python 3.10+（需要 `magnus-sdk>=0.7.0`）
+- Python 3.10+，并安装 `magnus-sdk>=0.8` 与后处理阶段用到的分析库：`pip install -r requirements.txt`（numpy、scipy、matplotlib、uproot、awkward、pyhf、pylhe、pyhepmc）；用 `python3 scripts/check_env.py` 检查。
 
 ### 配置步骤
 
@@ -72,7 +72,7 @@ cd ColliderAgent
 首先安装 Magnus SDK：
 
 ```bash
-pip install magnus-sdk
+pip install -r requirements.txt      # magnus-sdk 及分析库
 ```
 
 <details>

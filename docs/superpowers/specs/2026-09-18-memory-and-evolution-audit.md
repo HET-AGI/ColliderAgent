@@ -32,9 +32,16 @@ FeynRules 一步的试错（validate / generate-ufo / madgraph-compile 次数）
 - `ufo_fix.py`、`fr_lint.py` 及测试；skeleton.fr 去掉致病注释；ufo-generator / feynrules-model-validator / feynrules-model-generator / run-lessons / model-generator / pheno-analyzer 文本接入。
 - pheno-analyzer 环境事实：无 pylhe、无 pyhepmc、无 LaTeX。
 
-## 4. 建议但未动（事例生成一步，等 collaborator 改完 Magnus 存储参数）
-collider-simulator 这次的参数类报错都能写进 madgraph-simulator skill：
+## 4. 事例生成一步：参数类报错已写入 skill（commit 见 git log），存储上限的数值未改，等 collaborator 改完 Magnus 存储参数再同步
+collider-simulator 这次的参数类报错，已作为 madgraph-simulator skill 的 "Parameters and syntax that cost retries in earlier runs" 一节：
 - 重簇射既有 run 的语法只有一种：`launch -i <dir>` 后 `pythia8 run_XX --laststep=delphes`（"only one laststep argument"×5、"invalid argument"×3 来自试错这一句）。
 - blueprint 只接受 schema 里的参数；`process_dir`、`seed`、`timeout` 都不存在（用 `set iseed` 设种子）；`--output` 必填字符串。
 - `delphes not install` 出现在 `launch -i` 重簇射时未启用 detector 开关的情形；`No events file corresponding to run` 是 `--laststep` 指到不存在的 run。
 - 10 GB 打包上限与 `!` 清理已写入（commit 61800a9），存储参数放宽后需同步改数值。
+
+## 5. 依赖类报错的修复（2026-09-18）
+- `No module named 'pylhe'`（pheno-analyzer）、`pyhepmc` 缺失：已安装，并写入根目录 `requirements.txt` 与 `python-agent/pyproject.toml` 的 `analysis` 可选依赖组；README 的先决条件改为 `pip install -r requirements.txt`，`magnus-sdk>=0.8`。
+- `latex could not be found`（matplotlib `text.usetex`）：不是 pip 依赖，主机不装 TeX；pheno-analyzer 契约改为用 mathtext、禁用 usetex。
+- `lhapdf-config` 本地不存在：PDF 集由 launch job 的 `--pdf` 安装，skill 已说明本地不做任何 PDF 操作。
+- 新增 `scripts/check_env.py`（magnus 站点、Python 栈版本、可选工具），`run_benchmark.sh` 启动前调用；其输出即论文 Table S2 的 agent runtime 行。
+- FeynRules 示例库 `references/examples/`（W'、top-philic Z'、Hill 标量、standalone SM），刻意排除两个 benchmark 模型。

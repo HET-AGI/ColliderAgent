@@ -66,6 +66,13 @@ Result: `success`, `output_dir`, `cross_section` (e.g. `"0.1234 +- 0.005 pb"`), 
 
 Files per run, in `Events/<run_name>/`: `unweighted_events.lhe.gz` always; `tag_1_pythia8_events.hepmc.gz` with Pythia8; `tag_1_delphes_events.root` with Delphes; `tag_1_delphes_events.lhco.gz` only after enabling LHCO (below); `run_XX_decayed_1/` with the decayed events when MadSpin ran. `run_name` increments (`run_02`, …) when the directory already holds runs.
 
+### Parameters and syntax that cost retries in earlier runs
+
+- The blueprints accept exactly the parameters in `magnus blueprint schema <id>`; `process_dir`, `seed`, `timeout` and similar do not exist and fail the submission. The random seed is `set iseed <n>` inside the launch body; `--output` is a required string.
+- Re-showering an existing parton-level run (instead of regenerating it) is one fixed line pair in the launch body: `launch -i <process dir>` then `pythia8 run_XX --laststep=delphes` (or `--laststep=pythia8`); one `--laststep` only, and `run_XX` must exist in `Events/`. With `detector=Delphes` not switched on for that run MG5 answers `delphes not install`.
+- LHAPDF sets are installed by the launch job through `--pdf`; there is no `lhapdf-config` on the agent host and nothing about PDFs runs locally.
+- Multiparticle definitions go through `--definitions` without the `define` keyword; a process line must not start with `generate` (the blueprint prepends it; `No particle generate in model` is the symptom).
+
 ### Output size and the job's storage limit
 
 A launch job has about 10 GB of scratch space for the run directory plus the tarball it uploads at the end. Showered and detector-simulated output is large: Delphes ROOT ≈ 270 MB and HepMC ≈ 70 MB per 1000 events (a 100 000-event Delphes run wrote a 27 GB ROOT file), so the upload fails with "No space left on device" after all the CPU time was spent, and the job is lost. Two ways to stay inside the limit:
