@@ -13,6 +13,7 @@ Commands (all deterministic, no LLM):
     decay     archive lessons with support 1 not confirmed for --stale-days, then rebuild
     propose   list generalizable lessons with support >= --min-support (+ proposals.json)
     import    merge lessons harvested from another memory root, then rebuild
+    route     move lessons to the agent that owns their stage, then rebuild
     new       write one schema-valid lesson file, then rebuild
 
 The frontmatter parser is a small YAML subset: `key: value` scalars, double/single-quoted
@@ -389,6 +390,9 @@ def merge_lessons(a: Lesson, b: Lesson, sum_support: bool = True) -> Lesson:
         if e not in evidence:
             evidence.append(e)
     m["evidence"] = evidence
+    contra = int(ma.get("contradictions", 0) or 0) + int(mb.get("contradictions", 0) or 0)
+    if contra:
+        m["contradictions"] = contra
     if len(mb["fix"]) > len(ma["fix"]):
         m["fix"] = mb["fix"]
     tags = list(ma.get("tags") or [])
@@ -401,13 +405,69 @@ def merge_lessons(a: Lesson, b: Lesson, sum_support: bool = True) -> Lesson:
     return Lesson(a.path, m, body)
 
 
+STAGE_OWNER = {
+               "feynrules": "model-generator",
+               "ufo": "model-generator",
+               "calchep": "model-generator",
+               "madgraph": "collider-simulator",
+               "madanalysis": "event-analyzer",
+               "micromegas": "model-generator",
+               "pheno": "pheno-analyzer",
+               "orchestrator": None
+}
+
+STOPWORDS = {"the", "a", "an", "of", "in", "on", "to", "and", "or", "is", "are", "with", "for", "by", "as",
+             "at", "from", "that", "this", "it", "be", "not", "no", "so", "into", "when", "after", "before"}
+
+
+def symptom_tokens(s: str) -> set[str]:
+    """Content words of a symptom; numbers are kept whatever their length (they distinguish run_01/run_02)."""
+    return {t for t in normalize_symptom(s).split() if t not in STOPWORDS and (len(t) > 2 or t.isdigit())}
+
+
+def similar(a: Lesson, b: Lesson, threshold: float = 0.5) -> bool:
+    """Same stage and blueprint, and symptom token sets overlap enough (Jaccard) to be one lesson.
+
+    Wording differs between runs ("Python 2 raise syntax", "raise UFOError, msg breaks import"), so an exact
+    match on the normalised symptom leaves near-duplicates at support 1 forever."""
+    if a.key == b.key:          # same stage and same normalised symptom: always one lesson
+        return True
+    # the same defect is often filed under sibling stages (feynrules vs ufo) or under the blueprint where
+    # it was *observed* (madgraph-compile) rather than the one that caused it (generate-ufo)
+    if STAGE_OWNER.get(a.meta["stage"]) != STAGE_OWNER.get(b.meta["stage"]):
+        return False
+    ta, tb = symptom_tokens(a.meta["symptom"]), symptom_tokens(b.meta["symptom"])
+    if not ta or not tb:
+        return False
+    words_a, words_b = {t for t in ta if not t.isdigit()}, {t for t in tb if not t.isdigit()}
+    digits_a, digits_b = ta - words_a, tb - words_b
+    # identical wording that differs only in a number (run_01 vs run_02, lesson 6 vs 7) is two lessons
+    if words_a == words_b and digits_a != digits_b:
+        return False
+    inter = words_a & words_b
+    if len(inter) < 3:
+        return False
+    jaccard = len(inter) / len(words_a | words_b)
+    overlap = len(inter) / min(len(words_a), len(words_b))
+    if a.meta["blueprint"] != b.meta["blueprint"]:
+        return jaccard >= 0.6 or overlap >= 0.8      # across blueprints only when the wording clearly matches
+    return jaccard >= threshold or overlap >= 0.7
+
+
 def dedupe(lessons: list[Lesson]) -> tuple[list[Lesson], list[Path], set[Path]]:
-    """Merge lessons sharing (stage, normalised symptom). Returns (kept, removed_paths, changed_paths)."""
-    groups: dict[tuple[str, str], list[Lesson]] = {}
+    """Merge lessons that are the same lesson in different words (see similar()).
+
+    Returns (kept, removed_paths, changed_paths)."""
+    groups: list[list[Lesson]] = []
     for les in lessons:
-        groups.setdefault(les.key, []).append(les)
+        for grp in groups:
+            if any(similar(les, other) for other in grp):
+                grp.append(les)
+                break
+        else:
+            groups.append([les])
     kept, removed, changed = [], [], set()
-    for grp in groups.values():
+    for grp in groups:
         grp.sort(key=lambda l: (-l.meta["support"], l.meta["first_seen"], l.path.name))
         winner = grp[0]
         for other in grp[1:]:
@@ -500,8 +560,10 @@ def _one_line(s) -> str:
 def index_line(lesson: Lesson, agent_dir: Path) -> str:
     m = lesson.meta
     rel = lesson.path.relative_to(agent_dir).as_posix()
+    contra = int(m.get("contradictions", 0) or 0)
+    tag = f"support {m['support']}" + (f", contradicted {contra}" if contra else "")
     return (f"- [{m['stage']}] {_one_line(m['symptom'])} → {_one_line(m['fix'])} "
-            f"(support {m['support']}, last {m['last_confirmed']}) [{rel}]")
+            f"({tag}, last {m['last_confirmed']}) [{rel}]")
 
 
 def _fits(lines: list[str]) -> bool:
@@ -583,6 +645,29 @@ def cmd_decay(args) -> int:
     return rebuild(root)
 
 
+
+def cmd_route(args) -> int:
+    """Move each lesson into the memory of the agent that owns its stage (a lesson about the UFO discovered
+    by collider-simulator at compile time must be seen by model-generator next time), then rebuild."""
+    root = resolve_root(args.root)
+    per_agent, errors = validate_root(root)
+    if errors:
+        return report_invalid(errors)
+    moved = 0
+    for adir, lessons in per_agent.items():
+        for les in lessons:
+            owner = STAGE_OWNER.get(les.meta["stage"])
+            if owner and owner != adir.name:
+                dest_dir = root / owner / "lessons"
+                dest_dir.mkdir(parents=True, exist_ok=True)
+                dest = unique_path(dest_dir, les.path.stem)
+                les.path.rename(dest)
+                moved += 1
+                print(f"routed {les.path.name}: {adir.name} -> {owner}")
+    print(f"route: {moved} lesson(s) moved")
+    return rebuild(root)
+
+
 def cmd_propose(args) -> int:
     root = resolve_root(args.root)
     if not root.is_dir():
@@ -595,7 +680,8 @@ def cmd_propose(args) -> int:
     for agent_dir, lessons in per_agent.items():
         for les in lessons:
             m = les.meta
-            if m["generalizable"] is True and m["support"] >= args.min_support:
+            if (m["generalizable"] is True and m["support"] >= args.min_support
+                    and int(m.get("contradictions", 0) or 0) < m["support"]):
                 target = TARGET_SKILL.get(m["stage"])
                 cands.append({
                     "agent": agent_dir.name,
@@ -737,6 +823,11 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--stale-days", type=int, default=90, help="days since last_confirmed (default: %(default)s)")
     sp.add_argument("--today", help="override today's date (YYYY-MM-DD), for tests")
     sp.set_defaults(func=cmd_decay)
+
+    r = sub.add_parser("route", help="move lessons to the agent that owns their stage, then rebuild")
+    add_root(r)
+    r.set_defaults(func=cmd_route)
+
 
     sp = sub.add_parser("propose", help="list promotion candidates and write proposals.json")
     add_root(sp)

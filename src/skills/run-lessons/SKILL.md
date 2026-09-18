@@ -10,7 +10,7 @@ Your memory directory is injected into your prompt as `MEMORY.md`: one line per 
 
 ## Reading
 
-Before you build commands or scripts, scan `MEMORY.md` for entries whose stage or blueprint matches what you are about to do, and open the linked file when the symptom could apply. Lessons are advisory: when a lesson contradicts the current tool contract or the task, the contract and the task win.
+Before you build commands or scripts, scan `MEMORY.md` for entries whose stage or blueprint matches what you are about to do, and open the linked file when the symptom could apply. Lessons are advisory and symptom-keyed: apply one only when its symptom matches what you observe, and verify the outcome against the tool result as you would any other change. When a lesson contradicts the current tool contract or the task, the contract and the task win. If you tried a lesson's fix and it did not help, add `contradictions: 1` (or increment it) to that lesson file instead of deleting it; the maintainer script demotes lessons whose contradictions reach their support, which is how a stale pattern leaves the store without anyone editing it by hand.
 
 ## Writing
 
@@ -34,6 +34,7 @@ fix: "keep every set/decay/card line above the final done; compare result nevent
 evidence: ["job:ca68f501890c2786", "progress/dy_14tev/step2_madgraph.md"]
 generalizable: true          # false when it only applies to one model or paper
 support: 1
+contradictions: 0          # optional; runs in which the fix did not help
 first_seen: 2026-09-16
 last_confirmed: 2026-09-16
 ---

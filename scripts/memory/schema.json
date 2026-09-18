@@ -21,7 +21,16 @@
     "stage": {
       "description": "Pipeline stage the lesson belongs to.",
       "type": "string",
-      "enum": ["feynrules", "ufo", "calchep", "madgraph", "madanalysis", "micromegas", "pheno", "orchestrator"]
+      "enum": [
+        "feynrules",
+        "ufo",
+        "calchep",
+        "madgraph",
+        "madanalysis",
+        "micromegas",
+        "pheno",
+        "orchestrator"
+      ]
     },
     "blueprint": {
       "description": "Magnus blueprint id involved, or \"none\".",
@@ -48,7 +57,10 @@
       "description": "Job ids / progress files that back the lesson (never file contents or tokens).",
       "type": "array",
       "minItems": 1,
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "generalizable": {
       "description": "false = specific to one model/paper; never promoted into a skill.",
@@ -72,7 +84,15 @@
     "tags": {
       "description": "Optional free-form tags.",
       "type": "array",
-      "items": { "type": "string", "minLength": 1 }
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contradictions": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "runs in which applying the fix did not help"
     }
   }
 }

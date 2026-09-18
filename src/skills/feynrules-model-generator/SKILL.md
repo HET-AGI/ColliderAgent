@@ -30,6 +30,16 @@ Before writing, settle the physics-to-FeynRules mapping: new fields with quantum
 - **Widths of decaying BSM particles** are external parameters (`Width -> {WZp, 0.04}`) or `{WZp, Internal}`; `Width -> 0` marks the particle stable in MG5, which then silently ignores `set param_card DECAY` for it.
 - **micrOmegas targets**: Z₂-odd particles need a leading `~` in `ParticleName` (and `AntiParticleName`), because micrOmegas identifies the dark sector by that prefix in the exported CalcHEP files (calchep-generator skill).
 
+## Before submitting
+
+Run the linter that ships with this skill:
+
+```bash
+python3 <skill-dir>/scripts/fr_lint.py models/<Model>.fr        # --standalone for a full model with its own gauge groups
+```
+
+It catches what cost a cloud round-trip in earlier runs: the literal name of the gauge-group section appearing anywhere in an extension file (the export tools decide standalone-vs-extension by a substring test, comments included), `FSD[` (not a built-in; it leaks Mathematica into the UFO), one-letter class names, unbalanced brackets, `Width -> 0`, and an `h.c.` mention without `HC[]` or vice versa. Fix errors before validating; read warnings.
+
 ## Next step
 
 Validate with the feynrules-model-validator skill (`magnus run validate-feynrules -- --model models/<Model>.fr --lagrangian <symbol>`), then export. Also check by eye that every `+ h.c.` decision above matches the Lagrangian; the validator reports hermiticity but not whether you doubled a term that was already Hermitian.

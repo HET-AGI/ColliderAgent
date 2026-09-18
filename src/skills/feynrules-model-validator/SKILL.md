@@ -38,7 +38,7 @@ magnus run madgraph-compile -- --ufo models/MyModel_UFO
 
 Without `--process`, `madgraph-compile` only imports the model. Result: `success`, `stdout`, `stderr` (last 4000 characters each), `return_code`. On failure look for `UFOError` (Python error inside the UFO), `with error:` (MG5 import error), or `interrupted in sub-command` with `error`.
 
-Import failures usually come from FeynRules 2.3.49 code generation, so fix the UFO files directly rather than the `.fr`:
+Import failures usually come from FeynRules 2.3.49 code generation. Run `python3 <ufo-generator skill dir>/scripts/ufo_fix.py <UFO>` first: it applies the mechanical fixes below and reports the ones that need a `.fr` change. The table is the reference for what it does:
 
 | File | Defect | Fix |
 |---|---|---|

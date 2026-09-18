@@ -20,6 +20,16 @@ magnus run generate-ufo -- --model models/MyModel.fr --lagrangian LNP --output m
 
 A file without `M$GaugeGroups` is exported as a BSM extension: the blueprint loads SM.fr plus `Massless.rst` and `DiagonalCKM.rst` first. Result: `success`, `ufo_path`, and any FeynRules warnings; review warnings before using the model.
 
+## After export, repair and check the directory
+
+Run the fixer that ships with this skill before anything reads the model:
+
+```bash
+python3 <skill-dir>/scripts/ufo_fix.py models/MyModel_UFO          # --check to only report
+```
+
+It rewrites the Python-2 `raise UFOError, "msg"` that FeynRules 2.3.49 always emits, removes `__pycache__`, byte-compiles every file, and reports defects that a script cannot fix (unevaluated Mathematica such as `CreateObjectParticleName`, `FSD[`, `Slot(`; empty `lorentz.py`/`vertices.py`). Exit 0 means the import test can be submitted; exit 1 means the `.fr` must change first, and the report names the line. Four independent runs re-discovered the `raise` defect by hand before this script existed; do not hand-edit what it fixes.
+
 ## After export, read the model
 
 MG5 identifies particles by the `name` field in `particles.py`, not by the `.fr` class name, and parameters by SLHA block and code in `parameters.py`. Extract, for every BSM object:

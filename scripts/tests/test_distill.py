@@ -369,3 +369,35 @@ def test_import_repairs_extra_keys_and_long_symptom(tmp_path):
     assert "Full symptom: generate-ufo xxx" in text
     assert len(text.split("symptom: ")[1].split("\n")[0]) <= 205
 
+
+
+def test_dedupe_merges_reworded_symptoms_and_route_moves_by_stage(tmp_path):
+    """Four independent runs wrote the same Python-2 raise lesson in different words; rebuild must merge them
+    into one lesson with support 4, and route must move a ufo-stage lesson written by collider-simulator
+    into model-generator's store."""
+    import subprocess, sys
+    root = tmp_path / "mem"
+    def lesson(agent, name, symptom, stage="ufo", blueprint="generate-ufo", extra=""):
+        d = root / agent / "lessons"; d.mkdir(parents=True, exist_ok=True)
+        (d / name).write_text(
+            f"---\nstage: {stage}\nblueprint: {blueprint}\nsymptom: \"{symptom}\"\nroot_cause: \"FeynRules 2.3.49 emits Python 2 raise\"\n"
+            f"fix: \"replace raise UFOError, msg with raise UFOError(msg)\"\nevidence: [\"job:{name}\"]\ngeneralizable: true\n"
+            f"support: 1\nfirst_seen: 2026-09-16\nlast_confirmed: 2026-09-16\n{extra}---\nbody\n")
+    lesson("model-generator", "a.md", "Python 2 raise UFOError, msg syntax in object_library.py causes SyntaxError on MG5 import")
+    lesson("model-generator", "b.md", "object_library.py SyntaxError: raise UFOError, msg (Python 2 syntax)")
+    lesson("model-generator", "c.md", "FeynRules 2.3.49 object_library.py contains Python 2 raise UFOError, msg syntax that breaks MG5 3.x import")
+    lesson("collider-simulator", "d.md", "FeynRules 2.3.49 object_library.py has Python 2 raise UFOError syntax which breaks MG5 import", extra="contradictions: 1\n")
+    lesson("collider-simulator", "e.md", "cut_decays default False skips lepton cuts on decay products", stage="madgraph", blueprint="madgraph-launch")
+    r = subprocess.run([sys.executable, str(DISTILL), "route", "--root", str(root)], capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr + r.stdout
+    assert "routed d.md: collider-simulator -> model-generator" in r.stdout
+    files = sorted(p.name for p in (root / "model-generator" / "lessons").glob("*.md"))
+    assert len(files) == 1, files  # a, b, c and the routed d merged into one lesson
+    text = (root / "model-generator" / "lessons" / files[0]).read_text()
+    assert "support: 4" in text and "contradictions: 1" in text
+    index = (root / "model-generator" / "MEMORY.md").read_text()
+    assert "support 4, contradicted 1" in index
+    assert (root / "collider-simulator" / "lessons" / "e.md").is_file()  # madgraph lesson stays
+    r = subprocess.run([sys.executable, str(DISTILL), "propose", "--root", str(root), "--min-support", "3"],
+                       capture_output=True, text=True)
+    assert "support   4" in r.stdout and "ufo-generator" in r.stdout

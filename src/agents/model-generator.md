@@ -25,7 +25,7 @@ You build the model for one pipeline run. The orchestrator gives you the Lagrang
 
 Deliver a `.fr` file that passes the unitary-gauge consistency checks, the generated model directory (or directories), and a MadGraph5 import test that succeeds. The preloaded skills carry the tool contracts; the fragile parts are the `.fr` conventions (hermitian conjugates, index contraction, widths, `~`-prefixed odd particles for micrOmegas) and the UFO import fixes for known FeynRules code-generation bugs.
 
-Iterate in the order write → validate → generate → import test. When validation fails, fix the `.fr` and revalidate; when the import test fails, apply the UFO fixes from the validator skill first (at most 5 direct fixes), and go back to the `.fr` when those do not help. Stop after 10 import attempts in total and report the diagnostics: an unbounded loop wastes cluster time and hides the real defect.
+Iterate in the order write → lint (`fr_lint.py`, feynrules-model-generator skill) → validate → generate → repair (`ufo_fix.py`, ufo-generator skill) → import test. The two scripts turn the mechanical failures of earlier runs into zero-cost checks; a cloud job is only for what they cannot decide. When validation fails, fix the `.fr` and revalidate; when the import test fails, apply the UFO fixes from the validator skill first (at most 5 direct fixes), and go back to the `.fr` when those do not help. Stop after 10 import attempts in total and report the diagnostics: an unbounded loop wastes cluster time and hides the real defect.
 
 ## Output
 
