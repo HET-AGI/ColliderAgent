@@ -8,6 +8,8 @@ Each skill is a directory containing a `SKILL.md` (frontmatter + workflow) plus 
 
 | Skill | Description |
 |---|---|
+| [`research-target-finder`](research-target-finder/) | 从高层研究目标出发寻找研究对象：构造解释反常或满足特定目的的新模型，或系统调研所有相关模型，并给出经文献核实的候选模型报告 |
+| [`research-plan-generator`](research-plan-generator/) | 将研究对象转化为可由流水线直接执行的研究计划（模型、对撞过程、模拟设置、事例筛选、统计分析与图表） |
 | [`feynrules-model-generator`](feynrules-model-generator/) | 从 LaTeX 拉氏量生成 FeynRules `.fr` 模型文件 |
 | [`feynrules-model-validator`](feynrules-model-validator/) | 校验 FeynRules `.fr` 的物理自洽性，并验证 UFO 能否被 MadGraph5 正确导入 |
 | [`ufo-generator`](ufo-generator/) | 将 `.fr` 模型转换为 UFO 格式，供 MadGraph5 / Herwig / Sherpa 使用 |

@@ -18,8 +18,13 @@ description: >
   upstream stage with updating downstream results. These are multi-stage tasks and
   MUST go through the orchestrator to maintain run labeling, progress tracking, and
   script generation consistency.
-  Do NOT trigger for single-stage requests that only involve one of: model building,
-  event generation, event analysis, or plotting.
+  ALSO triggers when the user gives a high-level research goal instead of a concrete
+  specification AND wants the study carried out, such as "build a model that explains
+  <anomaly> and study it at the LHC", "find the models relevant to ... and test them",
+  or "propose and run a collider study of ...". The orchestrator then starts with a
+  research-planning step (principal-investigator subagent) before the pipeline.
+  Do NOT trigger for single-stage requests that only involve one of: research planning,
+  model building, event generation, event analysis, or plotting.
 ---
 
 # Analysis Pipeline Orchestrator
@@ -32,6 +37,12 @@ Each subagent's skill defines its own output paths. The combined layout is:
 
 ```
 <working_dir>/
+├── research/        # Step 0 (principal-investigator), only for high-level research goals
+│   └── <run_label>/
+│       ├── targets.md      # Research-target report
+│       ├── plans/          # Research plans (task files for Steps 1–4)
+│       ├── data/           # Experimental data downloaded for the plans
+│       └── sources/, tools/  # Paper sources and helper scripts of the subagent (if any)
 ├── models/          # Step 1 (feynrules-model-generator)
 ├── scripts/         # Steps 2/3/4 (all executable scripts)
 ├── events/          # Step 2 (madgraph-simulator)
@@ -125,6 +136,15 @@ Add a `parent` field to link incremental runs to their origin:
 
 Execute the following steps **sequentially**, using the specified subagent for each. Pass intermediate results via the `progress/` directory.
 
+### Step 0: Research Planning → `principal-investigator` subagent (if needed)
+- **When**: the task is a high-level research goal that lacks a concrete model, process, or analysis specification (e.g. "build a model that explains ...", "find the models relevant to ... and study them"). Skip this step when the user provides a complete task prompt
+- Input: the user's prompt **verbatim**, paths of any attached files, scope (`targets+plan` by default), the research directory `research/<run_label>/`, and any constraints the user stated (collider, number of plans, how much literature work to spend, existing models to reuse)
+- The subagent searches the literature, finds and vets research targets (new models and/or a survey of existing ones), and writes research plans in the task-prompt format
+- Output: `progress/<run_label>/step0_research.md`
+- Extract from return: ranked research targets, plan file paths in execution order, open decisions for the user
+- **Checkpoint**: target selection involves judgment calls that belong to the user. In an interactive session, present the ranked targets, the plan list, and the open decisions, and ask which plan(s) to execute before starting Step 1. In a non-interactive session, or if the user asked for autonomous execution, proceed with the first plan
+- **Executing plans**: the selected plan is the task file for Steps 1–4 — read it and proceed as for a user-provided task file. Record it in the manifest entry as `task_file: <plan path>`. If several plans are to be executed, the first continues in this run; execute each further plan as an incremental run (new run label, `parent` set to this run), reusing artifacts such as the UFO model where the plan declares a dependency
+
 ### Step 1: Model Building → `model-generator` subagent
 - Input: the Lagrangian and particle content from the user's task description
 - The subagent generates .fr model → validates → produces UFO model
@@ -153,11 +173,11 @@ Execute the following steps **sequentially**, using the specified subagent for e
 
 ## Rules
 
-1. **Read the task file first** — understand the full scope before starting any step.
+1. **Read the task file first** — understand the full scope before starting any step. Decide here whether Step 0 is needed: a task that already specifies the model, the process, and the analysis goes straight to Step 1.
 2. **Run steps sequentially** — each step depends on the previous step's output.
 3. **Pass precise information** — when invoking each subagent, include all relevant details from the task description AND the previous step's return summary. Tell the subagent the progress file path to write to (e.g., `progress/<run_label>/step2_madgraph.md`). The subagent has no access to the task file or conversation history.
 4. **If a subagent's return summary is insufficient**, read the corresponding `progress/<run_label>/stepN_*.md` file for complete details before proceeding.
-5. **Skip steps that are not needed** — not every task requires all 4 steps. For example, if the user already has a UFO model, skip step 1.
+5. **Skip steps that are not needed** — not every task requires all steps. For example, if the user already has a UFO model, skip step 1; if the user provides a complete task prompt, skip step 0.
 6. **Generate execution summary** — after all steps complete, invoke the `execution-summarizer` skill to produce a detailed `execution_summary.md` with prompt-to-code mapping tables and key results.
 7. **Update manifest after each step** — after a subagent completes, update the run's entry in `progress/run_manifest.yaml` with the step's status (success/failed).
 
@@ -165,6 +185,7 @@ Execute the following steps **sequentially**, using the specified subagent for e
 
 The orchestrator manages **paths and scheduling**, not physics results:
 
+- **Step 0 → Steps 1–4**: the research plan is the physics specification. When passing details to downstream subagents, copy the relevant plan sections **verbatim** (e.g. Section 2 "Model" to `model-generator`) — do not paraphrase, summarize, or "improve" the physics. If a plan turns out to be incomplete or inconsistent during execution, send it back to the `principal-investigator` subagent with the specific problem instead of patching the physics yourself.
 - **Step 1 → Step 2**: pass UFO path, particle names, PDG codes, parameter block names — structural info needed to write MadGraph scripts.
 - **Step 2 → Step 3/4**: pass output directory path(s) and a run name ↔ parameter mapping (e.g., `run_01 → MZp=200, run_02 → MZp=400`). Do NOT parse MadGraph logs for cross sections or other physics quantities.
 - **Step 3/4 subagents** are responsible for reading the simulation output files themselves and extracting whatever physics results the task requires.
