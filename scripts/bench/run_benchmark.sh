@@ -94,14 +94,11 @@ done < <(find "$PAPER_DIR" -type f \( -name '*.yaml' -o -name '*.yml' \) -print0
 # --- private CLAUDE_CONFIG_DIR ---------------------------------------------------------
 CFG="$SANDBOX/.claude-config"
 mkdir -p "$CFG"
-for f in .credentials.json settings.json; do
-  if [[ -f "$SRC_CFG/$f" ]]; then
-    cp "$SRC_CFG/$f" "$CFG/$f"
-    chmod 600 "$CFG/$f"
-  else
-    echo "run_benchmark.sh: note: $SRC_CFG/$f not found, skipped" >&2
-  fi
-done
+# settings are copied; credentials are SHARED by symlink so that every sandbox session sees the token the
+# main ~/.claude keeps refreshing (a copied token stops working as soon as any other session refreshes:
+# "OAuth session expired and could not be refreshed", observed 2026-09-17 and 2026-09-24).
+[[ -f "$SRC_CFG/settings.json" ]] && cp "$SRC_CFG/settings.json" "$CFG/settings.json"
+[[ -f "$SRC_CFG/.credentials.json" ]] && ln -sfn "$SRC_CFG/.credentials.json" "$CFG/.credentials.json"
 python3 "$REPO_ROOT/scripts/check_env.py" --quiet || echo "run_benchmark.sh: warning: environment incomplete (python3 scripts/check_env.py)" >&2
 "$REPO_ROOT/scripts/install.sh" --target "$CFG" >/dev/null
 if [[ "$MEMORY" == "warm" ]]; then
