@@ -10,6 +10,7 @@ unjudged and is shown as `?`. Warm-memory runs are listed as a separate model co
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import sys
 from collections import Counter
@@ -97,8 +98,88 @@ def load_runs(root: Path) -> list[dict]:
             "failure_mode": failure_mode,
             "footnote": footnote,
             "metrics": metrics,
+            "effort": env.get("EFFORT") or m.get("effort") or None,
+            "harness": env.get("HARNESS") or ("claude" if env.get("CLAUDE_VERSION") else None),
+            "source": "sandbox",
         })
     return runs
+
+
+def load_extra(path: Path) -> list[dict]:
+    """Runs recorded only in documents (their sandboxes are gone): a JSON file holding either a list
+    of run records or {"runs": [...]}. Each record carries arxiv, figure, model, success, failure_mode,
+    footnote, and a metrics dict with the collect_metrics.py keys (see docs/paper/results-*/documented_runs.json)."""
+    data = read_json(path)
+    if isinstance(data, dict):
+        data = data.get("runs")
+    if not isinstance(data, list):
+        raise SystemExit(f"aggregate.py: {path} must hold a list of run records (or {{'runs': [...]}})")
+    runs = []
+    for rec in data:
+        if not isinstance(rec, dict):
+            continue
+        arxiv, figure = rec.get("arxiv"), rec.get("figure")
+        model = rec.get("model") or "?"
+        memory = rec.get("memory") or "cold"
+        success = rec.get("success")
+        footnote = rec.get("footnote")
+        failure_mode = rec.get("failure_mode")
+        metrics = rec.get("metrics")
+        runs.append({
+            "label": rec.get("label") or f"documented_{arxiv}_fig{figure}_{model}",
+            "benchmark": f"{arxiv} Fig. {figure}" if arxiv and figure else str(rec.get("label")),
+            "model": model,
+            "model_label": model + (" (warm)" if memory == "warm" else ""),
+            "success": success if isinstance(success, bool) else None,
+            "failure_mode": failure_mode if isinstance(failure_mode, str) and failure_mode else None,
+            "footnote": footnote if isinstance(footnote, str) and footnote.strip() else None,
+            "metrics": metrics if isinstance(metrics, dict) else None,
+            "effort": rec.get("effort"),
+            "harness": rec.get("harness"),
+            "source": "documented",
+        })
+    return runs
+
+
+CSV_FIELDS = ["attempt", "benchmark", "model", "harness", "effort", "label", "source", "success", "failure_mode",
+              "wall_clock_h", "subagent_calls", "magnus_jobs", "files_written", "tokens_in_M", "tokens_out_k",
+              "cost_usd", "llm_share_of_wall", "footnote"]
+
+
+def runs_csv(runs: list[dict]) -> str:
+    """One row per run, attempts numbered per (benchmark, model) in label order (documented rows first)."""
+    import csv
+
+    def key(r):
+        return (r["benchmark"], r["model_label"], 0 if r.get("source") == "documented" else 1, r["label"])
+
+    counter: Counter = Counter()
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=CSV_FIELDS, lineterminator="\n")
+    w.writeheader()
+    for r in sorted(runs, key=key):
+        counter[(r["benchmark"], r["model_label"])] += 1
+        m = r.get("metrics") or {}
+        wall = m.get("wall_clock_s")
+        tin = m.get("tokens_in_total", m.get("tokens_in"))
+        tout = m.get("tokens_out_total", m.get("tokens_out"))
+        w.writerow({
+            "attempt": counter[(r["benchmark"], r["model_label"])],
+            "benchmark": r["benchmark"], "model": r["model_label"],
+            "harness": r.get("harness") or "", "effort": r.get("effort") or "",
+            "label": r["label"], "source": r.get("source") or "sandbox",
+            "success": {True: "yes", False: "no"}.get(r["success"], "TBD"),
+            "failure_mode": r["failure_mode"] or "",
+            "wall_clock_h": "" if wall is None else f"{wall / 3600:.2f}",
+            "subagent_calls": m.get("subagent_calls", ""), "magnus_jobs": m.get("magnus_jobs", ""),
+            "files_written": m.get("files_written", ""),
+            "tokens_in_M": "" if tin is None else f"{tin / 1e6:.2f}",
+            "tokens_out_k": "" if tout is None else f"{tout / 1e3:.1f}",
+            "cost_usd": "" if m.get("cost_usd") is None else f"{m['cost_usd']:.2f}",
+            "llm_share_of_wall": "" if m.get("llm_share_of_wall") is None else f"{m['llm_share_of_wall']:.2f}",
+            "footnote": r["footnote"] or "",
+        })
+    return buf.getvalue()
 
 
 def _mean(values):
@@ -193,12 +274,20 @@ def render(runs: list[dict]) -> str:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("runs_dir", nargs="?", default="bench_runs", help="directory of sandboxes (default: bench_runs)")
+    ap.add_argument("--extra", action="append", default=[], metavar="JSON",
+                    help="JSON file of documented runs (sandbox gone) to merge; may be repeated")
+    ap.add_argument("--csv", metavar="PATH", help="also write one CSV row per run (attempt-numbered) to PATH")
     args = ap.parse_args(argv)
     root = Path(args.runs_dir)
     if not root.is_dir():
         print(f"aggregate.py: not a directory: {root}", file=sys.stderr)
         return 1
-    sys.stdout.write(render(load_runs(root)))
+    runs = load_runs(root)
+    for extra in args.extra:
+        runs += load_extra(Path(extra))
+    if args.csv:
+        Path(args.csv).write_text(runs_csv(runs), encoding="utf-8")
+    sys.stdout.write(render(runs))
     return 0
 
 

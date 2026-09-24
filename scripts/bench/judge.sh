@@ -130,10 +130,14 @@ except ValueError:
 verdict = None
 m = re.search(r"\{.*\}", result_text, re.S)
 if m:
-    try:
-        verdict = json.loads(m.group(0))
-    except ValueError:
-        verdict = None
+    blob = m.group(0)
+    # the judge sometimes separates fields with ';' or leaves a trailing ',' -- repair before giving up
+    for candidate in (blob, re.sub(r'"\s*;\s*"', '", "', blob), re.sub(r",\s*\}$", "}", blob)):
+        try:
+            verdict = json.loads(candidate)
+            break
+        except ValueError:
+            verdict = None
 if isinstance(verdict, dict) and isinstance(verdict.get("success"), bool):
     success = "true" if verdict["success"] else "false"
     fm = verdict.get("failure_mode")

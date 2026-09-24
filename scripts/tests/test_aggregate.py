@@ -79,3 +79,42 @@ def test_empty_dir(tmp_path):
 def test_parse_simple_yaml():
     d = aggregate.parse_simple_yaml('success: true\nfailure_mode: null\nnotes: "a: b \\"q\\""\njudged_by: x\n# c\n')
     assert d == {"success": True, "failure_mode": None, "notes": 'a: b "q"', "judged_by": "x"}
+
+
+def test_extra_and_csv(tmp_path):
+    root = build(tmp_path)
+    extra = tmp_path / "documented.json"
+    extra.write_text(json.dumps({"runs": [
+        {"label": "doc-1", "arxiv": "1701.05379", "figure": "8", "model": "claude-opus-5", "effort": "xhigh",
+         "harness": "claude", "success": True, "footnote": "documented deviation",
+         "metrics": {"wall_clock_s": 3600, "subagent_calls": 2, "magnus_jobs": 4, "files_written": 8,
+                     "tokens_in_total": 1_000_000, "tokens_out_total": 10_000, "cost_usd": 5.0, "llm_share_of_wall": 0.5}},
+        {"label": "doc-2", "arxiv": "2005.06475", "figure": "2", "model": "claude-opus-5", "success": None,
+         "footnote": "TBD", "metrics": {"wall_clock_s": 7200}},
+        "not a record",
+    ]}))
+    runs = aggregate.load_runs(root) + aggregate.load_extra(extra)
+    out = aggregate.render(runs)
+    assert "Runs found: 8 (successful 3, failed 2, unjudged 3)" in out
+    # the documented success joins the S3 mean: (3600+7200+3600)/3 h, cost (10+20+5)/3
+    assert "| 1701.05379 Fig. 8 | claude-opus-5 | 3 | 1.33 | 4.0 | 6.0 | 10.7 | 2.33 | 20.0 | 11.67 |" in out
+    assert "| 2005.06475 Fig. 2 | 0/1 (1 ?) |" in out.split("### Table S5")[1]
+    assert "documented deviation" in out and "TBD" in out
+    csv_text = aggregate.runs_csv(runs)
+    lines = csv_text.splitlines()
+    assert lines[0].startswith("attempt,benchmark,model,harness,effort,label,source,success")
+    # documented rows come first within a (benchmark, model) group and attempts are numbered
+    rows = [l for l in lines if ",1701.05379 Fig. 8,claude-opus-5," in l]
+    assert rows[0].startswith("1,1701.05379 Fig. 8,claude-opus-5,claude,xhigh,doc-1,documented,yes,")
+    assert rows[1].startswith("2,1701.05379 Fig. 8,claude-opus-5,,,a1,sandbox,yes,,1.00,4,6,10,2.00,20.0,10.00,,")
+    assert rows[3].startswith("4,1701.05379 Fig. 8,claude-opus-5,,,a3,sandbox,TBD,,")
+    assert any(l.startswith("1,2005.06475 Fig. 2,claude-opus-5,,,doc-2,documented,TBD,,2.00,,,,,,,,TBD") for l in lines)
+    # CLI: --extra and --csv
+    csv_path = tmp_path / "runs.csv"
+    r = subprocess.run([sys.executable, str(AGGREGATE), str(root), "--extra", str(extra), "--csv", str(csv_path)],
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    assert "Runs found: 8" in r.stdout and csv_path.read_text() == csv_text
+    bad = tmp_path / "bad.json"
+    bad.write_text('{"runs": 3}')
+    assert subprocess.run([sys.executable, str(AGGREGATE), str(root), "--extra", str(bad)], capture_output=True).returncode != 0
