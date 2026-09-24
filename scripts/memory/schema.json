@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/ColliderAgent/scripts/memory/schema.json",
+  "title": "ColliderAgent lesson frontmatter",
+  "description": "Frontmatter of one lesson file under <agent-memory>/<agent>/lessons/*.md (design spec 3.1). Validated by scripts/memory/distill.py with its own minimal validator; the draft-07 keywords used here are: type, enum, required, properties, additionalProperties, minLength, maxLength, pattern, format (date), minItems, items, minimum.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "stage",
+    "blueprint",
+    "symptom",
+    "root_cause",
+    "fix",
+    "evidence",
+    "generalizable",
+    "support",
+    "first_seen",
+    "last_confirmed"
+  ],
+  "properties": {
+    "stage": {
+      "description": "Pipeline stage the lesson belongs to.",
+      "type": "string",
+      "enum": [
+        "feynrules",
+        "ufo",
+        "calchep",
+        "madgraph",
+        "madanalysis",
+        "micromegas",
+        "pheno",
+        "orchestrator"
+      ]
+    },
+    "blueprint": {
+      "description": "Magnus blueprint id involved, or \"none\".",
+      "type": "string",
+      "minLength": 1
+    },
+    "symptom": {
+      "description": "What the tool result showed (one line; also the near-duplicate key together with stage).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "root_cause": {
+      "description": "Why it happened.",
+      "type": "string",
+      "minLength": 1
+    },
+    "fix": {
+      "description": "What to do instead; this text is what MEMORY.md shows.",
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "description": "Job ids / progress files that back the lesson (never file contents or tokens).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "generalizable": {
+      "description": "false = specific to one model/paper; never promoted into a skill.",
+      "type": "boolean"
+    },
+    "support": {
+      "description": "Number of distinct runs that confirmed the lesson.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "first_seen": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "last_confirmed": {
+      "type": "string",
+      "format": "date",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "tags": {
+      "description": "Optional free-form tags.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "contradictions": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "runs in which applying the fix did not help"
+    }
+  }
+}

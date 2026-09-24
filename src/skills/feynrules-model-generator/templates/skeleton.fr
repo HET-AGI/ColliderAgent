@@ -38,9 +38,11 @@ M$InteractionOrderHierarchy = {
 (* Gauge Groups                                                 *)
 (* ============================================================ *)
 
-(* NOTE: For BSM extensions loaded on top of the SM .fr file,   *)
-(* M$GaugeGroups is already defined by the SM. Only add this    *)
-(* section if building a standalone model.                      *)
+(* NOTE: a BSM extension is loaded on top of SM.fr, which already *)
+(* declares the SM gauge groups; add a gauge-group section only   *)
+(* for a standalone model. Do not write the literal name of that  *)
+(* section anywhere in an extension file (the export tools use a  *)
+(* substring test on it to decide standalone vs extension).      *)
 
 (* ============================================================ *)
 (* Particle Classes                                             *)

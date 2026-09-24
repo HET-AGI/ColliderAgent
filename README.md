@@ -68,7 +68,7 @@ software installation required.
   > Windsurf, Gemini CLI, Cline, Goose, Roo Code, and
   > [more](#supported-agents-and-their-global-skills-paths)
 
-- Python 3.10+ (requires `magnus-sdk>=0.7.0`)
+- Python 3.10+ with `magnus-sdk>=0.8` and the analysis stack used by the post-processing stage: `pip install -r requirements.txt` (numpy, scipy, matplotlib, uproot, awkward, pyhf, pylhe, pyhepmc). Check everything with `python3 scripts/check_env.py`.
 
 ### Setup
 
@@ -86,7 +86,7 @@ git switch codex-com
 First, install the Magnus SDK:
 
 ```bash
-pip install magnus-sdk
+pip install -r requirements.txt      # magnus-sdk plus the analysis stack
 ```
 
 <details>
@@ -180,6 +180,8 @@ cp -r src/skills <skills-path>
 > the canonical `src/skills/` directories there through versioned symlinks.
 > Claude Code can use `.claude/skills/` for the equivalent project scope.
 
+Or run `scripts/install.sh` (it copies both; `scripts/install.sh --check` reports drift between the repo and the installed copies).
+
 **4. Restart your agent** to load the new agents and skills.
 
 **5. (Optional) Activate the Wolfram Engine license:**
@@ -211,10 +213,33 @@ The license file (`mathpass`) is written to `~/.wolfram-container-license/` on t
 The fastest way to try Collider-Agent is to run a standard-model dilepton invariant mass plot — a classic parton-level check — directly from the command line:
 
 ```bash
-claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-bypass-permissions
+CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-skip-permissions
 ```
 
+> [!NOTE]
+> In headless mode (`claude -p`) the pipeline stages run as background subagents. Claude Code stops waiting for them after 600 s unless `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` is set, so keep that variable on every non-interactive run (interactive `claude` sessions do not need it).
+
+
 This runs the full pipeline non-interactively: MadGraph5 generates the events via [Magnus](https://github.com/rise-agi/magnus), and the agent produces a normalized $m_{\ell\ell}$ histogram in your working directory.
+
+## Cross-run learning and benchmarking
+
+The four stage subagents keep a per-agent memory across runs (`~/.claude/agent-memory/<agent>/`, enabled by `memory: user` in `src/agents/*.md`). Each run can leave *lessons* — a job that failed, a parameter MadGraph silently ignored, an approach a tool result confirmed — and the next run sees them in the subagent's prompt. The store stays small and evidence-based:
+
+```bash
+python3 scripts/memory/distill.py rebuild     # validate lesson files, merge duplicates, rebuild MEMORY.md
+python3 scripts/memory/distill.py propose     # lessons seen in >= 3 runs, with the skill they belong in
+```
+
+`/skill-evolve` (a user-invoked skill) turns those proposals into the smallest SKILL.md edits, runs the blueprint smoke test, and leaves the result on a review branch — a human merges. The same harness measures the system:
+
+```bash
+scripts/bench/smoke.sh                                    # 5-blueprint smoke test against zhustation
+scripts/bench/run_benchmark.sh 1701.05379 8 claude-opus-5 # one paper reproduction in a clean sandbox
+python3 scripts/bench/aggregate.py bench_runs/            # success-rate and resource-usage tables
+```
+
+See `scripts/bench/README.md` and `docs/superpowers/specs/2026-09-16-skill-evolution-design.md`.
 
 ## Usage
 

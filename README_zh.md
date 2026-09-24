@@ -63,7 +63,7 @@ Collider-Agent 使 AI 编程智能体（Claude Code、Codex、Cursor、Windsurf 
   > 其他支持技能的智能体也可使用 skills-only 模式：Cursor、Windsurf、
   > Gemini CLI、Cline、Goose、Roo Code 等，[详见下表](#支持的智能体及其全局技能路径)
 
-- Python 3.10+（需要 `magnus-sdk>=0.7.0`）
+- Python 3.10+，并安装 `magnus-sdk>=0.8` 与后处理阶段用到的分析库：`pip install -r requirements.txt`（numpy、scipy、matplotlib、uproot、awkward、pyhf、pylhe、pyhepmc）；用 `python3 scripts/check_env.py` 检查。
 
 ### 配置步骤
 
@@ -81,7 +81,7 @@ git switch codex-com
 首先安装 Magnus SDK：
 
 ```bash
-pip install magnus-sdk
+pip install -r requirements.txt      # magnus-sdk 及分析库
 ```
 
 <details>
@@ -175,6 +175,8 @@ cp -r src/skills <skills-path>
 > 暴露权威的 `src/skills/`。Claude Code 的等价仓库级目录为
 > `.claude/skills/`。
 
+也可以直接运行 `scripts/install.sh`（同时复制 agents 与 skills；`scripts/install.sh --check` 检查仓库与已安装副本是否有差异）。
+
 **4. 重启您的智能体**以加载新的智能体和技能。
 
 **5.（可选）激活 Wolfram Engine 许可证：**
@@ -206,8 +208,12 @@ docker run -it --rm \
 最快的体验方式是直接运行一个标准模型双轻子不变质量图——经典的部分子级验证——从命令行一键执行：
 
 ```bash
-claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-bypass-permissions
+CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0 claude -p "Plot the dilepton invariant mass distribution for parton-level pp -> l+l- process at the 14 TeV LHC in the SM." --dangerously-skip-permissions
 ```
+
+> [!NOTE]
+> 无头模式（`claude -p`）下各流水线阶段以后台子 agent 运行；Claude Code 默认只等待 600 秒，必须设置 `CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS=0` 才会等到结束（交互式 `claude` 会话不需要）。
+
 
 此命令以非交互方式运行完整流程：MadGraph5 通过 [Magnus](https://github.com/rise-agi/magnus) 产生事例，智能体在当前工作目录生成归一化的 $m_{\ell\ell}$ 直方图。
 

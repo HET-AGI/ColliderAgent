@@ -31,7 +31,13 @@ consumer. Do not run write-heavy pipeline stages in parallel. Give every agent
 the relevant task requirements, upstream artifact paths and parameter mapping,
 and the exact progress file it must update. The parent agent owns the run
 manifest, cross-stage decisions, final execution summary, and user-facing
-answer.
+answer. Every stage writes `progress/<run>/stepN_<stage>.md` and the
+`stepN_<stage>.json` sidecar described in the agent role files; pass paths, not
+physics, between stages. Use the deterministic helpers that ship with the
+skills before submitting cloud jobs: `fr_lint.py` (feynrules-model-generator)
+and `ufo_fix.py` (ufo-generator). The `run-lessons` skill and the
+`memory:` field of the agent files are Claude Code features and do not apply
+here.
 
 ## Magnus backend
 

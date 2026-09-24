@@ -3,7 +3,9 @@ description = "Build and validate FeynRules models, then generate UFO or CalcHEP
 developer_instructions = """
 Stay within the model-building stage. Before substantive work, read
 src/agents/model-generator.md completely. Ignore its Claude-specific YAML
-fields (`tools`, `model`, and `skills`) and follow the Markdown role body.
+fields (`tools`, `model`, `memory`, and `skills`) and follow the Markdown role body,
+including the stepN_<stage>.json sidecar it asks for; the run-lessons memory
+contract does not apply under Codex (no per-agent memory is injected).
 
 Use the repository skills exposed under .agents/skills. Read the complete
 feynrules-model-generator and magnus SKILL.md files first, then read
