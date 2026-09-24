@@ -1,5 +1,5 @@
 {
-  "_comment": "Runs whose sandboxes no longer exist. Numbers are copied from docs/paper-tbd-audit-2026-09-16.md (Tables of 2026-09-17) and docs/paper/handover-2026-09-17.md; wall_clock_s from the documented hours. Same metric keys as collect_metrics.py so scripts/bench/aggregate.py --extra can merge them.",
+  "_comment": "Runs whose sandboxes no longer exist. Numbers are copied from docs/paper-tbd-audit-2026-09-16.md (Tables of 2026-09-17) and docs/paper/handover-2026-09-24.md; wall_clock_s from the documented hours. Same metric keys as collect_metrics.py so scripts/bench/aggregate.py --extra can merge them.",
   "runs": [
     {"label": "doc-20260916T2200Z_2005.06475_fig2_claude-opus-4-6", "arxiv": "2005.06475", "figure": "2", "model": "claude-opus-4-6", "effort": "xhigh", "harness": "claude", "memory": "cold", "attempt": 1,
      "success": null, "failure_mode": null,

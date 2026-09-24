@@ -6,7 +6,7 @@
 |---|---|
 | `tables.md` | `scripts/bench/aggregate.py` 的输出：Table S3（成功 run 的资源均值）、S4（模型 × benchmark 成功/尝试）、S5（benchmark 成功/尝试 + 失败模式）以及每个成功 run 的数值偏差 footnote 原文 |
 | `runs.csv` | 每个 run 一行：attempt 编号、模型、harness、effort、成功与否、失败模式、时长、子 agent 调用、Magnus jobs、写入文件数、tokens（主会话 + 全部子 agent）、费用、模型延迟占比、footnote |
-| `documented_runs.json` | 沙盒已不存在、数字取自 `docs/paper-tbd-audit-2026-09-16.md` / `handover-2026-09-17.md` 的 run（2026-09-16 的 Opus 4.6 第 1 次尝试和 Opus 5 / Opus 4.8 / Sonnet 5 单次 run） |
+| `documented_runs.json` | 沙盒已不存在、数字取自 `docs/paper-tbd-audit-2026-09-16.md` / `handover-2026-09-24.md` 的 run（2026-09-16 的 Opus 4.6 第 1 次尝试和 Opus 5 / Opus 4.8 / Sonnet 5 单次 run） |
 | `figures/` | 每个 run 的结果图，命名 `<arxiv>_fig<N>__<model>__a<attempt>[-FAILED].png`；参考图在 `paper-reproduction/<arxiv>/reference/` |
 
 重新生成表格（沙盒存在时）：
