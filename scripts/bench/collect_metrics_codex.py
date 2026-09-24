@@ -31,7 +31,7 @@ def read_env(p: Path) -> dict:
 
 def scan_events(p: Path) -> dict:
     usage = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0, "reasoning_output_tokens": 0}
-    magnus = 0; cmds = 0; files: set[str] = set(); messages = 0; turns = 0; thread = None; errors = 0; spawns = 0; spawn_attempts = 0
+    magnus = 0; cmds = 0; files: set[str] = set(); messages = 0; turns = 0; thread = None; errors = 0; spawns = 0; spawn_attempts = 0; child_ids: set[str] = set()
     if p.is_file():
         for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
             try:
@@ -59,38 +59,84 @@ def scan_events(p: Path) -> dict:
                             files.add(ch["path"])
                 elif kind == "agent_message":
                     messages += 1
-                elif kind == "collab_tool_call" and "spawn" in str(it.get("tool", "")).lower():
-                    spawn_attempts += 1
-                    if it.get("agents_states"):      # a spawn that produced a sub-agent thread
-                        spawns += 1
+                elif kind == "collab_tool_call":
+                    for cid in list((it.get("agents_states") or {}).keys()) + list(it.get("receiver_thread_ids") or []):
+                        if isinstance(cid, str):
+                            child_ids.add(cid)
+                    if "spawn" in str(it.get("tool", "")).lower():
+                        spawn_attempts += 1
+                        if it.get("agents_states"):      # a spawn that produced a sub-agent thread
+                            spawns += 1
                 elif kind == "error":
                     errors += 1
     return {"usage": usage, "magnus_jobs": magnus, "commands": cmds, "files": sorted(files),
-            "messages": messages, "turns": turns, "thread_id": thread, "errors": errors, "spawns": spawns, "spawn_attempts": spawn_attempts}
+            "messages": messages, "turns": turns, "thread_id": thread, "errors": errors, "spawns": spawns, "spawn_attempts": spawn_attempts, "child_ids": child_ids}
 
 
-def scan_rollout(thread_id: str | None) -> dict:
-    out = {"path": None, "subagent_calls": None, "total_usage": None, "entries": 0}
-    if not thread_id:
-        return out
+def _rollout_path(thread_id: str) -> str | None:
     home = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
     hits = glob.glob(str(home / "sessions" / "**" / f"*{thread_id}*.jsonl"), recursive=True)
-    if not hits:
-        return out
-    out["path"] = hits[0]
-    sub = 0; last_tc = None; n = 0
-    for line in open(hits[0], encoding="utf-8", errors="replace"):
+    return hits[0] if hits else None
+
+
+def scan_one_rollout(path: str) -> dict:
+    """Per-thread totals from a Codex rollout: last token_count total, exec_command calls, magnus submissions,
+    file patches, and the sub-agent threads it spawned."""
+    magnus = cmds = patches = 0; last_tc = None; n = 0; children: set[str] = set()
+    for line in open(path, encoding="utf-8", errors="replace"):
         try:
             d = json.loads(line)
         except ValueError:
             continue
         n += 1
         p = d.get("payload") or {}
-        if p.get("type") == "sub_agent_activity" or d.get("type") == "inter_agent_communication_metadata":
-            sub += 1
-        if p.get("type") == "token_count" and isinstance(p.get("info"), dict):
+        t = p.get("type")
+        if t in ("function_call", "custom_tool_call"):
+            args = p.get("arguments") if isinstance(p.get("arguments"), str) else json.dumps(p.get("input") or p.get("arguments") or "")
+            if p.get("name") in ("exec_command", "shell", "container.exec") or "cmd" in (args or "")[:40]:
+                cmds += 1
+                magnus += len(MAGNUS_RE.findall(args or ""))
+            if p.get("name") == "apply_patch" or t == "custom_tool_call" and "patch" in str(p.get("name", "")).lower():
+                patches += 1
+        elif t == "token_count" and isinstance(p.get("info"), dict):
             last_tc = p["info"].get("total_token_usage") or last_tc
-    out.update({"subagent_calls": sub, "total_usage": last_tc, "entries": n})
+        elif t == "patch_apply_end":
+            patches += 1
+        if d.get("type") == "inter_agent_communication_metadata":
+            for k in ("receiver_thread_ids", "child_thread_ids"):
+                for c in (p.get(k) or d.get(k) or []):
+                    if isinstance(c, str):
+                        children.add(c)
+    return {"path": path, "entries": n, "magnus_jobs": magnus, "commands": cmds, "patches": patches,
+            "total_usage": last_tc, "children": children}
+
+
+def scan_rollouts(thread_id: str | None, child_ids: set[str]) -> dict:
+    """Main thread plus every sub-agent thread (ids from the events stream and from the rollouts themselves)."""
+    out = {"path": None, "threads": [], "subagent_calls": 0, "total_usage": None, "entries": 0,
+           "magnus_jobs": 0, "commands": 0, "patches": 0}
+    if not thread_id:
+        return out
+    seen: set[str] = set(); queue = [thread_id]; usage_sum = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0, "reasoning_output_tokens": 0}
+    pending_children = set(child_ids)
+    while queue or pending_children:
+        tid = queue.pop(0) if queue else pending_children.pop()
+        if tid in seen:
+            continue
+        seen.add(tid)
+        path = _rollout_path(tid)
+        if not path:
+            continue
+        r = scan_one_rollout(path)
+        if tid == thread_id:
+            out["path"] = path
+        out["threads"].append({"thread_id": tid, "path": path, "magnus_jobs": r["magnus_jobs"], "commands": r["commands"], "usage": r["total_usage"]})
+        out["entries"] += r["entries"]; out["magnus_jobs"] += r["magnus_jobs"]; out["commands"] += r["commands"]; out["patches"] += r["patches"]
+        for k in usage_sum:
+            usage_sum[k] += int((r["total_usage"] or {}).get(k, 0) or 0)
+        queue.extend(c for c in r["children"] if c not in seen)
+    out["subagent_calls"] = max(0, len(out["threads"]) - 1)
+    out["total_usage"] = usage_sum if out["threads"] else None
     return out
 
 
@@ -101,7 +147,7 @@ def main(argv: list[str]) -> int:
     env = read_env(sb / "run.env")
     status = json.loads((sb / "status.json").read_text()) if (sb / "status.json").is_file() else {}
     ev = scan_events(sb / "events.jsonl")
-    ro = scan_rollout(ev["thread_id"])
+    ro = scan_rollouts(ev["thread_id"], ev["child_ids"])
     u = ro["total_usage"] or ev["usage"]
     tokens_in = int(u.get("input_tokens", 0))        # Codex reports cached tokens inside input_tokens
     tokens_out = int(u.get("output_tokens", 0))
@@ -114,9 +160,10 @@ def main(argv: list[str]) -> int:
         "exit_code": status.get("exit_code"), "wall_clock_s": wall, "num_turns": ev["turns"],
         "cost_usd": None,
         "tokens_in": tokens_in, "tokens_out": tokens_out, "tokens_in_total": tokens_in, "tokens_out_total": tokens_out,
-        "tokens": u, "tokens_scope": "rollout total" if ro["total_usage"] else "events turn.completed",
+        "tokens": u, "tokens_scope": "rollouts: main + %d sub-agent threads" % (ro["subagent_calls"] or 0) if ro["total_usage"] else "events turn.completed",
         "subagent_calls": max(ev["spawns"], ro["subagent_calls"] or 0),
-        "magnus_jobs": ev["magnus_jobs"], "files_written": len(ev["files"]), "files_written_paths": ev["files"],
+        "magnus_jobs": max(ev["magnus_jobs"], ro["magnus_jobs"]), "files_written": max(len(ev["files"]), ro["patches"]),
+        "files_written_paths": ev["files"], "threads": ro["threads"],
         "tool_calls": {"command_execution": ev["commands"], "file_change": len(ev["files"]), "agent_message": ev["messages"]},
         "errors": ev["errors"], "subagent_spawn_attempts": ev["spawn_attempts"], "transcript": {"found": ro["path"] is not None, "source": ro["path"], "entries": ro["entries"]},
     }
