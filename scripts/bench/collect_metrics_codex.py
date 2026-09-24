@@ -31,7 +31,7 @@ def read_env(p: Path) -> dict:
 
 def scan_events(p: Path) -> dict:
     usage = {"input_tokens": 0, "cached_input_tokens": 0, "output_tokens": 0, "reasoning_output_tokens": 0}
-    magnus = 0; cmds = 0; files: set[str] = set(); messages = 0; turns = 0; thread = None; errors = 0; spawns = 0
+    magnus = 0; cmds = 0; files: set[str] = set(); messages = 0; turns = 0; thread = None; errors = 0; spawns = 0; spawn_attempts = 0
     if p.is_file():
         for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
             try:
@@ -60,11 +60,13 @@ def scan_events(p: Path) -> dict:
                 elif kind == "agent_message":
                     messages += 1
                 elif kind == "collab_tool_call" and "spawn" in str(it.get("tool", "")).lower():
-                    spawns += 1
+                    spawn_attempts += 1
+                    if it.get("agents_states"):      # a spawn that produced a sub-agent thread
+                        spawns += 1
                 elif kind == "error":
                     errors += 1
     return {"usage": usage, "magnus_jobs": magnus, "commands": cmds, "files": sorted(files),
-            "messages": messages, "turns": turns, "thread_id": thread, "errors": errors, "spawns": spawns}
+            "messages": messages, "turns": turns, "thread_id": thread, "errors": errors, "spawns": spawns, "spawn_attempts": spawn_attempts}
 
 
 def scan_rollout(thread_id: str | None) -> dict:
@@ -116,7 +118,7 @@ def main(argv: list[str]) -> int:
         "subagent_calls": max(ev["spawns"], ro["subagent_calls"] or 0),
         "magnus_jobs": ev["magnus_jobs"], "files_written": len(ev["files"]), "files_written_paths": ev["files"],
         "tool_calls": {"command_execution": ev["commands"], "file_change": len(ev["files"]), "agent_message": ev["messages"]},
-        "errors": ev["errors"], "transcript": {"found": ro["path"] is not None, "source": ro["path"], "entries": ro["entries"]},
+        "errors": ev["errors"], "subagent_spawn_attempts": ev["spawn_attempts"], "transcript": {"found": ro["path"] is not None, "source": ro["path"], "entries": ro["entries"]},
     }
     f = lambda v, s: "?" if v is None else s.format(v)
     m["table_s3_row"] = (f"| {m['label']} | {f(wall and wall/3600, '{:.2f}')} | {m['subagent_calls']} | {m['magnus_jobs']} | "
