@@ -27,8 +27,13 @@ For a multi-stage pipeline, delegate to the project-scoped local subagents in
 4. `pheno-analyzer`
 
 Custom subagents are only loaded when `experimental.enableAgents` is true; the
-workspace `.gemini/settings.json` of this branch sets it. Without it the CLI
-reports "Subagent '<name>' not found" and only the built-in `generalist` exists.
+workspace `.gemini/settings.json` of this branch sets it. Project-level agents
+(`.gemini/agents/`) additionally carry a content hash and are registered only
+after the user acknowledges them in the interactive UI; a headless run never
+gets that dialog and `invoke_agent` reports "Subagent '<name>' not found".
+For headless use copy the four files to `~/.gemini/agents/` (user-level agents
+register without acknowledgement); `scripts/bench/run_benchmark_gemini.sh` does
+this at launch.
 
 Run dependent stages sequentially and wait for each subagent before starting
 its consumer. Do not run write-heavy pipeline stages in parallel. Give every
