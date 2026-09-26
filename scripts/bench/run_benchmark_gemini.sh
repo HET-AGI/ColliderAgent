@@ -55,6 +55,8 @@ if [[ -n "$GEMINI_CHECKOUT" && -f "$GEMINI_CHECKOUT/GEMINI.md" && -d "$GEMINI_CH
   cp "$GEMINI_CHECKOUT/GEMINI.md" "$SANDBOX/GEMINI.md"
   mkdir -p "$SANDBOX/.gemini"
   cp -r "$GEMINI_CHECKOUT/.gemini/agents" "$SANDBOX/.gemini/agents"
+  # workspace settings (experimental.enableAgents=true: custom sub-agents are not loaded without it)
+  [[ -f "$GEMINI_CHECKOUT/.gemini/settings.json" ]] && cp "$GEMINI_CHECKOUT/.gemini/settings.json" "$SANDBOX/.gemini/settings.json"
   ADAPTER="gemini-com ($(git -C "$GEMINI_CHECKOUT" rev-parse --short HEAD 2>/dev/null || echo unknown))"
 else
   # skills-only fallback: the Codex AGENTS.md adapted, no custom sub-agents (the 2026-09-26 control runs)
