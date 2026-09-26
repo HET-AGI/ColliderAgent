@@ -143,8 +143,8 @@ still need their $\times$3 (1.5--6\,h and up to $>$100\,USD each at \texttt{xhig
 Table S4: column A = Opus 4.6 with Claude Code; column B = GPT-5.5 with Codex CLI 0.155.1 on branch \texttt{codex-com}
 (skills-only mode, same prompts, one clean directory per attempt, same judge, metrics from the Codex event stream and the
 main/sub-agent thread rollouts). GPT-5.3-Codex, the model contemporaneous with Opus 4.6, is not served to a ChatGPT-login
-Codex account (an API key is required), so GPT-5.5 was used; column C is left blank. Codex runs on a subscription, so no
-cost is recorded for column B.
+Codex account (an API key is required), so GPT-5.5 was used on 2026-09-24; on 2026-09-26 column B was re-run with
+GPT-5.3-Codex through an API key and column C (Gemini via ADK) was measured --- see the next section.
 
 \begin{center}\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lccc|ccc}
@@ -198,6 +198,86 @@ Still open:
   $\times$3 for column B (about 1\,h each).
 \item Column C (Sonnet 5 or Opus 5): \texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig> claude-sonnet-5}.
 \end{enumerate}
+
+\section{Model C and the comprehensive Table S4 (2026-09-26)}
+Model C is the repository's own \texttt{python-agent}: one Google ADK \texttt{LlmAgent} (ADK 2.10, LiteLLM) with 13 flat
+tools (read/write/edit, FeynRules validation, UFO generation, MadGraph compile/launch, MadAnalysis, YAML workflow,
+plus \texttt{run\_python}/\texttt{run\_shell} added on 2026-09-26 so that a figure can be drawn at all), no sub-agents,
+no skills, no memory, no context compaction, \texttt{max\_llm\_calls}=150 (300 for the two Delphes benchmarks), a 6\,h
+wall limit. Model: \texttt{gemini-3.1-pro-preview} (released 2026-02-19, the Gemini contemporaneous with Opus 4.6) through
+an OpenAI-compatible relay. Two controls separate the harness from the model: the same Gemini model inside Gemini CLI 0.61
+(a coding agent, same \texttt{.agents/skills} as the Codex harness, no custom sub-agents) and GPT-5.5 inside the same ADK
+loop. Column B was re-run with GPT-5.3-Codex (API key). Same prompts, one clean directory per attempt, same judge; every run
+was checked with \texttt{scripts/bench/job\_provenance.py} (footnote $f$).
+
+\begin{center}\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccc|c|cc}
+\toprule
+ & A: Opus 4.6 & A$'$: Opus 5 & B: GPT-5.3-Codex & \textbf{C: Gemini 3.1 Pro} & C$_1$: Gemini 3.1 Pro & C$_2$: GPT-5.5 \\
+Benchmark & Claude Code ($\times$3) & Claude Code & Codex CLI & \textbf{ADK ($\times$3)} & Gemini CLI & ADK \\
+\midrule
+Heavy N & 3/3 & 1/1 & 1/1 & \textbf{1/3} & 1/1 & 1/1 \\
+U(1)$'$ scan & 3/3 & 1/1 & 1/1 & \textbf{1/3} & 1/1 & 1/1 \\
+ALP EFT & 3/3 & 1/1 & 1/1 & \textbf{2/3} & 1/1 & 1/1 \\
+General $Z'$ & 3/3 & 1/1 & 1/1 & \textbf{1/3} & 1/1 & 1/1 \\
+KK graviton & 3/3 & 1/1 & 1/1 & \textbf{2/3} & 1/1 & 1/1 \\
+U1 LQ at MuC, $\eta$ & 2/3 & 1/1 & 0/1 & \textbf{0/3} & 1/1 & 1/1 \\
+U1 LQ at MuC, reach & 3/3 & running & 0/1 & \textbf{1/3} & 1/1 & 1/1 \\
+\midrule
+figure benchmarks & 20/21 & 6/6 & 5/7 & \textbf{8/21} & 7/7 & 7/7 \\
+\midrule
+Scalar LQ (Delphes) & 0/1$^{a}$ & -- & 0/1$^{g}$ & running & -- & 0/1$^{h}$ \\
+U1 LQ mono-$\tau$ (Delphes) & 0/1$^{b}$ & -- & 1/1$^{*}$ & running & -- & running \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Long-horizon indicators, figure benchmarks, means per run (the ADK event log records every model call and every tool's
+success flag; the other harnesses do not expose comparable counts):
+
+\begin{center}\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrrrrrl}
+\toprule
+Column & runs & ok & wall [h] & LLM calls & tool calls & tool errors & error-refine cycles & max context [k tok] & exit \\
+\midrule
+Gemini 3.1 Pro / ADK & 21 & 8 & 1.41 & 117 & 117 & 39 & 39 & 120 & 10 of 21 hit the 150-call cap \\
+GPT-5.5 / ADK & 7 & 7 & 0.71 & 35 & 39 & 4 & 4 & 71 & all completed \\
+Gemini 3.1 Pro / Gemini CLI & 7 & 7 & 0.63 & -- & 72 & -- & -- & -- & all completed \\
+GPT-5.3-Codex / Codex & 7 & 5 & 0.81 & -- & -- & -- & -- & -- & -- \\
+Opus 5 / Claude Code & 4 & 4 & 1.22 & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Reading: (i) the same Gemini model goes from 8/21 in the single ADK loop to 7/7 in a coding-agent harness, with half the
+wall-clock and no budget exhaustion --- the harness, not the model, is the main factor; (ii) GPT-5.5 survives the same
+loop (7/7, 35 calls, 4 errors per run), i.e.\ the strongest current model masks the structural penalty on the figure
+benchmarks; (iii) the Delphes-level benchmarks separate them again: the coding agents solve the lepton$\to$photon LHE
+rewrite and the 10\,GB job limit by writing scripts and re-launching (Codex GPT-5.5 4.4\,h, GPT-5.3-Codex 2.6\,h for
+mono-$\tau$ with the paper's exclusion), whereas GPT-5.5 in the ADK loop stopped at the parton level and smeared
+$m_{ej}$ by hand (footnote $h$); (iv) ADK failures are loops --- 10 of 13 are the 150-call budget spent in event
+generation or model building (108/78/121 failed tool calls and 379k/182k/230k-token contexts in the three MuC $\eta$
+attempts) --- while the Codex/Claude failures are single physics errors (the MuC $\eta$ coupling not taking effect, an
+empty contour plot).
+
+\noindent$^{f}$ The Magnus job list is shared by all runs. The first GPT-5.3-Codex Heavy N run ``reproduced'' the figure in
+7 minutes from the logs of the 2026-09-16 Opus 4.6 jobs; it was quarantined and re-run, every harness prompt now
+carries \texttt{scripts/bench/benchmark\_rules.md} (submit your own jobs), and \texttt{job\_provenance.py} verified all other
+52 runs of this batch. Earlier batches were not scanned (sandboxes deleted) but built their own models (5--42 jobs each).\\
+$^{g}$ Model and UFO done; the agent could not install the LUXlep PDF set (\texttt{--pdf} installer lacks
+\texttt{lhapdf-config} on zhustation) and stopped after 0.8\,h instead of using the MG5-internal \texttt{pdlabel/lhaid}
+route that the Opus 4.6 and GPT-5.5 runs used.\\
+$^{h}$ 100k LUXlep parton events, no Pythia8/Delphes/selection: the agent reported that the tool interface ``did not support
+the requested LHE lepton-to-photon replacement before showering'' and applied a detector-resolution approximation to the
+parton-level $m_{ej}$ (peak $\approx$180 events/bin against $\approx$4 in the reference); counted as a generation failure.\\
+U(1)$'$ 3\,TeV tip, updated: $g_1'\approx0.48$ in Opus 4.6 $\times$3, Opus 5, GPT-5.3-Codex and GPT-5.5/ADK; 0.55 in Gemini
+CLI; the paper's 0.65 only in Codex GPT-5.5 --- a common analysis choice, not a property of one model or of the prompt
+(this supersedes the 2026-09-24 wording). Likewise for mono-$\tau$: the Claude continuation and Codex GPT-5.5 are 20--35\,\%
+weak, GPT-5.3-Codex reproduces the paper (0.88 vs 0.8 at 0.8\,TeV).
+
+Data: \texttt{docs/paper/results-2026-09-26/} (\texttt{README.md} in Chinese, \texttt{tables.md}, \texttt{runs.csv},
+\texttt{longhorizon\_*.md}, \texttt{figures/}); harnesses \texttt{scripts/bench/run\_benchmark\_adk.sh} and
+\texttt{run\_benchmark\_gemini.sh}.
 
 \section{Other markers}
 \begin{longtable}{p{3.2cm}p{5.6cm}p{1.6cm}p{6.2cm}}
