@@ -14,7 +14,7 @@ sandbox produced (events.jsonl, transcript*.jsonl, agent_stderr.log, run.log, ..
 and reports the referenced ids that were never submitted here ("foreign"). It writes provenance.json
 into the sandbox and exits 3 when foreign ids were used.
 
-usage: job_provenance.py <sandbox_dir> [--quiet]
+usage: job_provenance.py <sandbox_dir> [--quiet] [--no-server]
 """
 from __future__ import annotations
 
@@ -56,7 +56,7 @@ def extra_files(sandbox: Path) -> list[Path]:
         return []
 
 
-def scan(sandbox: Path) -> dict:
+def scan(sandbox: Path, check_server: bool = True) -> dict:
     submitted, referenced = set(), {}
     files = [p for p in sandbox.rglob("*")
              if p.is_file() and p.suffix in SCAN_SUFFIXES and p.name not in SKIP_FILES
@@ -72,14 +72,49 @@ def scan(sandbox: Path) -> dict:
         for m in REF_RE.finditer(text):
             referenced.setdefault(m.group(1), str(p.relative_to(sandbox)) if sandbox in p.parents else p.name)
     foreign = {jid: src for jid, src in referenced.items() if jid not in submitted}
+    own_by_time = {}
+    if foreign and check_server:
+        # a submission line can be lost (truncated tool output, background launch); a job created inside this
+        # run's time window is taken as the run's own job
+        start, end = run_window(sandbox)
+        if start and end:
+            for jid in list(foreign):
+                created = job_created_at(jid)
+                if created is not None and start - 120 <= created <= end + 60:
+                    own_by_time[jid] = foreign.pop(jid)
     return {"submitted": sorted(submitted), "referenced": sorted(referenced),
-            "foreign": foreign, "valid": not foreign, "files_scanned": len(files)}
+            "foreign": foreign, "own_by_creation_time": own_by_time, "valid": not foreign,
+            "files_scanned": len(files)}
+
+
+def run_window(sandbox: Path):
+    try:
+        return int((sandbox / "start.ts").read_text().strip()), int((sandbox / "end.ts").read_text().strip())
+    except (OSError, ValueError):
+        return None, None
+
+
+def job_created_at(jid: str):
+    """UTC epoch of a job's creation from `magnus job status` ("Created: MM-DD HH:MM", server time = UTC)."""
+    import datetime as dt
+    import subprocess
+    try:
+        out = subprocess.run(["magnus", "job", "status", jid], capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    m = re.search(r"Created:\s*(\d{4}-)?(\d{2})-(\d{2})\s+(\d{2}):(\d{2})", out.stdout + out.stderr)
+    if not m:
+        return None
+    year = int(m.group(1)[:-1]) if m.group(1) else dt.datetime.now(dt.timezone.utc).year
+    t = dt.datetime(year, int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5)), tzinfo=dt.timezone.utc)
+    return int(t.timestamp())
 
 
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     quiet = "--quiet" in argv
-    argv = [a for a in argv if a != "--quiet"]
+    check_server = "--no-server" not in argv
+    argv = [a for a in argv if a not in ("--quiet", "--no-server")]
     if len(argv) != 1:
         print(__doc__, file=sys.stderr)
         return 2
@@ -87,13 +122,15 @@ def main(argv=None) -> int:
     if not sandbox.is_dir():
         print(f"not a directory: {sandbox}", file=sys.stderr)
         return 1
-    result = scan(sandbox)
+    result = scan(sandbox, check_server=check_server)
     (sandbox / "provenance.json").write_text(json.dumps(result, indent=1), encoding="utf-8")
     if not quiet:
         print(f"{sandbox.name}: submitted {len(result['submitted'])}, referenced {len(result['referenced'])}, "
               f"foreign {len(result['foreign'])} -> {'VALID' if result['valid'] else 'INVALID'}")
         for jid, src in result["foreign"].items():
             print(f"  foreign job {jid} (first seen in {src})")
+        for jid, src in result.get("own_by_creation_time", {}).items():
+            print(f"  job {jid} referenced without a captured submission line; created inside this run's window -> own")
     return 0 if result["valid"] else 3
 
 
