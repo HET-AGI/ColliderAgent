@@ -10,7 +10,7 @@
 \setmainfont{DejaVu Serif}
 \setsansfont{DejaVu Sans}
 \setmonofont[Scale=0.85]{DejaVu Sans Mono}
-\usepackage{booktabs,longtable,graphicx,array}
+\usepackage{booktabs,longtable,graphicx,array,amsmath,slashed}
 \usepackage[hidelinks]{hyperref}
 \usepackage{enumitem}
 \setlist{nosep,leftmargin=1.4em}
@@ -23,6 +23,97 @@
 \begin{document}
 \maketitle
 
+\section*{Part I --- Tables S2--S5 of the Supplemental Material, filled, and the text to insert}
+The tables below follow the layout of \code{sm.pdf} (Tables S2--S5) so that they can be pasted into the source; the extended
+versions add the columns and rows measured beyond the paper's placeholders. Every number is traceable to
+\code{results-2026-09-26/runs.csv}; Part II documents how it was obtained.
+
+\subsection*{Table S2 --- software environment}
+Caption as in the paper (``Software environment of the two container images used by Magnus in this work \ldots''). All
+versions were read inside the images on zhustation on 2026-09-16 with a probe blueprint. Two corrections to the placeholder
+table: \code{uproot} is not in the collider image (the analysis Python stack runs in the agent runtime), and Delphes is 3.5.1.
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+Image & Package & Version \\
+\midrule
+collider & MadGraph5\_aMC@NLO & 3.7.0 \\
+ & Pythia8 & 8.316 \\
+ & Delphes & 3.5.1 \\
+ & MadAnalysis5 & 1.11.0 \\
+ & LHAPDF & 6.5.5 \\
+ & numpy / scipy (in-image) & 1.26.4 / 1.15.3 \\
+ & awkward / matplotlib (in-image) & 2.9.0 / 3.10.8 \\
+ & pyhf & 0.7.6 \\
+mma-het & Wolfram Engine & 13.3.0 \\
+ & FeynRules & 2.3.49 \\
+agent runtime & uproot / awkward & 5.7.4 / 2.9.0 \\
+ & numpy / scipy & 2.4.4 / 1.15.3 \\
+ & Claude Code & 2.1.273 (re-runs); original runs: TBD \\
+ & LLM & Claude Opus 4.6 (\code{claude-opus-4-6}) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Table S3 --- resource usage per benchmark}
+Paper caption: ``Resource usage per benchmark: wall-clock time from prompt to final figure, number of sub-agent invocations,
+Magnus jobs, files written by the agent (scripts, cards, records), and LLM tokens (input/output). Numbers refer to a
+successful run of each benchmark with Claude Opus 4.6.'' Filled with the first successful attempt of each benchmark
+(2026-09-16, \code{--effort xhigh}); tokens = main session plus all sub-agents (uncached, cache-write and cache-read);
+$^{\dagger}$ = no successful attempt yet, the numbers are those of the stopped (Scalar LQ, 6.4\,h) or failed (mono-$\tau$)
+attempt. The paper's single row ``U1 LQ at MuC [Fig.\,S2(e,f)]'' is split into its two prompts; the Dark-SMEFT rows are the
+authors' and unchanged.
+\begin{center}\footnotesize\setlength{\tabcolsep}{4pt}\wide{\input{report-tables/s3_paper.tex}}\end{center}
+
+Alternative filling (means over the three successful attempts of 2026-09-16 and 2026-09-24, same columns):
+\begin{center}\footnotesize\setlength{\tabcolsep}{4pt}\wide{\input{report-tables/s3_paper_mean.tex}}\end{center}
+
+Model-latency share of wall-clock (transcript timestamps, 21 figure-benchmark attempts): 0.23--0.80, median 0.55.
+
+\subsection*{Table S4 --- reproduction success rate for different LLMs and agent runtimes}
+Paper caption: ``Reproduction success rate (successful runs / attempted runs) per benchmark for different LLMs and agent
+runtimes.'' Model B = GPT-5.3-Codex (released 2026-02-05, the same day as Opus 4.6) through the Codex CLI in skills-only mode
+(branch \code{codex-com}); model C = Gemini 3.1 Pro preview (2026-02-19) through the single-agent ADK reference implementation
+(\code{python-agent}). Paper layout (the four main-text benchmarks):
+\begin{center}\small\input{report-tables/s4_paper.tex}\end{center}
+
+Extended version (all benchmarks; every LLM/runtime pair measured in the campaign; $\times$3 where three attempts were made):
+\begin{center}\scriptsize\setlength{\tabcolsep}{4pt}\input{report-tables/s4_ext.tex}\end{center}
+
+\subsection*{Table S5 --- reproduction robustness}
+Paper caption: ``Reproduction robustness: number of successful runs out of three sandboxed attempts per benchmark, and the
+failure mode of the unsuccessful runs, classified as (i) model, (ii) generation, (iii) analysis or (iv) infrastructure.''
+Opus 4.6, Claude Code; the two Delphes-level benchmarks have one attempt each (see Part II, open items):
+\begin{center}\small\input{report-tables/s5_paper.tex}\end{center}
+
+Extended version (the two runtimes with three attempts per benchmark; the ADK loop's attempts include its two
+Delphes-level runs):
+\begin{center}\scriptsize\setlength{\tabcolsep}{3pt}\input{report-tables/s5_ext.tex}\end{center}
+
+\clearpage
+\subsection*{Text to insert (reply letter and Supplemental Material)}
+\begin{center}\small
+\begin{tabular}{p{2.8cm}p{4.2cm}p{9.3cm}}
+\toprule
+Where & Placeholder & Proposed text \\
+\midrule
+reply p.\,1, checklist (1) & fill in Tables S3, S4, S5 & Done: the tables above; the numbers of this letter follow. \\
+reply p.\,4, point (c) & ``[choose one of the two sentences]'' & ``We have therefore run all eight benchmarks with GPT-5.3-Codex through the Codex CLI (skills-only mode) and with Gemini 3.1 Pro through the single-agent ADK reference implementation, three attempts each for Opus 4.6 and for the ADK runtime, and report the success rates in Table S4 of the SM. The same Gemini model succeeds in 7/7 figure benchmarks inside a coding-agent runtime (Gemini CLI, skills-only) but in 8/21 attempts inside the single-agent loop, and no single-agent run completed a Delphes-level benchmark, so the reliability with which the skills are followed depends on the runtime at least as much as on the model.'' \\
+reply p.\,4, ``Tokens and latency'' & ``the LLM token consumption [fill in]'' & ``the LLM token consumption (1--37\,M input and 5--56\,k output tokens per figure benchmark, 180--215\,M input tokens for the two Delphes-level benchmarks, main session plus sub-agents)''. Next sentence: ``The wall-clock time of a benchmark (0.4--1.4\,h for the figure benchmarks, 4--6\,h for the Delphes-level ones) is shared between LLM inference and cluster jobs for the former (model share 0.2--0.8, median 0.55) and dominated by event generation and detector simulation for the latter.'' \\
+reply p.\,4, ``Robustness'' & sentence on three runs and Table S5 & keep; Table S5 is filled (20/21 for the seven figure benchmarks; the two Delphes-level benchmarks have one attempt each, see the open items). \\
+reply p.\,6 & ``Table S3 quantifies \ldots [fill in]'' & ``Table S3 quantifies, per benchmark, the number of sub-agent invocations (2--3), Magnus jobs (6--42), files written (2--28) and wall-clock time (0.4--6.4\,h)''. \\
+sm p.\,5, Sec.\,S-I.E & ``LLM inference accounts for a minor fraction [fill in]'' & ``For the figure benchmarks of Table S3 the wall-clock time is shared about equally between LLM inference and cluster jobs (model share of wall-clock 0.2--0.8, median 0.55 over 21 runs); cluster time dominates only for the Delphes-level benchmarks and the Dark-SMEFT campaigns.'' \\
+sm p.\,5, Sec.\,S-I.E & Table S4 placeholder sentence & ``Table S4 reports the reproduction success rate of the benchmarks for Claude Opus 4.6 in Claude Code (full multi-agent mode), GPT-5.3-Codex in the Codex CLI (skills-only mode) and Gemini 3.1 Pro in the ADK reference implementation (single agent); the extended version in the results package adds Opus 5, GPT-5.5 and Gemini CLI.'' \\
+sm p.\,6, Table S3 caption & ``[fill in from usage logs]'' & ``Numbers refer to the first successful run of each benchmark with Claude Opus 4.6 (effort \texttt{xhigh}); tokens count the main session and all sub-agents.'' \\
+sm p.\,6, Table S5 and text & ``[fill in the per-benchmark counts and failure modes]'' & Table S5 above; sentence: ``Across the seven figure benchmarks, 20 of 21 sandboxed attempts produced the requested figure; the one failure was a model-construction failure (the leptoquark coupling did not enter the generated sample). The two Delphes-level benchmarks failed once each on infrastructure (job storage limit; an early stop while waiting for downloads) and are being re-run.'' \\
+paper p.\,7, Table I caption & ``tokens consumed and wall-clock time [fill in]'' & cite Table S3 of the SM instead of repeating numbers. \\
+sm p.\,4, Table S2 & Delphes ``3.5.x (TBD)'', MadAnalysis5 TBD, analysis stack TBD, Claude Code TBD & rows above; the Claude Code version of the original April--May runs must come from the co-author who ran them. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\clearpage
+\section*{Part II --- the campaign record}
 \section{Scope and timeline}
 The paper's supplementary tables S2 (software versions), S3 (resource usage), S4 (models and harnesses) and S5 (robustness, three attempts) were empty. Between 2026-09-16 and 2026-09-26 the nine paper-reproduction prompts of the repository were run under five harness/model combinations, judged against the reference figures, and their resource usage recorded. This document is the single record of that campaign; the per-run data are in \code{docs/paper/results-2026-09-24/} and \code{docs/paper/results-2026-09-26/} (\code{runs.csv}, \code{tables.md}, \code{figures/}).
 

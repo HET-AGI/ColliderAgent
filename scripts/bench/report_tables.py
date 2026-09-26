@@ -223,6 +223,121 @@ def adk_runs(path: Path):
     return "\n".join(lines) + "\n"
 
 
+PAPER_NAME = {"2005.06475 Fig. 2": "Scalar LQ, $m_{ej}$ [Fig.\\,2(a)]", "1701.05379 Fig. 8": "ALP EFT, $\\slashed{E}_T$ [Fig.\\,2(b)]",
+              "1605.02910 Fig. 1": "U(1)$'$ scan [Fig.\\,2(c)]", "1811.07920 Fig. 3": "U1 LQ mono-$\\tau$ [Fig.\\,2(d)]",
+              "1308.2209 Fig. 3": "Heavy N [Fig.\\,S2(a,b)]", "2103.02708 Fig. 4": "General $Z'$ [Fig.\\,S2(c)]",
+              "9909255 Fig. 2": "KK graviton [Fig.\\,S2(d)]", "2104.05720 Fig. 11": "U1 LQ at MuC, $\\eta$ [Fig.\\,S2(e)]",
+              "2104.05720 Fig. 12": "U1 LQ at MuC, reach [Fig.\\,S2(f)]"}
+PAPER_ORDER = ["2005.06475 Fig. 2", "1701.05379 Fig. 8", "1605.02910 Fig. 1", "1811.07920 Fig. 3", "1308.2209 Fig. 3",
+               "2103.02708 Fig. 4", "9909255 Fig. 2", "2104.05720 Fig. 11", "2104.05720 Fig. 12"]
+DARK_SMEFT_ROWS = [r"Dark-SMEFT, campaign 1 ($O_{RV}$, $O_{RA}$) & $\approx$24 & TBD & $>$100 & $>$200 & TBD & TBD \\",
+                   r"Dark-SMEFT, campaign 2 ($O_{LV}$, $O_{LA}$) & $\approx$36 & TBD & $\approx$140 & $>$200 & TBD & TBD \\",
+                   r"Dark-SMEFT, campaign 3 (scalar/vector DM) & $\approx$24 & TBD & $\approx$100 & $>$100 & TBD & TBD \\"]
+MODE_ROMAN = {"model": "(i) model", "generation": "(ii) generation", "analysis": "(iii) analysis", "infrastructure": "(iv) infrastructure"}
+
+
+def _opus46(rows, b):
+    return sorted([r for r in rows if r["benchmark"] == b and column_key(r) == "claude-opus-4-6"], key=lambda r: int(r["attempt"]))
+
+
+def s3_paper(rows, mean=False):
+    """Table S3 in the paper's layout. mean=False: the first successful Opus 4.6 attempt of each benchmark
+    (the paper's 'a successful run'); mean=True: means over the successful attempts. Benchmarks without a
+    successful run show the numbers of the (failed/stopped) attempt, marked with a dagger."""
+    lines = [r"\begin{tabular}{lrrrrrr}", r"\toprule",
+             r"Benchmark & Wall-clock [h] & Sub-agent calls & Magnus jobs & Files written & Tokens in [M] & Tokens out [k] \\", r"\midrule"]
+    for b in PAPER_ORDER:
+        rs = _opus46(rows, b)
+        ok = [r for r in rs if r["success"] == "yes"]
+        if not rs:
+            continue
+        if ok:
+            src = ok if mean else ok[:1]
+            mark = ""
+        else:
+            src, mark = rs[:1], r"$^{\dagger}$"
+        f = (lambda k, spec: num(mean_or_first(src, k, mean), spec))
+        lines.append(f"{PAPER_NAME[b]}{mark} & {f('wall_clock_h', '.2f')} & {f('subagent_calls', '.0f' if not mean else '.1f')} & "
+                     f"{f('magnus_jobs', '.0f' if not mean else '.1f')} & {f('files_written', '.0f' if not mean else '.1f')} & "
+                     f"{f('tokens_in_M', '.1f')} & {f('tokens_out_k', '.0f')} \\\\")
+    lines.append(r"\midrule")
+    lines += DARK_SMEFT_ROWS
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
+def mean_or_first(rs, key, use_mean):
+    vals = [r[key] for r in rs if r.get(key) not in (None, "")]
+    if not vals:
+        return None
+    return mean(vals) if use_mean else float(vals[0])
+
+
+def s4_paper(rows, main_text=("2005.06475 Fig. 2", "1701.05379 Fig. 8", "1605.02910 Fig. 1", "1811.07920 Fig. 3")):
+    cols = [("claude-opus-4-6", "Opus 4.6"), ("gpt-5.3-codex / codex", "model B: GPT-5.3-Codex (Codex)"),
+            ("gemini-3.1-pro-preview / adk", "model C: Gemini 3.1 Pro (ADK)")]
+    lines = [r"\begin{tabular}{lccc}", r"\toprule", "Benchmark & " + " & ".join(n for _, n in cols) + r" \\", r"\midrule"]
+    for b in main_text:
+        lines.append(PAPER_NAME[b].split(" [")[0] + " & " + " & ".join(cell([r for r in rows if r["benchmark"] == b and column_key(r) == c]) for c, _ in cols) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
+def s4_ext(rows, exclude=("claude-opus-4-8", "claude-sonnet-5")):
+    cols = [c for c in COLUMN_ORDER if c not in exclude and any(column_key(r) == c for r in rows)]
+    lines = [r"\begin{tabular}{l" + "c" * len(cols) + "}", r"\toprule",
+             "Benchmark & " + " & ".join(COLUMN_TWO_LINE[c][0] for c in cols) + r" \\",
+             " & " + " & ".join(COLUMN_TWO_LINE[c][1] for c in cols) + r" \\", r"\midrule"]
+    for b in PAPER_ORDER:
+        if b == "1308.2209 Fig. 3":
+            lines.append(r"\midrule")
+        lines.append(PAPER_NAME[b] + " & " + " & ".join(cell([r for r in rows if r["benchmark"] == b and column_key(r) == c]) for c in cols) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
+def _s5_cells(rs):
+    ok = sum(1 for r in rs if r["success"] == "yes")
+    tbd = [r for r in rs if r["success"] == "TBD"]
+    counts = Counter(MODE_ROMAN.get(r["failure_mode"], r["failure_mode"] or "?") for r in rs if r["success"] == "no")
+    modes = [f"{m} $\\times${n}" if n > 1 else m for m, n in counts.items()]
+    if tbd:
+        modes.append("stopped by the operator (TBD)")
+    return f"{ok}/{len(rs)}", ", ".join(modes) if modes else "--"
+
+
+def s5_paper(rows):
+    lines = [r"\begin{tabular}{lcl}", r"\toprule", r"Benchmark & Successful / attempted & Failure mode(s) \\", r"\midrule"]
+    for b in PAPER_ORDER:
+        rs = _opus46(rows, b)
+        if rs:
+            n, m = _s5_cells(rs)
+            lines.append(f"{PAPER_NAME[b].split(' [')[0]} & {n} & {m} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
+def s5_ext(rows, cols=("claude-opus-4-6", "gemini-3.1-pro-preview / adk")):
+    lines = [r"\begin{tabular}{l" + "cl" * len(cols) + "}", r"\toprule",
+             "Benchmark & " + " & ".join(r"\multicolumn{2}{c}{" + COLUMN_NAME[c] + "}" for c in cols) + r" \\",
+             " & " + " & ".join("succ./att. & failure mode(s)" for _ in cols) + r" \\", r"\midrule"]
+    for b in PAPER_ORDER:
+        cells = []
+        any_data = False
+        for c in cols:
+            rs = sorted([r for r in rows if r["benchmark"] == b and column_key(r) == c], key=lambda r: int(r["attempt"]))
+            if rs:
+                any_data = True
+                n, m = _s5_cells(rs)
+                cells.append(f"{n} & {m}")
+            else:
+                cells.append("-- & --")
+        if any_data:
+            lines.append(PAPER_NAME[b].split(" [")[0] + " & " + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
 def md_table(path: Path, align: str | None = None) -> str:
     """A Markdown pipe table (longhorizon_table.py output) as a booktabs tabular."""
     if not path.is_file():
@@ -275,7 +390,9 @@ def main(argv=None) -> int:
     frags = {"s4_matrix.tex": s4_matrix(rows), "s5_attempts.tex": s5_attempts(rows), "failure_modes.tex": failure_modes(rows),
              "resources.tex": resources(rows), "opus46_attempts.tex": opus46_attempts(rows), "crossmodel.tex": crossmodel(rows),
              "all_runs.tex": all_runs(rows), "adk_runs.tex": adk_runs(res / "adk_runs.json"), "footnotes.tex": footnotes(res / "tables.md"),
-             "longhorizon_light.tex": md_table(res / "longhorizon_light.md"), "longhorizon_heavy.tex": md_table(res / "longhorizon_heavy.md")}
+             "longhorizon_light.tex": md_table(res / "longhorizon_light.md"), "longhorizon_heavy.tex": md_table(res / "longhorizon_heavy.md"),
+             "s3_paper.tex": s3_paper(rows), "s3_paper_mean.tex": s3_paper(rows, mean=True), "s4_paper.tex": s4_paper(rows),
+             "s4_ext.tex": s4_ext(rows), "s5_paper.tex": s5_paper(rows), "s5_ext.tex": s5_ext(rows)}
     for name, body in frags.items():
         (out / name).write_text(body, encoding="utf-8")
     print(f"wrote {len(frags)} fragments to {out} from {len(rows)} runs")
