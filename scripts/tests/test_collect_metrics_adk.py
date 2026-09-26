@@ -74,6 +74,12 @@ def test_stage_figure_and_exit_reasons(tmp_path):
     assert cm.collect(sb2)["exit_reason"] == "wall_clock_limit"
     sb3 = build(tmp_path / "c", stdout="Error: BadRequestError: This model's maximum context length is 1048576 tokens\n")
     assert cm.collect(sb3)["exit_reason"] == "context_length"
+    # a transient 429 in stderr does not change a run that ended with a final answer
+    sb4 = build(tmp_path / "d", stdout="Response:\nI could not validate the model.\nTurns: 67\n")
+    (sb4 / "agent_stderr.log").write_text("LiteLLM: RateLimitError 429 ... Retrying\n")
+    assert cm.collect(sb4)["exit_reason"] == "completed"
+    sb5 = build(tmp_path / "e", stdout="Error: RateLimitError: 429 Too Many Requests\n")
+    assert cm.collect(sb5)["exit_reason"] == "rate_limit"
 
 
 def test_cli(tmp_path):

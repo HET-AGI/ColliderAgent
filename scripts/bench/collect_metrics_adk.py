@@ -55,15 +55,17 @@ def exit_reason(sandbox: Path, status: dict, events: list[dict]) -> str:
     if status.get("exit_code") == 124:
         return "wall_clock_limit"
     m = re.search(r"^Error: (.*)$", log, re.M)
-    text = (m.group(1) if m else "") + " " + err[-3000:]
-    if "LlmCallsLimitExceeded" in text or "max_llm_calls" in text or "Max number of llm calls" in text:
-        return "max_llm_calls"
-    if re.search(r"context.length|context_length|maximum context|too many tokens|input token count", text, re.I):
-        return "context_length"
-    if re.search(r"RateLimit|429|rate limit", text):
-        return "rate_limit"
-    if m:
+    if m:  # agent.run() raised: classify by the exception text (stderr tail as a hint)
+        text = m.group(1) + " " + err[-3000:]
+        if "LlmCallsLimitExceeded" in text or "max_llm_calls" in text or "Max number of llm calls" in text:
+            return "max_llm_calls"
+        if re.search(r"context.length|context_length|maximum context|too many tokens|input token count", text, re.I):
+            return "context_length"
+        if re.search(r"RateLimit|(?<![\d,:.])429(?!\d)|rate limit", text):
+            return "rate_limit"
         return "exception: " + m.group(1)[:120]
+    if re.search(r"^Response:", log, re.M):
+        return "completed"  # the agent ended its turn with a final answer (whether or not the task succeeded)
     if any(e.get("error") for e in events):
         last = [e for e in events if e.get("error")][-1]["error"]
         return "llm_error: " + str(last.get("message") or last.get("code"))[:120]
