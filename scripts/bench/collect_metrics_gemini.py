@@ -74,7 +74,18 @@ def collect(sandbox: Path) -> dict:
     assistant_msgs = sum(1 for e in events if e.get("type") == "message" and e.get("role") == "assistant")
     # custom sub-agents (.gemini/agents, branch gemini-com) are called through the invoke_agent tool
     agent_calls = [e for e in tool_uses if e.get("tool_name") == "invoke_agent"]
-    agents_used = [str((e.get("parameters") or {}).get("agent") or (e.get("parameters") or {}).get("name") or "?") for e in agent_calls]
+    agents_used = [str((e.get("parameters") or {}).get("agent_name") or (e.get("parameters") or {}).get("agent")
+                       or (e.get("parameters") or {}).get("name") or "?") for e in agent_calls]
+    # sub-agents submit their Magnus jobs outside the main stream: count "Job submitted. ID: <id>" lines in the
+    # sandbox files as well (the same signal job_provenance.py uses) and keep the larger count
+    submitted_ids = set()
+    for pth in sandbox.rglob("*"):
+        if pth.is_file() and pth.suffix in (".jsonl", ".log", ".txt", ".md") and ".agents" not in pth.parts and pth.name != "metrics.json":
+            try:
+                submitted_ids.update(re.findall(r"Job submitted\.?\s*ID:\s*(?:\[green\])?([0-9a-f]{16})", pth.read_text(encoding="utf-8", errors="replace")))
+            except OSError:
+                pass
+    magnus_jobs = max(magnus_jobs, len(submitted_ids))
     if status.get("exit_code") == 124:
         exit_reason = "wall_clock_limit"
     elif status.get("exit_code") == 53:
@@ -113,6 +124,7 @@ def collect(sandbox: Path) -> dict:
         "tool_errors": len(failed),
         "skills_activated": skills,
         "magnus_jobs": magnus_jobs,
+        "magnus_jobs_submitted_ids": len(submitted_ids),
         "files_written": len(written),
         "files_written_paths": sorted(written),
         "figures": figures,
