@@ -35,13 +35,34 @@ SKIP_DIRS = {".agents", ".codex", ".claude-config", ".venv", "node_modules", ".a
 SKIP_FILES = {"provenance.json", "metrics.json"}
 
 
+def extra_files(sandbox: Path) -> list[Path]:
+    """Codex keeps the sub-agent threads' transcripts outside the sandbox (~/.codex/sessions); a Codex
+    sandbox is scanned together with its main and sub-agent rollouts, found the way collect_metrics_codex does."""
+    env = {}
+    if (sandbox / "run.env").is_file():
+        for line in (sandbox / "run.env").read_text(encoding="utf-8").splitlines():
+            if "=" in line:
+                k, v = line.split("=", 1)
+                env[k.strip()] = v.strip()
+    if env.get("HARNESS") != "codex" or not (sandbox / "events.jsonl").is_file():
+        return []
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import collect_metrics_codex as cmc
+        ev = cmc.scan_events(sandbox / "events.jsonl")
+        ro = cmc.scan_rollouts(ev.get("thread_id"), set(ev.get("child_ids") or []))
+        return [Path(t["path"]) for t in ro.get("threads", []) if t.get("path")]
+    except Exception:  # noqa: BLE001
+        return []
+
+
 def scan(sandbox: Path) -> dict:
     submitted, referenced = set(), {}
-    for p in sandbox.rglob("*"):
-        if not p.is_file() or p.suffix not in SCAN_SUFFIXES or p.name in SKIP_FILES:
-            continue
-        if any(part in SKIP_DIRS for part in p.relative_to(sandbox).parts):
-            continue
+    files = [p for p in sandbox.rglob("*")
+             if p.is_file() and p.suffix in SCAN_SUFFIXES and p.name not in SKIP_FILES
+             and not any(part in SKIP_DIRS for part in p.relative_to(sandbox).parts)]
+    files += extra_files(sandbox)
+    for p in files:
         try:
             text = p.read_text(encoding="utf-8", errors="replace")
         except OSError:
@@ -49,10 +70,10 @@ def scan(sandbox: Path) -> dict:
         for m in SUBMIT_RE.finditer(text):
             submitted.add(next(g for g in m.groups() if g))
         for m in REF_RE.finditer(text):
-            referenced.setdefault(m.group(1), str(p.relative_to(sandbox)))
+            referenced.setdefault(m.group(1), str(p.relative_to(sandbox)) if sandbox in p.parents else p.name)
     foreign = {jid: src for jid, src in referenced.items() if jid not in submitted}
     return {"submitted": sorted(submitted), "referenced": sorted(referenced),
-            "foreign": foreign, "valid": not foreign}
+            "foreign": foreign, "valid": not foreign, "files_scanned": len(files)}
 
 
 def main(argv=None) -> int:
