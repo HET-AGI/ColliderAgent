@@ -28,8 +28,10 @@ SUBMIT_RE = re.compile(r"Job submitted\.?\s*ID:\s*(?:\[green\])?" + ID      # ma
                        + r"|Job\s+" + ID + r"\s+submitted"                    # python SDK: "Job <id> submitted."
                        + r"|\"job_id\":\s*\"" + ID + r"\"|job_id[=:]\s*'?" + ID
                        + r"|Submitted job\s+" + ID + r"|Job ID:\s*" + ID, re.I)
-REF_RE = re.compile(r"magnus\s+(?:job\s+)?(?:logs?|status|result|action|download|fetch|kill|signal)\b[^\n|;&]*?\b" + ID + r"\b",
-                    re.I)
+# the id must sit close to the command word and inside the same string (no quote/backslash/newline in between),
+# otherwise a long JSON transcript line links unrelated 16-hex hashes to an earlier "magnus status"
+REF_RE = re.compile(r"magnus\s+(?:job\s+)?(?:logs?|status|result|action|download|fetch|kill|signal)\b[^\n|;&\"\\]{0,80}?(?<![0-9a-f])"
+                    + ID + r"(?![0-9a-f])", re.I)
 SCAN_SUFFIXES = {".jsonl", ".log", ".txt", ".md", ".json", ".yaml", ".sh"}
 SKIP_DIRS = {".agents", ".codex", ".claude-config", ".venv", "node_modules", ".adk_scripts"}
 SKIP_FILES = {"provenance.json", "metrics.json"}

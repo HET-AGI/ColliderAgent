@@ -28,6 +28,16 @@ def test_valid_and_foreign(tmp_path):
     assert r["foreign"]["cccccccccccccccc"] == "agent_stderr.log"
 
 
+def test_json_hash_not_linked_to_distant_command(tmp_path):
+    sb = tmp_path / "sb"
+    sb.mkdir()
+    line = ('{"text": "run magnus job status later", "harnessSectionHash": "9908214ee726f4f0", '
+            '"more": "' + "x" * 200 + '"}\n')
+    (sb / "transcript.jsonl").write_text(line)
+    r = jp.scan(sb, check_server=False)
+    assert r["referenced"] == [] and r["valid"]
+
+
 def test_cli(tmp_path):
     sb = tmp_path / "sb"
     sb.mkdir()
