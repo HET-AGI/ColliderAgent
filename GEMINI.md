@@ -26,6 +26,10 @@ For a multi-stage pipeline, delegate to the project-scoped local subagents in
 3. `event-analyzer`
 4. `pheno-analyzer`
 
+Custom subagents are only loaded when `experimental.enableAgents` is true; the
+workspace `.gemini/settings.json` of this branch sets it. Without it the CLI
+reports "Subagent '<name>' not found" and only the built-in `generalist` exists.
+
 Run dependent stages sequentially and wait for each subagent before starting
 its consumer. Do not run write-heavy pipeline stages in parallel. Give every
 subagent the relevant task requirements, upstream artifact paths and parameter
