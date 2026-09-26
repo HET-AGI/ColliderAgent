@@ -181,22 +181,21 @@ at 3.8\,TeV; the Delphes card used anti-$k_T$ $R=0.6$ instead of 0.4. Opus 4.6 a
 
 Correction to the U(1)$'$ note of 2026-09-17: the Codex/GPT-5.5 run reproduces the paper's 3\,TeV contour tip
 ($\tilde g\approx-0.72$, $g_1'\approx0.65$), whereas all three Opus 4.6 attempts and the Opus 5 run give $g_1'\approx0.48$.
-The 25\,\% shortfall is therefore an analysis choice made in the Claude runs, not a limitation of the prompt; the earlier
+The 25\,\% shortfall is therefore an analysis choice made in the run, not a limitation of the prompt; the earlier
 wording ``systematic to the prompt's analysis procedure'' is withdrawn (it stays a footnote, the runs stay successful under
-the agreed criterion).
+the agreed criterion). The 2026-09-26 batch (next section) shows the same 0.48 tip in GPT-5.3-Codex and GPT-5.5/ADK runs,
+so it is not Claude-specific either.
 
 Success criterion used (agreed 2026-09-16): the run completes end to end and the figure agrees with the requested part of
 the reference qualitatively; quantitative deviations go to a footnote ($^{*}$). Failure modes follow the paper's four
 classes; every verdict was produced by the assistive judge (\texttt{scripts/bench/judge.sh}) and confirmed by eye.
 
-Still open:
+Still open after 2026-09-26:
 \begin{enumerate}
 \item Scalar LQ and mono-$\tau$, Opus 4.6 $\times$3: \texttt{scripts/bench/run\_benchmark.sh 2005.06475 2 claude-opus-4-6
   --effort high} and \texttt{... 1811.07920 3 ...}; both root causes are fixed in the skills.
-\item Column B with GPT-5.3-Codex: \texttt{codex login --with-api-key}, then
-  \texttt{scripts/bench/run\_benchmark\_codex.sh <arxiv> <fig> gpt-5.3-codex}; the remaining five figure benchmarks and the
-  $\times$3 for column B (about 1\,h each).
-\item Column C (Sonnet 5 or Opus 5): \texttt{scripts/bench/run\_benchmark.sh <arxiv> <fig> claude-sonnet-5}.
+\item $\times$3 for the Opus 5 and GPT-5.3-Codex columns (one attempt each so far; about 1\,h per run).
+\item A stricter model/harness separation: an Anthropic model inside the ADK loop (needs an Anthropic API key through LiteLLM).
 \end{enumerate}
 
 \section{Model C and the comprehensive Table S4 (2026-09-26)}
@@ -238,11 +237,11 @@ success flag; the other harnesses do not expose comparable counts):
 \begin{center}\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lrrrrrrrrl}
 \toprule
-Column & runs & ok & wall [h] & LLM calls & tool calls & tool errors & error-refine cycles & max context [k tok] & exit \\
+Column & runs & ok & wall [h] & LLM calls & tool calls & tool errors & refine cycles & max ctx [k tok] & exit \\
 \midrule
-Gemini 3.1 Pro / ADK & 21 & 8 & 1.41 & 117 & 117 & 39 & 39 & 120 & 10 of 21 hit the 150-call cap \\
-GPT-5.5 / ADK & 7 & 7 & 0.71 & 35 & 39 & 4 & 4 & 71 & all completed \\
-Gemini 3.1 Pro / Gemini CLI & 7 & 7 & 0.63 & -- & 72 & -- & -- & -- & all completed \\
+Gemini 3.1 Pro / ADK & 21 & 8 & 1.41 & 117 & 117 & 39 & 39 & 120 & 10 capped \\
+GPT-5.5 / ADK & 7 & 7 & 0.71 & 35 & 39 & 4 & 4 & 71 & completed \\
+Gemini 3.1 Pro / Gemini CLI & 7 & 7 & 0.63 & -- & 72 & -- & -- & -- & completed \\
 GPT-5.3-Codex / Codex & 7 & 5 & 0.81 & -- & -- & -- & -- & -- & -- \\
 Opus 5 / Claude Code & 4 & 4 & 1.22 & -- & -- & -- & -- & -- & -- \\
 \bottomrule
