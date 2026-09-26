@@ -111,9 +111,9 @@ def test_extra_and_csv(tmp_path):
     csv_text = aggregate.runs_csv(runs)
     lines = csv_text.splitlines()
     assert lines[0].startswith("attempt,benchmark,model,harness,effort,label,source,success")
-    # documented rows come first within a (benchmark, model) group and attempts are numbered
+    # attempts are numbered chronologically by label within a (benchmark, model) group ("doc-" is ignored)
     rows = [l for l in lines if ",1701.05379 Fig. 8,claude-opus-5," in l]
-    assert rows[0].startswith("1,1701.05379 Fig. 8,claude-opus-5,claude,xhigh,doc-1,documented,yes,")
+    assert rows[0].startswith("1,1701.05379 Fig. 8,claude-opus-5,claude,xhigh,doc-1,documented,yes,")  # "1" sorts before "a1"
     assert rows[1].startswith("2,1701.05379 Fig. 8,claude-opus-5,,,a1,sandbox,yes,,1.00,4,6,10,2.00,20.0,10.00,,")
     assert rows[3].startswith("4,1701.05379 Fig. 8,claude-opus-5,,,a3,sandbox,TBD,,")
     assert any(l.startswith("1,2005.06475 Fig. 2,claude-opus-5,,,doc-2,documented,TBD,,2.00,,,,,,,,TBD") for l in lines)

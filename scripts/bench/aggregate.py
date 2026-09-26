@@ -159,11 +159,12 @@ CSV_FIELDS = ["attempt", "benchmark", "model", "harness", "effort", "label", "so
 
 
 def runs_csv(runs: list[dict]) -> str:
-    """One row per run, attempts numbered per (benchmark, model) in label order (documented rows first)."""
+    """One row per run, attempts numbered per (benchmark, model) in chronological label order."""
     import csv
 
     def key(r):
-        return (r["benchmark"], r["model_label"], 0 if r.get("source") == "documented" else 1, r["label"])
+        # chronological within a (benchmark, model) group: documented labels carry their timestamp after "doc-"
+        return (r["benchmark"], r["model_label"], r["label"].replace("doc-", ""))
 
     counter: Counter = Counter()
     buf = io.StringIO()

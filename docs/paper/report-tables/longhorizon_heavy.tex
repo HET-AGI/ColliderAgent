@@ -1,0 +1,9 @@
+\begin{tabular}{lrrrrrrrrrrl}
+\toprule
+Column & n & ok & wall [h] & LLM calls & tool calls & tool err. & refine cyc. & jobs & max ctx [k] & tok in [M] & exit \\
+\midrule
+Gemini 3.1 Pro / ADK & 2 & 0 & 2.04 & 300 & 300 & 52 & 50 & 28 & 169 & 28.4 & max\_llm\_calls (2) \\
+GPT-5.3-Codex / Codex & 2 & 1 & 1.72 & - & - & - & - & 13 & - & 9.5 & - \\
+GPT-5.5 / ADK & 2 & 0 & 1.22 & 54 & 57 & 13 & 12 & 18 & 91 & 3.7 & completed (2) \\
+\bottomrule
+\end{tabular}

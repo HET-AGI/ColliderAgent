@@ -7,8 +7,8 @@
 # usage: scripts/bench/run_benchmark_gemini.sh <arxiv> <figure> <model> [--label L] [--codex-checkout DIR]
 #                                              [--wall-limit SECONDS] [--no-wait]
 #   <model>   gemini-3.1-pro-preview | gemini-3-pro-preview | gemini-2.5-pro
-#   The skills and AGENTS.md come from the codex-com checkout (default ../ColliderAgent-codex); AGENTS.md
-#   becomes GEMINI.md with a short note that this harness has no custom sub-agents.
+#   Skills come from the codex-com checkout (default ../ColliderAgent-codex); GEMINI.md and sub-agents from the
+#   gemini-com checkout when present, else AGENTS.md is adapted into a skills-only GEMINI.md.
 #
 # Keys: ~/.config/collideragent/openlux.env (OPENLUX_API_KEY, OPENLUX_BASE_URL) — Gemini CLI reads them as
 # GEMINI_API_KEY / GOOGLE_GEMINI_BASE_URL. ~/.gemini/settings.json must select "gemini-api-key" auth and
@@ -18,6 +18,7 @@ REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BENCH_RUNS_DIR="${BENCH_RUNS_DIR:-$REPO_ROOT/bench_runs}"
 PAPER_ROOT="${BENCH_PAPER_ROOT:-$REPO_ROOT/paper-reproduction}"
 CODEX_CHECKOUT="${CODEX_CHECKOUT:-$REPO_ROOT/../ColliderAgent-codex}"
+GEMINI_CHECKOUT="${GEMINI_CHECKOUT:-$REPO_ROOT/../ColliderAgent-gemini}"   # branch gemini-com: GEMINI.md + .gemini/agents
 KEYS_DIR="${ADK_KEYS_DIR:-$HOME/.config/collideragent}"
 GEMINI_BIN="${GEMINI_BIN:-$(command -v gemini || echo "$HOME/.npm-global/bin/gemini")}"
 LABEL=""; NOWAIT=0; WALL_LIMIT=21600
@@ -27,6 +28,8 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --label) LABEL="$2"; shift 2 ;;
     --codex-checkout) CODEX_CHECKOUT="$2"; shift 2 ;;
+    --gemini-checkout) GEMINI_CHECKOUT="$2"; shift 2 ;;
+    --no-subagents) GEMINI_CHECKOUT=""; shift ;;
     --wall-limit) WALL_LIMIT="$2"; shift 2 ;;
     --no-wait) NOWAIT=1; shift ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
@@ -47,6 +50,15 @@ mkdir -p "$SANDBOX"
 cp "$PROMPT_FILE" "$SANDBOX/prompt.md"
 cat "$REPO_ROOT/scripts/bench/benchmark_rules.md" >> "$SANDBOX/prompt.md"
 for extra in analysis hepdata; do [[ -d "$PAPER_ROOT/$ARXIV/$extra" ]] && cp -r "$PAPER_ROOT/$ARXIV/$extra" "$SANDBOX/"; done
+if [[ -n "$GEMINI_CHECKOUT" && -f "$GEMINI_CHECKOUT/GEMINI.md" && -d "$GEMINI_CHECKOUT/.gemini/agents" ]]; then
+  # full adapter (branch gemini-com): GEMINI.md and the four local sub-agents
+  cp "$GEMINI_CHECKOUT/GEMINI.md" "$SANDBOX/GEMINI.md"
+  mkdir -p "$SANDBOX/.gemini"
+  cp -r "$GEMINI_CHECKOUT/.gemini/agents" "$SANDBOX/.gemini/agents"
+  ADAPTER="gemini-com ($(git -C "$GEMINI_CHECKOUT" rev-parse --short HEAD 2>/dev/null || echo unknown))"
+else
+  # skills-only fallback: the Codex AGENTS.md adapted, no custom sub-agents (the 2026-09-26 control runs)
+  ADAPTER="skills-only (AGENTS.md of $CODEX_CHECKOUT)"
 {
   sed 's/^# ColliderAgent Codex adapter/# ColliderAgent Gemini CLI adapter/' "$CODEX_CHECKOUT/AGENTS.md"
   cat <<'NOTE'
@@ -60,6 +72,7 @@ and keep writing the `progress/<run>/stepN_<stage>.md` and `.json` sidecars the 
 job: poll it with `magnus job status <id>` (sleep between polls) until it finishes, then continue.
 NOTE
 } > "$SANDBOX/GEMINI.md"
+fi
 mkdir -p "$SANDBOX/.agents/skills"
 for s in "$CODEX_CHECKOUT"/.agents/skills/*; do
   [[ -f "$s/SKILL.md" ]] || continue
@@ -78,6 +91,7 @@ GIT_COMMIT=$GIT_COMMIT
 CODEX_CHECKOUT=$CODEX_CHECKOUT
 GEMINI_BIN=$GEMINI_BIN
 GEMINI_VERSION=$("$GEMINI_BIN" --version 2>/dev/null | head -1)
+ADAPTER=$ADAPTER
 KEYS_DIR=$KEYS_DIR
 WALL_LIMIT=$WALL_LIMIT
 START_UTC=$TS
