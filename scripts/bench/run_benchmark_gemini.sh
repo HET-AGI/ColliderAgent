@@ -57,6 +57,10 @@ if [[ -n "$GEMINI_CHECKOUT" && -f "$GEMINI_CHECKOUT/GEMINI.md" && -d "$GEMINI_CH
   cp -r "$GEMINI_CHECKOUT/.gemini/agents" "$SANDBOX/.gemini/agents"
   # workspace settings (experimental.enableAgents=true: custom sub-agents are not loaded without it)
   [[ -f "$GEMINI_CHECKOUT/.gemini/settings.json" ]] && cp "$GEMINI_CHECKOUT/.gemini/settings.json" "$SANDBOX/.gemini/settings.json"
+  # Project-level agents carry a content hash and are only registered after an interactive acknowledgement
+  # (no dialog in headless mode -> "Subagent 'x' not found"); user-level agents register directly, so the
+  # four definitions are also installed into ~/.gemini/agents/ (same files, overwritten on every launch).
+  mkdir -p "$HOME/.gemini/agents" && cp "$GEMINI_CHECKOUT"/.gemini/agents/*.md "$HOME/.gemini/agents/"
   ADAPTER="gemini-com ($(git -C "$GEMINI_CHECKOUT" rev-parse --short HEAD 2>/dev/null || echo unknown))"
 else
   # skills-only fallback: the Codex AGENTS.md adapted, no custom sub-agents (the 2026-09-26 control runs)
