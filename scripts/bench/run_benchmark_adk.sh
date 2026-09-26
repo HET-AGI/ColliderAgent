@@ -44,7 +44,7 @@ PY="$AGENT_DIR/.venv/bin/python"
 [[ -x "$PY" ]] || { echo "python-agent venv missing: run 'uv sync --extra analysis' in $AGENT_DIR" >&2; exit 2; }
 [[ -f "$KEYS_DIR/$PROVIDER.env" ]] || { echo "missing key file $KEYS_DIR/$PROVIDER.env" >&2; exit 2; }
 "$PY" -c "import google.adk, litellm, magnus" || { echo "python-agent venv lacks google-adk/litellm/magnus" >&2; exit 2; }
-magnus config 2>&1 | grep -qE "Current:[[:space:]]+zhustation" || echo "warning: magnus current site is not zhustation" >&2
+magnus config 2>&1 | grep -E "Current:[[:space:]]+zhustation" > /dev/null || echo "warning: magnus current site is not zhustation" >&2
 
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 [[ -n "$LABEL" ]] || LABEL="${TS}_${ARXIV}_fig${FIGURE}_adk-${MODEL}"

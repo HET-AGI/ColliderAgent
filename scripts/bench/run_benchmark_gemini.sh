@@ -37,7 +37,7 @@ PROMPT_FILE="$PAPER_ROOT/$ARXIV/prompt_figure_$FIGURE.md"
 [[ -f "$CODEX_CHECKOUT/AGENTS.md" && -d "$CODEX_CHECKOUT/.agents/skills" ]] || { echo "codex checkout lacks AGENTS.md/.agents/skills: $CODEX_CHECKOUT" >&2; exit 2; }
 [[ -x "$GEMINI_BIN" ]] || { echo "gemini CLI not found (set GEMINI_BIN)" >&2; exit 2; }
 [[ -f "$KEYS_DIR/openlux.env" ]] || { echo "missing key file $KEYS_DIR/openlux.env" >&2; exit 2; }
-magnus config 2>&1 | grep -qE "Current:[[:space:]]+zhustation" || echo "warning: magnus current site is not zhustation" >&2
+magnus config 2>&1 | grep -E "Current:[[:space:]]+zhustation" > /dev/null || echo "warning: magnus current site is not zhustation" >&2
 
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 [[ -n "$LABEL" ]] || LABEL="${TS}_${ARXIV}_fig${FIGURE}_gemini-${MODEL}"
