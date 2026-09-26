@@ -30,6 +30,8 @@ def build(tmp_path, exit_code=0, with_result=True):
         {"type": "tool_use", "tool_name": "run_shell_command", "tool_id": "t5",
          "parameters": {"command": "magnus run validate-feynrules --model models/HeavyN.fr --lagrangian LHeavyN && magnus run generate-ufo --model models/HeavyN.fr"}},
         {"type": "tool_result", "tool_id": "t5", "status": "success", "output": "ok"},
+        {"type": "tool_use", "tool_name": "invoke_agent", "tool_id": "t6", "parameters": {"agent": "model-generator", "task": "build the model"}},
+        {"type": "tool_result", "tool_id": "t6", "status": "success", "output": "done"},
         {"type": "message", "role": "assistant", "content": "The figure is at output/figures/xsec.png", "delta": True},
     ]
     if with_result:
@@ -46,14 +48,15 @@ def test_metrics(tmp_path):
     (sb / "output" / "figures").mkdir(parents=True)
     (sb / "output" / "figures" / "xsec.png").write_bytes(b"png")
     m = cm.collect(sb)
-    assert m["tool_calls"] == 5 and m["tool_errors"] == 1
+    assert m["tool_calls"] == 6 and m["tool_errors"] == 1
+    assert m["subagent_calls"] == 1 and m["subagents_used"] == ["model-generator"]
     assert m["magnus_jobs"] == 3
     assert m["files_written"] == 1 and m["files_written_paths"] == ["/sb/models/HeavyN.fr"]
     assert m["skills_activated"] == ["feynrules-model-generator"]
     assert m["tokens_in_total"] == 290000 and m["tokens_out_total"] == 10000 and m["tokens_cached"] == 1000
     assert m["figures"] == ["output/figures/xsec.png"] and m["num_turns"] == 1
-    assert m["exit_reason"] == "completed" and m["subagent_calls"] == 0 and m["cost_usd"] is None
-    assert m["table_s3_row"] == "| lab | 0.50 | 0 | 3 | 1 | 0.29 | 10.0 |"
+    assert m["exit_reason"] == "completed" and m["cost_usd"] is None
+    assert m["table_s3_row"] == "| lab | 0.50 | 1 | 3 | 1 | 0.29 | 10.0 |"
 
 
 def test_exit_reasons(tmp_path):

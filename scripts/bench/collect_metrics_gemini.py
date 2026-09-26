@@ -72,6 +72,9 @@ def collect(sandbox: Path) -> dict:
     figures = sorted(str(p.relative_to(sandbox)) for p in sandbox.rglob("*.png") if ".agents" not in p.parts)
 
     assistant_msgs = sum(1 for e in events if e.get("type") == "message" and e.get("role") == "assistant")
+    # custom sub-agents (.gemini/agents, branch gemini-com) are called through the invoke_agent tool
+    agent_calls = [e for e in tool_uses if e.get("tool_name") == "invoke_agent"]
+    agents_used = [str((e.get("parameters") or {}).get("agent") or (e.get("parameters") or {}).get("name") or "?") for e in agent_calls]
     if status.get("exit_code") == 124:
         exit_reason = "wall_clock_limit"
     elif status.get("exit_code") == 53:
@@ -103,7 +106,8 @@ def collect(sandbox: Path) -> dict:
         "duration_ms": stats.get("duration_ms"),
         "exit_reason": exit_reason,
         "num_turns": assistant_msgs,
-        "subagent_calls": 0,
+        "subagent_calls": len(agent_calls),
+        "subagents_used": agents_used,
         "tool_calls": len(tool_uses),
         "tool_calls_by_name": dict(tool_counts),
         "tool_errors": len(failed),
@@ -121,7 +125,7 @@ def collect(sandbox: Path) -> dict:
         "cost_usd": None,
     }
     metrics["table_s3_row"] = (
-        f"| {metrics['label']} | {(wall or 0) / 3600:.2f} | 0 | {magnus_jobs} | {len(written)} | "
+        f"| {metrics['label']} | {(wall or 0) / 3600:.2f} | {len(agent_calls)} | {magnus_jobs} | {len(written)} | "
         f"{(tokens_in or 0) / 1e6:.2f} | {(tokens_out or 0) / 1e3:.1f} |"
     )
     return metrics
