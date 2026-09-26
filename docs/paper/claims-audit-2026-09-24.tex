@@ -226,7 +226,7 @@ U1 LQ at MuC, reach & 3/3 & running & 0/1 & \textbf{1/3} & 1/1 & 1/1 \\
 figure benchmarks & 20/21 & 6/6 & 5/7 & \textbf{8/21} & 7/7 & 7/7 \\
 \midrule
 Scalar LQ (Delphes) & 0/1$^{a}$ & -- & 0/1$^{g}$ & running & -- & 0/1$^{h}$ \\
-U1 LQ mono-$\tau$ (Delphes) & 0/1$^{b}$ & -- & 1/1$^{*}$ & running & -- & running \\
+U1 LQ mono-$\tau$ (Delphes) & 0/1$^{b}$ & -- & 1/1$^{*}$ & 0/1$^{i}$ & -- & 0/1$^{h}$ \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -268,7 +268,8 @@ $^{g}$ Model and UFO done; the agent could not install the LUXlep PDF set (\text
 route that the Opus 4.6 and GPT-5.5 runs used.\\
 $^{h}$ 100k LUXlep parton events, no Pythia8/Delphes/selection: the agent reported that the tool interface ``did not support
 the requested LHE lepton-to-photon replacement before showering'' and applied a detector-resolution approximation to the
-parton-level $m_{ej}$ (peak $\approx$180 events/bin against $\approx$4 in the reference); counted as a generation failure.\\
+parton-level $m_{ej}$ (peak $\approx$180 events/bin against $\approx$4 in the reference); counted as a generation failure. The same agent's mono-$\tau$ run attempted three Pythia8+Delphes launches, reported that the LHCO output ``could not be downloaded'' and computed the ATLAS/CMS selections from LHE-level kinematics (boundary 0.55 at 0.8\,TeV, far stronger than the paper's 0.8); also a generation failure.\\
+$^{i}$ Cap raised to 300 calls: model and UFO done, MadGraph compile failed 10 times, 277 of 300 tool calls were \texttt{run\_shell} re-inspections of the same files; no events.\\
 U(1)$'$ 3\,TeV tip, updated: $g_1'\approx0.48$ in Opus 4.6 $\times$3, Opus 5, GPT-5.3-Codex and GPT-5.5/ADK; 0.55 in Gemini
 CLI; the paper's 0.65 only in Codex GPT-5.5 --- a common analysis choice, not a property of one model or of the prompt
 (this supersedes the 2026-09-24 wording). Likewise for mono-$\tau$: the Claude continuation and Codex GPT-5.5 are 20--35\,\%

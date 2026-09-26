@@ -38,7 +38,7 @@ ADK 只做了"能跑"级别的最小修复（见 commit `e019374`）：加 `run_
 | MuC reach（2104.05720 Fig. 12） | 3/3 | 1/1 | 0/1 | – | **1/3** | 1/1 | 1/1 |
 | **轻量 7 题合计** | **20/21** | **7/7** | **5/7** | 4/4（含重题 2） | **8/21** | **7/7** | **7/7** |
 | Scalar LQ（2005.06475 Fig. 2，重） | 0/1（TBD） | – | 0/1 | 1/1 | 运行中 | – | 0/1 |
-| mono‑τ（1811.07920 Fig. 3，重） | 0/1 | – | 1/1 | 1/1 | 0/1 | – | 运行中 |
+| mono‑τ（1811.07920 Fig. 3，重） | 0/1 | – | 1/1 | 1/1 | 0/1 | – | 0/1 |
 
 Opus 4.8 / Sonnet 5 各 1/1（ALP，9/16）不再列出。
 
@@ -60,7 +60,7 @@ ADK+Gemini 21 次 run 的分布：成功的 8 次用 20–126 次调用；失败
 
 1. **同一模型、换 harness，结果从 8/21 变成 7/7**：Gemini 3.1 Pro 在 Gemini CLI（skills、shell、文件工具、自动上下文管理）里 7 题全部一次通过，平均 0.63 h、72 次工具调用；放进 ADK 单循环后只有 38 % 成功，平均 117 次 LLM 调用、39 次工具报错，近半数 run 触顶。结构差异是主要因素。
 2. **但前沿模型能"扛住"糟糕的结构**：gpt‑5.5 在完全相同的 ADK 循环里 7/7，平均只用 35 次调用、4 次报错，上下文峰值 71k。单循环结构对轻量题的惩罚在弱一档的模型上显现，在最强模型上被模型自身的纠错能力掩盖。
-3. **长程重题是分水岭**：Scalar LQ / mono‑τ 需要 10 万事例的 Pythia8+Delphes、轻子→光子的 LHE 改写、10 GB 作业空间限制下的分批与清理，20–40 个作业、2.5–6 h。编码型 agent 用自写脚本 + 重新 launch 解决（Codex gpt‑5.5 4.4 h 完成 Scalar LQ，gpt‑5.3‑codex 2.6 h 完成 mono‑τ 且排除限最接近论文）；ADK+gpt‑5.5 在 Scalar LQ 上遇到"工具不支持 LHE 改写"就退回 parton 级近似（判失败），ADK+Gemini 的重题见第 5 节的更新。
+3. **长程重题是分水岭**：Scalar LQ / mono‑τ 需要 10 万事例的 Pythia8+Delphes、轻子→光子的 LHE 改写、10 GB 作业空间限制下的分批与清理，20–40 个作业、2.5–6 h。编码型 agent 用自写脚本 + 重新 launch 解决（Codex gpt‑5.5 4.4 h 完成 Scalar LQ，gpt‑5.3‑codex 2.6 h 完成 mono‑τ 且排除限最接近论文）；ADK+gpt‑5.5 在 Scalar LQ 上遇到"工具不支持 LHE 改写"、在 mono‑τ 上遇到"Delphes 输出下载不了"都退回 parton 级近似（两题均判失败）；ADK+Gemini 的 mono‑τ 在 300 次调用内连编译都没通过，Scalar LQ 见第 5.1 节。
 4. **失败模式**：ADK 的失败集中在"事例生成阶段的报错循环"（generation 7 次）和"模型/UFO 阶段"（model 4 次），与 Opus 4.6 的唯一失败（MuC Fig. 11 耦合未生效）和 Codex 5.3‑codex 的 MuC 两题失败（同一种耦合问题 + 空等高线）不同：后者是单点物理错误，前者是循环卡死。
 5. **U(1)′ 3 TeV 面板的偏差**（9/17、9/24 文档需更正）：尖端 g₁′≈0.48 出现在 Opus 4.6 ×3、Opus 5、gpt‑5.3‑codex、ADK+gpt‑5.5；0.55 在 Gemini CLI；0.65（论文值）只在 Codex gpt‑5.5。这是多数 run 共有的分析选择所致，不是某个模型或 prompt 的固有限制。mono‑τ 同理：Claude 续跑与 Codex gpt‑5.5 偏弱 20–35 %，gpt‑5.3‑codex 基本复现论文（0.88 对 0.8）。
 
@@ -79,7 +79,7 @@ ADK+Gemini 21 次 run 的分布：成功的 8 次用 20–126 次调用；失败
 | Codex gpt‑5.3‑codex Scalar LQ | 失败（generation）：LUXlep PDF 装不上（blueprint `--pdf` 在 zhustation 缺 `lhapdf-config`），0.8 h 放弃；gpt‑5.5 与 Opus 4.6 当时用 MG5 内 `pdlabel/lhaid` 绕过 |
 | Codex gpt‑5.3‑codex mono‑τ | 成功（2.64 h，8 个作业，排除边界贴 RH 带，0.8 TeV 处 0.88 对论文 ≈0.8） |
 | ADK gpt‑5.5 Scalar LQ | 失败（generation）：只做 parton 级，未做 Pythia8/Delphes/选择，自行做"分辨率近似"（0.68 h，67 次调用） |
-| ADK gpt‑5.5 mono‑τ | 运行中 |
+| ADK gpt‑5.5 mono‑τ | 失败（generation）：Delphes 输出拿不到后退回 LHE 级动力学做 ATLAS/CMS 选择（1.76 h，42 次调用），排除限强于论文（5 TeV 处 2.45 对 ≈3.5） |
 | ADK Gemini Scalar LQ | 运行中 |
 | ADK Gemini mono‑τ | 失败（generation）：上限放宽到 300 次仍未编译成功（compile 失败 10 次，277 次 `run_shell` 反复查看文件），1.29 h |
 
