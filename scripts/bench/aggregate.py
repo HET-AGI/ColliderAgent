@@ -67,6 +67,17 @@ def parse_simple_yaml(text: str) -> dict:
     return out
 
 
+def model_label(model: str, harness, memory) -> str:
+    """Column label: the model, plus the harness when it is not Claude Code (so that the same model run
+    through Codex, the ADK python-agent or Gemini CLI is never averaged with its Claude Code runs)."""
+    label = model
+    if harness and harness not in ("claude", "claude-code"):
+        label += f" / {harness}"
+    if memory == "warm":
+        label += " (warm)"
+    return label
+
+
 def load_runs(root: Path) -> list[dict]:
     runs = []
     for d in sorted(p for p in root.iterdir() if p.is_dir()):
@@ -89,17 +100,18 @@ def load_runs(root: Path) -> list[dict]:
         figure = env.get("FIGURE") or m.get("figure")
         model = env.get("MODEL") or m.get("model") or "?"
         memory = env.get("MEMORY") or m.get("memory") or "cold"
+        harness = env.get("HARNESS") or m.get("harness") or ("claude" if env.get("CLAUDE_VERSION") else None)
         runs.append({
             "label": env.get("LABEL") or m.get("label") or d.name,
             "benchmark": f"{arxiv} Fig. {figure}" if arxiv and figure else d.name,
             "model": model,
-            "model_label": model + (" (warm)" if memory == "warm" else ""),
+            "model_label": model_label(model, harness, memory),
             "success": success,
             "failure_mode": failure_mode,
             "footnote": footnote,
             "metrics": metrics,
             "effort": env.get("EFFORT") or m.get("effort") or None,
-            "harness": env.get("HARNESS") or ("claude" if env.get("CLAUDE_VERSION") else None),
+            "harness": harness,
             "source": "sandbox",
         })
     return runs
@@ -129,7 +141,7 @@ def load_extra(path: Path) -> list[dict]:
             "label": rec.get("label") or f"documented_{arxiv}_fig{figure}_{model}",
             "benchmark": f"{arxiv} Fig. {figure}" if arxiv and figure else str(rec.get("label")),
             "model": model,
-            "model_label": model + (" (warm)" if memory == "warm" else ""),
+            "model_label": model_label(model, rec.get("harness"), memory),
             "success": success if isinstance(success, bool) else None,
             "failure_mode": failure_mode if isinstance(failure_mode, str) and failure_mode else None,
             "footnote": footnote if isinstance(footnote, str) and footnote.strip() else None,

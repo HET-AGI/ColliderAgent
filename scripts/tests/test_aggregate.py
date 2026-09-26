@@ -91,11 +91,19 @@ def test_extra_and_csv(tmp_path):
                      "tokens_in_total": 1_000_000, "tokens_out_total": 10_000, "cost_usd": 5.0, "llm_share_of_wall": 0.5}},
         {"label": "doc-2", "arxiv": "2005.06475", "figure": "2", "model": "claude-opus-5", "success": None,
          "footnote": "TBD", "metrics": {"wall_clock_s": 7200}},
+        {"label": "doc-3", "arxiv": "1701.05379", "figure": "8", "model": "gpt-5.5", "harness": "codex", "success": True,
+         "metrics": {"wall_clock_s": 3600, "magnus_jobs": 9}},
+        {"label": "doc-4", "arxiv": "1701.05379", "figure": "8", "model": "gpt-5.5", "harness": "adk", "success": False,
+         "failure_mode": "analysis", "metrics": {"wall_clock_s": 3600, "magnus_jobs": 4}},
         "not a record",
     ]}))
     runs = aggregate.load_runs(root) + aggregate.load_extra(extra)
     out = aggregate.render(runs)
-    assert "Runs found: 8 (successful 3, failed 2, unjudged 3)" in out
+    assert "Runs found: 10 (successful 4, failed 3, unjudged 3)" in out
+    # the same model through different harnesses gets separate columns
+    s4 = out.split("### Table S4")[1].split("### Table S5")[0]
+    assert "| gpt-5.5 / adk | gpt-5.5 / codex |" in s4
+    assert "| 1701.05379 Fig. 8 | 3/4 (1 ?) | 0/1 | 0/1 | 0/1 | 1/1 |" in s4
     # the documented success joins the S3 mean: (3600+7200+3600)/3 h, cost (10+20+5)/3
     assert "| 1701.05379 Fig. 8 | claude-opus-5 | 3 | 1.33 | 4.0 | 6.0 | 10.7 | 2.33 | 20.0 | 11.67 |" in out
     assert "| 2005.06475 Fig. 2 | 0/1 (1 ?) |" in out.split("### Table S5")[1]
@@ -114,7 +122,7 @@ def test_extra_and_csv(tmp_path):
     r = subprocess.run([sys.executable, str(AGGREGATE), str(root), "--extra", str(extra), "--csv", str(csv_path)],
                        capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
-    assert "Runs found: 8" in r.stdout and csv_path.read_text() == csv_text
+    assert "Runs found: 10" in r.stdout and csv_path.read_text() == csv_text
     bad = tmp_path / "bad.json"
     bad.write_text('{"runs": 3}')
     assert subprocess.run([sys.executable, str(AGGREGATE), str(root), "--extra", str(bad)], capture_output=True).returncode != 0

@@ -45,6 +45,7 @@ SANDBOX="$BENCH_RUNS_DIR/$LABEL"
 mkdir -p "$SANDBOX"
 [[ -f "$BENCH_RUNS_DIR/.gitignore" ]] || printf '*\n!.gitignore\n' > "$BENCH_RUNS_DIR/.gitignore"
 cp "$PROMPT_FILE" "$SANDBOX/prompt.md"
+cat "$REPO_ROOT/scripts/bench/benchmark_rules.md" >> "$SANDBOX/prompt.md"
 for extra in analysis hepdata; do [[ -d "$PAPER_ROOT/$ARXIV/$extra" ]] && cp -r "$PAPER_ROOT/$ARXIV/$extra" "$SANDBOX/"; done
 {
   sed 's/^# ColliderAgent Codex adapter/# ColliderAgent Gemini CLI adapter/' "$CODEX_CHECKOUT/AGENTS.md"

@@ -82,6 +82,7 @@ mkdir -p "$RUNS_DIR"
 [[ -f "$RUNS_DIR/.gitignore" ]] || printf '*\n!.gitignore\n' > "$RUNS_DIR/.gitignore"
 mkdir -p "$SANDBOX"
 cp "$PROMPT_SRC" "$SANDBOX/prompt.md"
+cat "$REPO_ROOT/scripts/bench/benchmark_rules.md" >> "$SANDBOX/prompt.md"
 for d in analysis hepdata; do
   if [[ -d "$PAPER_DIR/$d" ]]; then cp -R "$PAPER_DIR/$d" "$SANDBOX/$d"; fi
 done
