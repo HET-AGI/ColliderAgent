@@ -30,6 +30,7 @@ from tools import (
     generate_simulation_yaml, run_from_yaml, generate_ufo_model,
     validate_feynrules,
     read_event_index, madanalysis_process,
+    run_python, run_shell,
 )
 
 # Load environment variables
@@ -114,6 +115,8 @@ class FeynRulesAgent:
             FunctionTool(func=run_from_yaml),
             FunctionTool(func=read_event_index),
             FunctionTool(func=madanalysis_process),
+            FunctionTool(func=run_python),
+            FunctionTool(func=run_shell),
         ])
 
         # Create LlmAgent
@@ -254,6 +257,12 @@ This separates configuration from execution and enables reproducibility.
   - `target_path`: Where to download analysis output
   - `level`: "parton" (LHE), "hadron" (HepMC), "reco" (LHCO/ROOT)
   - Returns: dict with success, output_dir, message
+
+### Code Execution (post-processing, statistics, plotting)
+- `run_python(code, timeout_s=900)` - Run a Python script with numpy/scipy/matplotlib/uproot/awkward/pyhf/pylhe/pyhepmc; save figures with plt.savefig (no display)
+- `run_shell(command, timeout_s=900)` - Run a bash command in the working directory (ls, grep, gunzip, etc.)
+Use these to read event files, tabulate cross sections from MadGraph output, run fits and draw the requested figure.
+Long computations belong on Magnus (the tools above), not in run_python.
 
 ## Complete Workflow
 
@@ -516,6 +525,8 @@ Key conventions:
             final_response = None
             turn_count = 0
 
+            events_path = os.getenv("COLLIDER_AGENT_EVENTS", "events.jsonl")
+            events_log = open(events_path, "a", encoding="utf-8")
             for event in runner.run(
                 user_id="user",
                 session_id="default",
@@ -523,6 +534,11 @@ Key conventions:
                 run_config=run_config
             ):
                 turn_count += 1
+                try:
+                    events_log.write(json.dumps(self._event_record(event, turn_count), ensure_ascii=False) + "\n")
+                    events_log.flush()
+                except Exception as log_err:  # noqa: BLE001
+                    logger.warning(f"could not log event: {log_err}")
 
                 if hasattr(event, 'content') and event.content:
                     # Log the event
@@ -557,6 +573,47 @@ Key conventions:
                 "error": str(e),
                 "session_id": self.session_id
             }
+
+    @staticmethod
+    def _event_record(event, turn: int) -> Dict[str, Any]:
+        """Compact JSON record of one runner event (LLM usage, tool calls, tool results, text)."""
+        rec: Dict[str, Any] = {"turn": turn, "ts": time.time(), "author": getattr(event, "author", None),
+                               "type": type(event).__name__}
+        um = getattr(event, "usage_metadata", None)
+        if um is not None:
+            rec["usage"] = {
+                "prompt_tokens": getattr(um, "prompt_token_count", None),
+                "candidates_tokens": getattr(um, "candidates_token_count", None),
+                "thoughts_tokens": getattr(um, "thoughts_token_count", None),
+                "total_tokens": getattr(um, "total_token_count", None),
+            }
+        if getattr(event, "error_code", None) or getattr(event, "error_message", None):
+            rec["error"] = {"code": getattr(event, "error_code", None),
+                            "message": str(getattr(event, "error_message", None))[:2000]}
+        content = getattr(event, "content", None)
+        parts = getattr(content, "parts", None) or []
+        calls, responses, texts = [], [], []
+        for part in parts:
+            fc = getattr(part, "function_call", None)
+            if fc is not None:
+                args = dict(fc.args or {})
+                calls.append({"name": fc.name, "args": {k: (v if len(str(v)) <= 300 else str(v)[:300] + "...")
+                                                          for k, v in args.items()}})
+            fr = getattr(part, "function_response", None)
+            if fr is not None:
+                resp = fr.response if isinstance(fr.response, dict) else {"value": str(fr.response)}
+                responses.append({"name": fr.name, "success": resp.get("success"),
+                                  "message": str(resp.get("message") or resp.get("error") or "")[:500],
+                                  "size": len(json.dumps(resp, default=str))})
+            if getattr(part, "text", None):
+                texts.append(part.text[:2000])
+        if calls:
+            rec["function_calls"] = calls
+        if responses:
+            rec["function_responses"] = responses
+        if texts:
+            rec["text"] = texts
+        return rec
 
     def save_session(self, filename: Optional[str] = None):
         """Save session history to JSON file."""

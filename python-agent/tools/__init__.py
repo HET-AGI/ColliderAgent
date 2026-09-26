@@ -15,6 +15,8 @@ Available tools:
 - run_from_yaml: Run MadGraph5 simulation from YAML configuration
 - read_event_index: Parse event_index.yaml to locate event files for a process
 - madanalysis_process: Run MadAnalysis5 analysis and produce plots/cutflows
+- run_python: Execute a Python snippet (post-processing, statistics, plotting)
+- run_shell: Run a shell command in the working directory
 """
 
 from .file_tools import read, write, edit
@@ -23,6 +25,7 @@ from .feynrules_validation import validate_feynrules
 from .madgraph_tools import madgraph_compile, madgraph_launch
 from .simulation_yaml_to_madgraph import generate_simulation_yaml, run_from_yaml
 from .madanalysis_tools import read_event_index, madanalysis_process
+from .exec_tools import run_python, run_shell
 
 __all__ = [
     "read",
@@ -36,4 +39,6 @@ __all__ = [
     "run_from_yaml",
     "read_event_index",
     "madanalysis_process",
+    "run_python",
+    "run_shell",
 ]

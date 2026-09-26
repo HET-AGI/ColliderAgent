@@ -1,5 +1,6 @@
 # tools/madgraph_tools.py
 import json
+import os
 import traceback
 from typing import Any, Dict
 from dotenv import load_dotenv; load_dotenv()
@@ -24,7 +25,9 @@ def madgraph_compile(
 
     Args:
         ufo_model_path: Path to the UFO model directory (from FeynRules/UFO
-            generation). This directory is uploaded to the cloud for compilation.
+            generation); it is uploaded to the cloud for compilation. A name that is
+            not an existing path (e.g. "sm") selects that MG5 built-in model instead,
+            which is what pure-SM background processes need.
         process: Process definition, one per line.
             First line becomes `generate`, the rest become `add process`.
             Example: "p p > t t~\\np p > t t~ j"
@@ -51,10 +54,13 @@ def madgraph_compile(
 
     try:
         args = {
-            "ufo": ufo_model_path,
             "process": process,
             "output": target_path,
         }
+        if os.path.exists(ufo_model_path):
+            args["ufo"] = ufo_model_path          # custom UFO directory: uploaded as a file secret
+        else:
+            args["model"] = ufo_model_path        # MG5 built-in model name such as "sm" or "sm-no_b_mass"
         if definitions:
             args["definitions"] = definitions
 
