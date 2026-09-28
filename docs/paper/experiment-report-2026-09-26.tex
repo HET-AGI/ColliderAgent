@@ -17,9 +17,9 @@
 \setlength{\parskip}{3pt}\setlength{\parindent}{0pt}\sloppy
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\wide}[1]{\noindent\resizebox{\textwidth}{!}{#1}}
-\title{ColliderAgent benchmark campaign, 16--26 September 2026\\\large setup, protocol, every table and number for Tables S2--S5 and the Model C comparison}
+\title{ColliderAgent benchmark campaign, 16--28 September 2026\\\large setup, protocol, every table and number for Tables S2--S5 and the Model C comparison}
 \author{ColliderAgent benchmark harness, branch \code{feat/skill-evolution-v2}}
-\date{2026-09-26}
+\date{2026-09-28 (v2; v1 2026-09-26)}
 \begin{document}
 \maketitle
 
@@ -59,13 +59,14 @@ agent runtime & uproot / awkward & 5.7.4 / 2.9.0 \\
 Paper caption: ``Resource usage per benchmark: wall-clock time from prompt to final figure, number of sub-agent invocations,
 Magnus jobs, files written by the agent (scripts, cards, records), and LLM tokens (input/output). Numbers refer to a
 successful run of each benchmark with Claude Opus 4.6.'' Filled with the first successful attempt of each benchmark
-(2026-09-16, \code{--effort xhigh}); tokens = main session plus all sub-agents (uncached, cache-write and cache-read);
-$^{\dagger}$ = no successful attempt yet, the numbers are those of the stopped (Scalar LQ, 6.4\,h) or failed (mono-$\tau$)
-attempt. The paper's single row ``U1 LQ at MuC [Fig.\,S2(e,f)]'' is split into its two prompts; the Dark-SMEFT rows are the
+(2026-09-16 for the seven figure benchmarks, 2026-09-27 for the two Delphes-level ones; all \code{--effort xhigh}); tokens = main
+session plus all sub-agents (uncached, cache-write and cache-read). In the mono-$\tau$ row the main session ran every stage itself
+through the skills (0 sub-agent calls, 41\,min); the mean table below averages it with the three-sub-agent attempt. The paper's single row ``U1 LQ at MuC [Fig.\,S2(e,f)]'' is split into its two prompts; the Dark-SMEFT rows are the
 authors' and unchanged.
 \begin{center}\footnotesize\setlength{\tabcolsep}{4pt}\wide{\input{report-tables/s3_paper.tex}}\end{center}
 
-Alternative filling (means over the three successful attempts of 2026-09-16 and 2026-09-24, same columns):
+Alternative filling (means over the successful attempts: three per figure benchmark from 2026-09-16/24, two per Delphes-level
+benchmark from 2026-09-27/28; same columns):
 \begin{center}\footnotesize\setlength{\tabcolsep}{4pt}\wide{\input{report-tables/s3_paper_mean.tex}}\end{center}
 
 Model-latency share of wall-clock (transcript timestamps, 21 figure-benchmark attempts): 0.23--0.80, median 0.55.
@@ -76,14 +77,23 @@ runtimes.'' Model B = GPT-5.3-Codex (released 2026-02-05, the same day as Opus 4
 (branch \code{codex-com}); model C = Gemini 3.1 Pro preview (2026-02-19) through the single-agent ADK reference implementation
 (\code{python-agent}). Paper layout (the four main-text benchmarks):
 \begin{center}\small\input{report-tables/s4_paper.tex}\end{center}
+The Opus 4.6 entries of the two Delphes-level benchmarks are 2/3: attempt 1 of 2026-09-16 failed on infrastructure in both
+(the 10\,GB job-space limit; an early stop while waiting for downloads), attempts 2 and 3 of 2026-09-27 succeeded.
 
 Extended version (all benchmarks; every LLM/runtime pair measured in the campaign; $\times$3 where three attempts were made):
 \begin{center}\scriptsize\setlength{\tabcolsep}{4pt}\input{report-tables/s4_ext.tex}\end{center}
+\emph{Model generation.} Opus 5, the successor of Opus 4.6 in the same harness, completed both Delphes-level benchmarks at the
+first attempt (Scalar LQ 2.6\,h, mono-$\tau$ 1.7\,h) with a third of the input tokens of the Opus 4.6 successes (13.6 vs
+38.9\,M per run); in the Codex CLI, GPT-5.5 completed both (2/2) where GPT-5.3-Codex completed one (1/2). Across two model
+generations of two vendors the success rate on the long-horizon benchmarks rises, i.e.\ the tasks the framework carries grow
+with the models it is given; Part II, finding 7, gives the caveat (attempts 2--3 of Opus 4.6 ran with the two skill additions
+made after attempt 1, so with identical skills the generation effect is in cost and self-correction, not in the count).
 
 \subsection*{Table S5 --- reproduction robustness}
 Paper caption: ``Reproduction robustness: number of successful runs out of three sandboxed attempts per benchmark, and the
 failure mode of the unsuccessful runs, classified as (i) model, (ii) generation, (iii) analysis or (iv) infrastructure.''
-Opus 4.6, Claude Code; the two Delphes-level benchmarks have one attempt each (see Part II, open items):
+Opus 4.6, Claude Code, three attempts per benchmark (Delphes-level attempts 2--3 on 2026-09-27; their attempt 1 of 2026-09-16
+is the infrastructure failure):
 \begin{center}\small\input{report-tables/s5_paper.tex}\end{center}
 
 Extended version (the two runtimes with three attempts per benchmark; the ADK loop's attempts include its two
@@ -99,11 +109,11 @@ Where & Placeholder & Proposed text \\
 \midrule
 reply p.\,1, checklist (1) & fill in Tables S3, S4, S5 & Done: the tables above; the numbers of this letter follow. \\
 reply p.\,4, point (c) & ``[choose one of the two sentences]'' & ``We have therefore run all eight benchmarks with GPT-5.3-Codex through the Codex CLI (skills-only mode) and with Gemini 3.1 Pro through the single-agent ADK reference implementation, three attempts each for Opus 4.6 and for the ADK runtime, and report the success rates in Table S4 of the SM. The same Gemini model succeeds in 7/7 figure benchmarks inside a coding-agent runtime (Gemini CLI, skills-only) but in 8/21 attempts inside the single-agent loop, and no single-agent run completed a Delphes-level benchmark, so the reliability with which the skills are followed depends on the runtime at least as much as on the model.'' \\
-reply p.\,4, ``Tokens and latency'' & ``the LLM token consumption [fill in]'' & ``the LLM token consumption (1--37\,M input and 5--56\,k output tokens per figure benchmark, 180--215\,M input tokens for the two Delphes-level benchmarks, main session plus sub-agents)''. Next sentence: ``The wall-clock time of a benchmark (0.4--1.4\,h for the figure benchmarks, 4--6\,h for the Delphes-level ones) is shared between LLM inference and cluster jobs for the former (model share 0.2--0.8, median 0.55) and dominated by event generation and detector simulation for the latter.'' \\
-reply p.\,4, ``Robustness'' & sentence on three runs and Table S5 & keep; Table S5 is filled (20/21 for the seven figure benchmarks; the two Delphes-level benchmarks have one attempt each, see the open items). \\
-reply p.\,6 & ``Table S3 quantifies \ldots [fill in]'' & ``Table S3 quantifies, per benchmark, the number of sub-agent invocations (2--3), Magnus jobs (6--42), files written (2--28) and wall-clock time (0.4--6.4\,h)''. \\
+reply p.\,4, ``Tokens and latency'' & ``the LLM token consumption [fill in]'' & ``the LLM token consumption (1--37\,M input and 5--56\,k output tokens per figure benchmark, 2--84\,M input tokens for the two Delphes-level benchmarks, main session plus sub-agents)''. Next sentence: ``The wall-clock time of a benchmark (0.4--1.4\,h for the figure benchmarks, 0.7--4.3\,h for the Delphes-level ones) is shared between LLM inference and cluster jobs for the former (model share 0.2--0.8, median 0.55) and dominated by event generation and detector simulation for the latter.'' \\
+reply p.\,4, ``Robustness'' & sentence on three runs and Table S5 & keep; Table S5 is filled (20/21 for the seven figure benchmarks, 4/6 for the two Delphes-level ones; the two failures are the infrastructure failures of the first attempts). \\
+reply p.\,6 & ``Table S3 quantifies \ldots [fill in]'' & ``Table S3 quantifies, per benchmark, the number of sub-agent invocations (0--3), Magnus jobs (6--26), files written (2--25) and wall-clock time (0.4--3.8\,h)''. \\
 sm p.\,5, Sec.\,S-I.E & ``LLM inference accounts for a minor fraction [fill in]'' & ``For the figure benchmarks of Table S3 the wall-clock time is shared about equally between LLM inference and cluster jobs (model share of wall-clock 0.2--0.8, median 0.55 over 21 runs); cluster time dominates only for the Delphes-level benchmarks and the Dark-SMEFT campaigns.'' \\
-sm p.\,5, Sec.\,S-I.E & Table S4 placeholder sentence & ``Table S4 reports the reproduction success rate of the benchmarks for Claude Opus 4.6 in Claude Code (full multi-agent mode), GPT-5.3-Codex in the Codex CLI (skills-only mode) and Gemini 3.1 Pro in the ADK reference implementation (single agent); the extended version in the results package adds Opus 5, GPT-5.5 and Gemini CLI.'' \\
+sm p.\,5, Sec.\,S-I.E & Table S4 placeholder sentence & ``Table S4 reports the reproduction success rate of the benchmarks for Claude Opus 4.6 in Claude Code (full multi-agent mode), GPT-5.3-Codex in the Codex CLI (skills-only mode) and Gemini 3.1 Pro in the ADK reference implementation (single agent); the extended version in the results package adds Opus 5, GPT-5.5 and Gemini CLI; the successor model Opus 5 completed both Delphes-level benchmarks at the first attempt.'' \\
 sm p.\,6, Table S3 caption & ``[fill in from usage logs]'' & ``Numbers refer to the first successful run of each benchmark with Claude Opus 4.6 (effort \texttt{xhigh}); tokens count the main session and all sub-agents.'' \\
 sm p.\,6, Table S5 and text & ``[fill in the per-benchmark counts and failure modes]'' & Table S5 above; sentence: ``Across the seven figure benchmarks, 20 of 21 sandboxed attempts produced the requested figure; the one failure was a model-construction failure (the leptoquark coupling did not enter the generated sample). The two Delphes-level benchmarks failed once each on infrastructure (job storage limit; an early stop while waiting for downloads) and are being re-run.'' \\
 paper p.\,7, Table I caption & ``tokens consumed and wall-clock time [fill in]'' & cite Table S3 of the SM instead of repeating numbers. \\
@@ -115,7 +125,7 @@ sm p.\,4, Table S2 & Delphes ``3.5.x (TBD)'', MadAnalysis5 TBD, analysis stack T
 \clearpage
 \section*{Part II --- the campaign record}
 \section{Scope and timeline}
-The paper's supplementary tables S2 (software versions), S3 (resource usage), S4 (models and harnesses) and S5 (robustness, three attempts) were empty. Between 2026-09-16 and 2026-09-26 the nine paper-reproduction prompts of the repository were run under five harness/model combinations, judged against the reference figures, and their resource usage recorded. This document is the single record of that campaign; the per-run data are in \code{docs/paper/results-2026-09-24/} and \code{docs/paper/results-2026-09-26/} (\code{runs.csv}, \code{tables.md}, \code{figures/}).
+The paper's supplementary tables S2 (software versions), S3 (resource usage), S4 (models and harnesses) and S5 (robustness, three attempts) were empty. Between 2026-09-16 and 2026-09-28 the nine paper-reproduction prompts of the repository were run under five harness/model combinations, judged against the reference figures, and their resource usage recorded. This document is the single record of that campaign; the per-run data are in \code{docs/paper/results-2026-09-24/} and \code{docs/paper/results-2026-09-26/} (\code{runs.csv}, \code{tables.md}, \code{figures/}).
 
 \begin{center}\small
 \begin{tabular}{lp{14.5cm}}
@@ -127,6 +137,7 @@ Date (UTC) & What ran \\
 09-18 & Memory/evolution audit; parameter-error notes into skills; dependency fixes. \\
 09-24 & Opus 4.6 attempts 2--3 of the seven figure benchmarks (14 valid runs; 4 runs lost to copied OAuth tokens and relaunched); Codex + GPT-5.5 (ChatGPT login) on ALP, U(1)$'$, mono-$\tau$, Scalar LQ; results package v1. \\
 09-26 & Model C: \code{python-agent} (Google ADK single loop) + Gemini 3.1 Pro, 7 figure benchmarks $\times$3 and both Delphes benchmarks; controls Gemini CLI + Gemini 3.1 Pro (7) and ADK + GPT-5.5 (7 + 2); Codex + GPT-5.3-Codex via API key (7 + 2); Opus 5 on the remaining 5 figure benchmarks; job-provenance check introduced; results package v2. \\
+09-27/28 & Delphes-level benchmarks $\times$3: Opus 4.6 \code{xhigh} attempts 2--3 and Opus 5 attempt 1 on Scalar LQ and mono-$\tau$ (6 valid runs, all successful, 0.7--4.3\,h; 3 runs lost at 19:53\,UTC to an expired OAuth session and relaunched); the 2026-09-16 Scalar LQ TBD closed as an infrastructure failure; results package and this report v2. \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -227,17 +238,44 @@ Means over successful figure-benchmark runs per column (files = distinct paths w
 
 \wide{\input{report-tables/resources.tex}}
 
-Model-latency share of wall-clock, Opus 4.6, 21 figure-benchmark attempts: 0.23--0.80, median 0.55; above 0.6 in 7 of 9 attempt-1 runs. Cost of the campaign in Claude CLI dollars: Opus 4.6 attempt 1 $\approx$190 (Scalar LQ excluded), attempts 2--3 102.6, Opus 5 $\approx$65; Codex, Gemini and ADK ran on API keys or a relay without per-run billing.
+Model-latency share of wall-clock, Opus 4.6, 21 figure-benchmark attempts: 0.23--0.80, median 0.55; above 0.6 in 7 of 9 attempt-1 runs. Cost of the campaign in Claude CLI dollars: Opus 4.6 attempt 1 $\approx$190 (Scalar LQ excluded), attempts 2--3 102.6 (figure benchmarks) + 130.6 (Delphes-level, 2026-09-27/28), Opus 5 $\approx$65 (figure) + 34.8 (Delphes-level); Codex, Gemini and ADK ran on API keys or a relay without per-run billing.
 
 \subsection{Single cross-model runs of 2026-09-16 (default effort)}
 \wide{\input{report-tables/crossmodel.tex}}
+
+\subsection{Delphes-level benchmarks $\times$3 (2026-09-27/28)}
+Six valid runs, all successful, all with 0 foreign job ids in the provenance check. Judged with the lenient criterion of the
+campaign: the Scalar LQ peaks are 2.6--2.8 events/bin at 2.9--3.0\,TeV against $\approx$3 in the reference (Codex GPT-5.5: 1.5);
+the mono-$\tau$ bounds are 10--30\,\% weaker than the reference (0.85--0.97 at 0.8\,TeV against 0.65--0.8), the same class of
+deviation as the Codex successes. USD is the CLI's main-session figure.
+
+\begin{center}\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llcrrrrrrp{5.6cm}}
+\toprule
+Benchmark & Model & Att. & Wall [h] & Sub-ag. & Job subm. & Files & Tok in [M] & USD & Note \\
+\midrule
+Scalar LQ & Opus 4.6 xhigh & 2 & 3.83 & 3 & 21 & 20 & 83.8 & 62.7 & simulation sub-agent 2\,h\,50\,min: 18 launches, 9 error-refine cycles (job-space handling) \\
+Scalar LQ & Opus 4.6 xhigh & 3 & 4.30 & 3 & 55 & 24 & 56.5 & 47.4 & first simulation left MG5's second beam as an electron (\code{lpp2}=0); the orchestrator caught it from $\sigma$ and re-dispatched (+1.5\,h) \\
+Scalar LQ & Opus 5 & 1 & 2.60 & 3 & 28 & 32 & 20.8 & 24.4 & 10 seeds $\times$ 10k events chunked for the job limit; caught the \code{lpp2} trap itself; flagged the ATLAS card's $R$=0.6 and Delphes booking 21\,\% of electrons as photons \\
+mono-$\tau$ & Opus 4.6 xhigh & 2 & 0.68 & 0 & 12 & 2 & 2.1 & 6.3 & main session ran all stages through the skills; 9 masses $\times$ 10k events, ATLAS/CMS in 6 launches \\
+mono-$\tau$ & Opus 4.6 xhigh & 3 & 0.96 & 3 & 14 & 17 & 13.0 & 14.2 & three sub-agents; 2 $\times$ 9 masses $\times$ 10k events \\
+mono-$\tau$ & Opus 5 & 1 & 1.66 & 3 & 25 & 5 & 6.3 & 10.4 & re-implemented the profile likelihood independently as a cross-check; flagged the vector kinetic normalisation and the 0--2 MC events in the last $m_T$ bins \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Three further runs (Opus 5 mono-$\tau$ after 1.7\,h, Opus 4.6 Scalar LQ attempt 2 after 1.7\,h, Opus 4.6 mono-$\tau$ attempt 3
+after 0.9\,h) died at 19:53--19:55\,UTC with ``OAuth session expired and could not be refreshed'' before the operator re-logged
+in at 20:24\,UTC; they are quarantined under \code{invalid/} and excluded from the counts, as on 2026-09-24. The 2026-09-16
+Scalar LQ attempt (stopped by the operator at 6.4\,h) is now counted as an infrastructure failure, which closes the TBD of
+footnote $a$ of the claims audit.
 
 \subsection{Long-horizon indicators}
 Means per run; LLM calls, tool errors, error-refine cycles and the largest context are only measurable for the ADK harness (its event log records every model call and every tool's success flag). Figure benchmarks:
 
 \wide{\scriptsize\setlength{\tabcolsep}{3pt}\input{report-tables/longhorizon_light.tex}}
 
-Delphes benchmarks:
+Delphes benchmarks (Claude Code rows: the six runs of 2026-09-27/28; Codex and ADK rows: 2026-09-26):
 
 \wide{\scriptsize\setlength{\tabcolsep}{3pt}\input{report-tables/longhorizon_heavy.tex}}
 
@@ -253,6 +291,7 @@ Every ADK run (transcribed from each sandbox's \code{metrics.json} before deleti
 \item \textbf{Failure kinds differ.} ADK failures are loops (generation 8, model 5, analysis 2 across 23 attempts); the Claude Code and Codex failures are single physics errors (the MuC $\eta$ leptoquark coupling not taking effect in Opus 4.6 attempt 2 and in GPT-5.3-Codex; an empty MuC-reach contour in GPT-5.3-Codex) or infrastructure (mono-$\tau$ early stop, Scalar LQ disk limit, PDF installer).
 \item \textbf{Skills are portable across coding agents.} The same \code{.agents/skills} drove the full pipeline (validate $\to$ UFO $\to$ compile $\to$ launch $\to$ analysis, with step sidecars) in Claude Code, Codex and Gemini CLI; Gemini CLI activated 6--8 skills per run without custom sub-agents.
 \item \textbf{Deviations are run-level analysis choices, not model- or prompt-level constants.} The U(1)$'$ 3\,TeV contour tip is 0.48 in Opus 4.6 ($\times$3), Opus 5, GPT-5.3-Codex and GPT-5.5/ADK, 0.55 in Gemini CLI and the paper's 0.65 only in Codex GPT-5.5; the mono-$\tau$ bound is 20--35\,\% weak in the Opus 4.6 continuation and Codex GPT-5.5 but matches the paper in GPT-5.3-Codex (0.88 vs 0.8 at 0.8\,TeV).
+\item \textbf{Successive model generations widen what the framework completes.} On the two long-horizon benchmarks Opus 4.6 went 2/3 and 2/3 (attempt 1 failed on infrastructure, attempts 2--3 succeeded); Opus 5 went 1/1 and 1/1 at the first try, faster (2.1 vs 2.4\,h mean) and with a third of the tokens (13.6 vs 38.9\,M input per run); in Codex, GPT-5.5 went 2/2 where GPT-5.3-Codex went 1/2. The caveat: the Opus 4.6 first attempts predate the two skill additions they triggered (job-space rule, no-waiting rule), so with identical skills Opus 4.6 is 4/4 and the generation effect shows in cost and self-correction rather than in the count: Opus 4.6's simulation sub-agent needed 18 launches and 9 error-refine cycles for the job-space handling, and in attempt 3 the orchestrator had to re-dispatch the simulation after MG5 silently defaulted the second beam to an electron, whereas Opus 5 caught the same trap from the sign of the cross section inside the first sub-agent.
 \item \textbf{Caveats.} (i) Model and harness are confounded in column C; the two controls bound the effect but an Anthropic model inside the ADK loop, or Gemini in ADK through the native client, would tighten it: ADK's Gemini went through an OpenAI-compatible relay that drops Gemini~3 thought signatures, Gemini CLI through the native API. (ii) The ADK agent received \code{run\_python}/\code{run\_shell} and a call cap of 150/300; Claude Code and Codex have no cap but used far fewer calls. (iii) The KK-graviton ADK successes have on-pole cross sections two orders of magnitude above the reference (no width smearing); they pass the qualitative criterion with a footnote.
 \end{enumerate}
 
@@ -264,13 +303,15 @@ Every ADK run (transcribed from each sandbox's \code{metrics.json} before deleti
 \item The assistive judge once emitted ``;''-separated JSON; \code{judge.sh} repairs it (2026-09-24).
 \item The Magnus job list is shared and never purged (833 jobs): a GPT-5.3-Codex run reproduced Heavy N in 7\,min from the 2026-09-16 job logs. Quarantined and re-run; \code{benchmark\_rules.md} appended to every prompt; \code{job\_provenance.py} verified all other 52 runs of 2026-09-26 (\code{c565067}, \code{36b2588}, \code{d3211ef}).
 \item \code{madgraph-launch --pdf} cannot install LHAPDF sets on zhustation (\code{lhapdf-config} not on PATH); the MG5-internal \code{pdlabel/lhaid} route works and is what the successful Scalar LQ runs used.
-\item Home disk at 97\,\%: 2026-09-26 sandboxes lived on \code{/playpen1} and were deleted after packaging (15\,GB).
+\item 2026-09-27, 19:53\,UTC: the account's OAuth session itself expired (not a copied token): three running sessions ended with ``OAuth session expired and could not be refreshed''; a symlinked credentials file cannot help until the operator logs in again (20:24\,UTC). Quarantined and relaunched; one session that was inside a long tool call survived on the refreshed token.
+\item MG5 silently defaults the second beam to an electron (\code{lpp2}=0) in the LUXlep lepton-in-proton setup and returns a negative cross section: Opus 5 caught it inside the simulation sub-agent, Opus 4.6 attempt 3 only at the orchestrator after a full simulation (+1.5\,h). Not yet in the madgraph-simulator skill (open item).
+\item Home disk at 97\,\%: 2026-09-26 sandboxes lived on \code{/playpen1} and were deleted after packaging (15\,GB); the six 2026-09-27/28 sandboxes (5\,GB) and the three invalid ones are kept there.
 \end{itemize}
 
 \section{Open items}
 \begin{enumerate}
-\item Opus 4.6 $\times$3 on Scalar LQ and mono-$\tau$ (footnotes a, b of the claims audit; 1.5--6\,h and $>$100\,USD each at \code{xhigh}, \code{--effort high} recommended).
-\item $\times$3 for Opus 5 and GPT-5.3-Codex (one attempt each so far).
+\item $\times$3 for Opus 5 (Delphes-level and figure benchmarks) and GPT-5.3-Codex (one attempt each so far).
+\item Write MG5's \code{lpp2} default for lepton-in-proton (LUXlep) setups into the madgraph-simulator skill.
 \item A stricter model/harness separation: an Anthropic model inside the ADK loop, or Gemini in ADK through the native client.
 \end{enumerate}
 
@@ -287,7 +328,7 @@ Every ADK run (transcribed from each sandbox's \code{metrics.json} before deleti
 
 \section{Data and code}
 \begin{itemize}\small
-\item \code{docs/paper/results-2026-09-26/}: \code{runs.csv} (84 attempts), \code{tables.md}, \code{longhorizon\_light.md}, \code{longhorizon\_heavy.md}, \code{adk\_runs.json}, \code{figures/} (41), \code{README.md} (Chinese narrative). \code{docs/paper/results-2026-09-24/}: the first results package (30 figures, \code{documented\_runs.json} with the 2026-09-16 and 2026-09-24 attempts).
+\item \code{docs/paper/results-2026-09-26/}: \code{runs.csv} (90 attempts), \code{tables.md}, \code{longhorizon\_light.md}, \code{longhorizon\_heavy.md}, \code{adk\_runs.json}, \code{figures/} (47), \code{documented\_runs.json} (the 53 runs of 2026-09-26 whose sandboxes were deleted; \code{scripts/bench/csv\_to\_documented.py}), \code{README.md} (Chinese narrative). \code{docs/paper/results-2026-09-24/}: the first results package (30 figures, \code{documented\_runs.json} with the 2026-09-16 and 2026-09-24 attempts).
 \item Harnesses and tools: \code{scripts/bench/run\_benchmark.sh}, \code{run\_benchmark\_codex.sh}, \code{run\_benchmark\_adk.sh}, \code{run\_benchmark\_gemini.sh}, \code{collect\_metrics*.py}, \code{judge.sh}, \code{judge\_all.sh}, \code{job\_provenance.py}, \code{aggregate.py}, \code{pack\_results.py}, \code{longhorizon\_table.py}, \code{report\_tables.py}; tests under \code{scripts/tests/}.
 \item Companion documents: \code{claims-audit-2026-09-24.pdf} (per-placeholder proposals for the three paper PDFs), \code{handover-2026-09-24.pdf} (Chinese handover).
 \end{itemize}

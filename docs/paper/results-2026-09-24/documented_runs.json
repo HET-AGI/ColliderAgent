@@ -10,9 +10,9 @@
    "harness": "claude",
    "memory": "cold",
    "attempt": 1,
-   "success": null,
-   "failure_mode": null,
-   "footnote": "TBD (handed over). Stopped by the operator after 6.4 h without a figure: model, validation and the 100k-event LUXlep parton sample were done; two Pythia8+Delphes launches failed at upload with 'No space left on device' (27 GB Delphes ROOT against the job's 10 GB packing space); a third launch with post-run cleanup was running when stopped.",
+   "success": false,
+   "failure_mode": "infrastructure",
+   "footnote": "Counted as a failure (infrastructure) on 2026-09-28, closing the TBD: stopped by the operator after 6.4 h without a figure. Model, validation and the 100k-event LUXlep parton sample were done; two Pythia8+Delphes launches failed at upload with 'No space left on device' (27 GB Delphes ROOT against the job's 10 GB packing space); a third launch with post-run cleanup was running when stopped. The job-space rule was added to the madgraph-simulator skill afterwards (attempts 2 and 3 ran with it).",
    "metrics": {
     "wall_clock_s": 23076,
     "subagent_calls": 2,
