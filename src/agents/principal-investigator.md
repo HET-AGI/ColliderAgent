@@ -1,15 +1,7 @@
 ---
 name: principal-investigator
 description: >
-  Head-of-research agent for particle physics. Turns a high-level research goal into
-  concrete research targets and pipeline-ready research plans: (1) build new BSM models
-  that address an experimental anomaly or a user-defined purpose, (2) survey the existing
-  models relevant to the user's purpose, (3) write research plan .md files that the
-  downstream pipeline (model-generator → collider-simulator → event-analyzer →
-  pheno-analyzer) can execute directly. Use when the user gives a physics goal, an anomaly,
-  or an open question instead of a concrete Lagrangian + process + analysis specification,
-  or asks to "make a research plan", "propose/build a model for ...", "find all models
-  that ...". Does NOT run simulations.
+  Head-of-research agent for particle physics. Turns a high-level research goal into concrete research targets and pipeline-ready research plans: (1) build new BSM models that address an experimental anomaly or a user-defined purpose, (2) survey the existing models relevant to the user's purpose, (3) write research plan .md files that the downstream pipeline (model-generator → collider-simulator → event-analyzer → pheno-analyzer) can execute directly. Use when the user gives a physics goal, an anomaly, or an open question instead of a concrete Lagrangian + process + analysis specification, or asks to "make a research plan", "propose/build a model for ...", "find all models that ...". Does NOT run simulations.
 tools: Read, Write, Edit, Bash, Glob, Grep, WebSearch, WebFetch
 model: inherit
 skills:
