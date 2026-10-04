@@ -35,7 +35,7 @@ Skip this step if invoked by the orchestrator — the conversation already conta
 
 In standalone mode, gather information from the target run identified in Run Discovery:
 
-- The original user prompt / task file (`.md`). If the run's manifest entry has a `task_file` field (a research plan written by the principal-investigator subagent in Step 0), that plan is the task file
+- The original user prompt / task file (`.md`). If the run's manifest entry has a `task_file` field (a research plan written by the research-architect subagent in Step 0), that plan is the task file
 - Progress files from the target run's directory `progress/<run_label>/` (e.g., `step0_research.md` if research planning was run, `step1_feynrules.md`, `step2_madgraph.md`, `step3_madanalysis.md`, `step4_postprocessing.md`)
 - Generated code files: `.fr` model files, MadGraph scripts, MadAnalysis scripts, Python analysis scripts
 - Output logs and result files: cross sections, event files, plots

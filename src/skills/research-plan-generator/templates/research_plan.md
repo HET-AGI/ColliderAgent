@@ -7,7 +7,7 @@
      - Be explicit: no "suitable cuts", "appropriate range", "standard settings".
      - Labels: [estimate] own estimate, [assumed] analysis choice not fixed by a source, [unverified] unchecked fact. -->
 
-> **Research plan** `<plan_nn_slug>` — study `<study_label>`, target `<T-id: model name>` — generated <YYYY-MM-DD> by the principal-investigator agent.
+> **Research plan** `<plan_nn_slug>` — study `<study_label>`, target `<T-id: model name>` — generated <YYYY-MM-DD> by the research-architect agent.
 > User goal: "<one-line paraphrase of the user's prompt>".
 > Depends on: <none | plan_xx (reuses `models/<Model>_UFO`, skip model building)>.
 > Caveats: <study-level caveats a reader of the results must know — e.g. "the scanned coupling regime is in tension with flavour bounds in generic UV completions", "LO + fast simulation" | none>.

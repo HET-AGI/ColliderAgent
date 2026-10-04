@@ -22,7 +22,7 @@ description: >
   specification AND wants the study carried out, such as "build a model that explains
   <anomaly> and study it at the LHC", "find the models relevant to ... and test them",
   or "propose and run a collider study of ...". The orchestrator then starts with a
-  research-planning step (principal-investigator subagent) before the pipeline.
+  research-planning step (research-architect subagent) before the pipeline.
   Do NOT trigger for single-stage requests that only involve one of: research planning,
   model building, event generation, event analysis, or plotting.
 ---
@@ -37,7 +37,7 @@ Each subagent's skill defines its own output paths. The combined layout is:
 
 ```
 <working_dir>/
-├── research/        # Step 0 (principal-investigator), only for high-level research goals
+├── research/        # Step 0 (research-architect), only for high-level research goals
 │   └── <run_label>/
 │       ├── targets.md      # Research-target report
 │       ├── plans/          # Research plans (task files for Steps 1–4)
@@ -136,7 +136,7 @@ Add a `parent` field to link incremental runs to their origin:
 
 Execute the following steps **sequentially**, using the specified subagent for each. Pass intermediate results via the `progress/` directory.
 
-### Step 0: Research Planning → `principal-investigator` subagent (if needed)
+### Step 0: Research Planning → `research-architect` subagent (if needed)
 - **When**: the task is a high-level research goal that lacks a concrete model, process, or analysis specification (e.g. "build a model that explains ...", "find the models relevant to ... and study them"). Skip this step when the user provides a complete task prompt
 - Input: the user's prompt **verbatim**, paths of any attached files, scope (`targets+plan` by default), the research directory `research/<run_label>/`, and any constraints the user stated (collider, number of plans, how much literature work to spend, existing models to reuse)
 - The subagent searches the literature, finds and vets research targets (new models and/or a survey of existing ones), and writes research plans in the task-prompt format
@@ -185,7 +185,7 @@ Execute the following steps **sequentially**, using the specified subagent for e
 
 The orchestrator manages **paths and scheduling**, not physics results:
 
-- **Step 0 → Steps 1–4**: the research plan is the physics specification. When passing details to downstream subagents, copy the relevant plan sections **verbatim** (e.g. Section 2 "Model" to `model-generator`) — do not paraphrase, summarize, or "improve" the physics. If a plan turns out to be incomplete or inconsistent during execution, send it back to the `principal-investigator` subagent with the specific problem instead of patching the physics yourself.
+- **Step 0 → Steps 1–4**: the research plan is the physics specification. When passing details to downstream subagents, copy the relevant plan sections **verbatim** (e.g. Section 2 "Model" to `model-generator`) — do not paraphrase, summarize, or "improve" the physics. If a plan turns out to be incomplete or inconsistent during execution, send it back to the `research-architect` subagent with the specific problem instead of patching the physics yourself.
 - **Step 1 → Step 2**: pass UFO path, particle names, PDG codes, parameter block names — structural info needed to write MadGraph scripts.
 - **Step 2 → Step 3/4**: pass output directory path(s) and a run name ↔ parameter mapping (e.g., `run_01 → MZp=200, run_02 → MZp=400`). Do NOT parse MadGraph logs for cross sections or other physics quantities.
 - **Step 3/4 subagents** are responsible for reading the simulation output files themselves and extracting whatever physics results the task requires.
