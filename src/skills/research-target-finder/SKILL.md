@@ -2,14 +2,8 @@
 name: research-target-finder
 description: >
   Find research targets for a BSM collider study from a high-level physics goal.
-  Triggers when the user wants to build a new model that explains an experimental anomaly
-  or realizes a given purpose (e.g. "build a model that explains the muon g-2",
-  "construct a minimal dark matter model testable at the LHC"), or wants a survey of the
-  models relevant to a purpose (e.g. "which models can explain this excess",
-  "find all leptoquark models for R_D"). Produces a research-target report with
-  literature-verified status, vetted candidate models, and pipeline-ready Lagrangians.
-  Do NOT trigger when the user already supplies a complete Lagrangian together with the
-  process and analysis specification.
+  Triggers when the user wants to build a new model that explains an experimental anomaly or realizes a given purpose (e.g. "build a model that explains the muon g-2", "construct a minimal dark matter model testable at the LHC"), or wants a survey of the models relevant to a purpose (e.g. "which models can explain this excess", "find all leptoquark models for R_D"). Produces a research-target report with  literature-verified status, vetted candidate models, and pipeline-ready Lagrangians. 
+  Do NOT trigger when the user already supplies a complete Lagrangian together with the process and analysis specification.
 ---
 
 # Research Target Finder
