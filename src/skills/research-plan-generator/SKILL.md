@@ -2,12 +2,7 @@
 name: research-plan-generator
 description: >
   Generate an executable research plan (.md) for a collider phenomenology study.
-  Triggers when the user asks to "make a research plan", "design a collider study",
-  "plan an analysis for this model", or wants an idea, a research target, or a paper's
-  model turned into a concrete task specification — model Lagrangian, collider process,
-  simulation settings, parameter scan, event selection, statistical analysis, and figures.
-  The plan follows the task-prompt format that the pheno-pipeline-orchestrator executes,
-  so it can be run directly with "Execute the analysis following <plan>.md".
+  Triggers when the user asks to "make a research plan", "design a collider study", "plan an analysis for this model", or wants an idea, a research target, or a paper's model turned into a concrete task specification — model Lagrangian, collider process, simulation settings, parameter scan, event selection, statistical analysis, and figures. The plan follows the task-prompt format that the pheno-pipeline-orchestrator executes, so it can be run directly with "Execute the analysis following <plan>.md".
   Do NOT trigger when the user already has a complete task prompt and wants it executed.
 ---
 
