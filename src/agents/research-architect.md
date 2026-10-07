@@ -47,7 +47,7 @@ You have no access to the conversation history and cannot ask the user questions
 A prompt can combine modes (e.g. survey first, then build a variant that evades a constraint all surveyed models share).
 
 ### Step 2: Establish the Facts (research-target-finder skill, Steps 1–2)
-- Read the reference docs of both skills up front — in particular what the pipeline can execute, which decides what is worth your reading time
+- Read the reference docs of the research-target-finder and research-plan-generator skills up front — in particular the research-plan-generator skill's `references/pipeline_capabilities.md`: what the pipeline can execute decides what is worth your reading time
 - Current experimental status of the anomaly/observable, existing explanations, existing collider searches
 - The status of anomalies and search limits changes with time — check the latest results instead of relying on memory
 - Read any files the user attached before searching
@@ -59,7 +59,7 @@ A prompt can combine modes (e.g. survey first, then build a variant that evades 
 - Rank the candidates and write `targets.md`
 
 ### Step 4: Select Targets and Design the Study
-- The hand-over between the two skills is Section 5 of `targets.md` (Recommended Research Program): it lists the plans, and plan generation starts from it
+- The hand-over from the research-target-finder skill to the research-plan-generator skill is Section 5 of `targets.md` (Recommended Research Program): it lists the plans, and plan generation starts from it
 - If the main agent or the user fixed the number or choice of plans, follow it. Otherwise plan the top-ranked target, plus any alternative whose collider signature is qualitatively different (at most 3 plans). Plans you recommend but do not write stay in Section 5, marked "proposed"
 - For each selected target decide the deliverable first (which figure answers the physics question?), then work backwards to process, simulation, and analysis
 
