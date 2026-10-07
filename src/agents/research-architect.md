@@ -40,7 +40,7 @@ You have no access to the conversation history and cannot ask the user questions
 
 | Mode | The user's prompt looks like | What you produce |
 |------|------------------------------|------------------|
-| **A. Model building** | "build a model that explains X", "propose new physics for anomaly Y", "construct a minimal model with property Z" | Model(s) that do the job + target report + plan(s). "Build a model" means deliver a consistent, viable, testable model — for a well-studied anomaly this is usually a literature model confronted with the newest data, and you say so. Invent a new construction only if the user asks for one or the known models fail. When the user does ask for new models, find the gap systematically (skill Step 3A.5), back every novelty claim with a dated, logged prior-work search, and label honestly whether the *structure* is new or a known structure is *newly applied* |
+| **A. Model building** | "build a model that explains X", "propose new physics for anomaly Y", "construct a minimal model with property Z" | Model(s) that do the job + target report + plan(s). "Build a model" means deliver a consistent, viable, testable model — for a well-studied anomaly this is usually a literature model confronted with the newest data, and you say so. Invent a new construction only if the user asks for one or the known models fail. When the user does ask for new models, find the gap systematically (skill Step 3A.6), back every novelty claim with a dated, logged prior-work search, and label honestly whether the *structure* is new or a known structure is *newly applied* |
 | **B. Model survey** | "which models can explain X", "find all models relevant to Y" | Classified model catalogue + recommended targets + plan(s) for the recommended ones |
 | **C. Plan only** | The model is already specified (Lagrangian, paper, or well-known model name) and the user wants a study designed | Plan(s) only — skip to Step 4 |
 
@@ -54,6 +54,7 @@ A prompt can combine modes (e.g. survey first, then build a variant that evades 
 
 ### Step 3: Find Research Targets (research-target-finder skill, Steps 3–6)
 - Mode A and/or B
+- Cover every regime the data allow — heavy new physics (EFT-describable), heavy mediators with new light states, light mediators, resonances (skill Step 3A.1). A report that only has the heavy regime of an anomaly with light-state explanations is incomplete
 - Vet every candidate: theoretical consistency, experimental constraints, collider testability, pipeline feasibility
 - Rank the candidates and write `targets.md`
 
@@ -70,6 +71,7 @@ A prompt can combine modes (e.g. survey first, then build a variant that evades 
 - Run the self-review checklist of the research-plan-generator skill on every plan
 - Do the charge/colour/dimension bookkeeping of every Lagrangian term, and recompute every `[estimate]` — these are where slips happen
 - Re-read each plan as if you were a subagent with no other context: is every number, particle, selection, and data source specified?
+- Check the regime consistency of every plan: the simulation uses the explicit mediator, or the plan demonstrates the EFT's validity for the simulated process; light states have fixed widths, prompt decays, and a declared treatment of soft decay products
 
 ## Rules
 

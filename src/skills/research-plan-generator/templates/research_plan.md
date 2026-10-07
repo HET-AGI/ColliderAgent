@@ -51,7 +51,7 @@ The free (external) parameters are:
 
 <Derived (internal) parameters, if any — given as formulas of the free ones, with every numerical constant and its source: e.g. $c_{c\nu}=V_{cs}\beta_{23}+V_{cb}$ with $V_{cs}=\ldots$ (PDG ...).>
 
-- Width of $X$: computed automatically by MadGraph at each parameter point. <Cross-check value [estimate]: $\Gamma/M\simeq\ldots$> <or: fixed to ... GeV because ...>
+- Width of $X$: computed automatically by MadGraph at each parameter point. <Cross-check value [estimate]: $\Gamma/M\simeq\ldots$> <or: fixed to ... GeV because ... — mandatory for a state below ~2 GeV with hadronic or invisible decays: give the width's source and $\beta\gamma c\tau$ at the benchmarks [estimate]>
 
 <SM-side settings that differ from the pipeline defaults (diagonal CKM, massless light fermions, massive $b$): e.g. "set $m_b=0$: $b$ quarks appear in the initial state". Otherwise: "SM parameters at their defaults.">
 
@@ -71,7 +71,8 @@ $$<pp \to \ldots>$$
 - which diagrams matter (e.g. "mediated by $t$-channel $U_1$ exchange; include SM–BSM interference" or "BSM-only contribution")
 - initial-state flavours (e.g. "include $b$ and $c$ quarks in the proton")
 - charge-conjugate processes to add
-- decay chains, and whether decays are done in the matrix element or with MadSpin>
+- decay chains, and whether decays are done in the matrix element or with MadSpin
+- for an EFT model: the validity statement — cutoff $\Lambda$, the mediator mass it stands for, the fraction of signal events with $\sqrt{\hat s}$ above it [estimate], and the generator-level cut that enforces it, if any; otherwise "explicit mediator">
 
 ## 3.2 Collider simulation settings
 

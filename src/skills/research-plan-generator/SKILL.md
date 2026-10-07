@@ -48,17 +48,20 @@ Pick from Section 6 of the capability reference — signal characterization, rec
 - Take the Lagrangian from the target report. If the user supplied the model, bring it into pipeline-ready form following Section 4 of the research-target-finder skill's `references/model_building_guide.md`
 - Define every symbol. The model builder has no other source: if a field's quantum numbers, a coupling's reality, or a chirality is not in the plan, it will be guessed
 - Include only what this study needs — couplings irrelevant to the process can be dropped (say so), which makes model validation faster and safer
+- Explicit mediator or EFT? Copy the target's regime statement from the target report. The default is the explicit mediator. An EFT is acceptable only if its validity for *this* process has been shown (fraction of signal events above the mediator mass it stands for — research-target-finder guide, Section 7); the plan then restates the cutoff, the mediator mass, and the validity condition
 
 ### Step 4: Define the Process
 
 - Physics notation plus the subtleties the MadGraph process string must capture: heavy flavours in the proton, charge conjugates, resonant vs non-resonant contributions, interference with the SM, on-shell decay chains vs MadSpin
 - Check that the process exists at tree level in the model as written. If it is loop-induced, the effective vertex must be in the Lagrangian (Step 3)
+- If the model is an EFT and signal events reach $\sqrt{\hat s}\sim M$, switch to the explicit mediator — the tail shape and the interference pattern differ between mediators that share one low-energy operator
 
 ### Step 5: Simulation Settings and Parameter Strategy
 
 - Collider and $\sqrt s$, events per point, PDF, shower, detector card, output format — each stated explicitly. Match the level to the analysis: parton level suffices for total cross sections; selections on reconstructed objects need Pythia8 + Delphes (request LHCO output)
 - Benchmarks and scans: justify ranges from constraints and estimates (target report Section 3; guide Section 7). Exploit scaling laws — simulate at a reference coupling and rescale analytically where the dependence is a pure power
 - Keep the campaign proportionate: (parameter points) × (runs) × (events). State the total in the Appendix
+- Light or weakly coupled states: fix widths explicitly with a source (automatic widths are partonic and blind to invisible channels), quote $\beta\gamma c\tau$ at the benchmark points and that decays are prompt, and check the detector card's object thresholds against the expected kinematics — the stock cards reconstruct no leptons below $p_T=10$ GeV (capability reference, Section 3). The anomalous hadron decay, if any, is a validated closed-form overlay, not a simulated process
 
 ### Step 6: Specify the Analysis
 
@@ -105,11 +108,13 @@ Write the plan to its output path. Fill the Appendix (rationale, approximations,
 - [ ] The process is allowed at tree level by the Lagrangian as written
 - [ ] Benchmark points are not already excluded (or that is the point of the study — say so); couplings perturbative; $\Gamma/M$ consistent with the treatment used
 - [ ] Scaling laws used for rescaling are exact for the process (no interference term neglected silently)
+- [ ] EFT models: validity for the simulated process shown (cutoff, the mediator mass it stands for, fraction of signal events above it); otherwise the explicit mediator is used
 - [ ] Units everywhere (GeV, fb, fb$^{-1}$)
 
 **Feasibility**
 - [ ] Nothing outside `references/pipeline_capabilities.md`; approximations (LO, fast simulation, K-factors) stated in the Appendix
 - [ ] Event numbers sufficient after selection; campaign size proportionate
+- [ ] Light states: widths fixed from a source; $\beta\gamma c\tau$ quoted and prompt; soft-object thresholds respected or a truth-level analysis declared; the anomalous hadron decay supplied as a validated overlay, not simulated
 
 **Integrity**
 - [ ] Every reference verified in this session; every experimental number has a source

@@ -23,6 +23,8 @@ Supported:
 - Automatic validation: hermiticity, diagonal quadratic and mass terms, kinetic-term normalisation
 - Output as UFO (MadGraph5) and/or CalcHEP (micrOmegas) — request CalcHEP explicitly in the plan if Section 5 is used
 - Widths: external parameter or computed automatically by MadGraph (`Auto`)
+- EFT contact interactions (four-fermion, dipole, $hVV$-type operators) as explicit vertices of the UFO — treated at fixed order, without unitarization. Valid only while the simulated events stay well below the mediator mass the operator stands for (research-target-finder guide, Section 7); the plan must state the cutoff and the validity condition, and prefer the explicit mediator when signal events reach $\sqrt{\hat s}\sim M$
+- Light states (MeV–GeV masses) as ordinary fields, with their widths **set explicitly** from a source: automatic widths are partonic (meaningless for a state below ~2 GeV decaying to hadrons, which goes through $\pi\pi$, $KK$, ...) and blind to invisible channels that are not in the model
 
 Requirements on the plan: see Section 4 of the research-target-finder skill's `references/model_building_guide.md` (field table, mass basis, explicit chirality and h.c., real/complex couplings, names ≥ 2 characters).
 
@@ -34,7 +36,7 @@ Defaults of the SM part (BSM extensions are built on FeynRules' `SM.fr` with the
 Not supported → how to plan around it:
 | Limitation | Workaround |
 |---|---|
-| Tree-level models only (no NLO counterterms, no loop-induced vertices) | Write loop-induced couplings ($gg\to S$, $S\to\gamma\gamma$, ...) as effective operators with explicit coefficients; apply higher-order K-factors from the literature in Step 4 (cite the source) |
+| Tree-level models only (no NLO counterterms, no loop-induced vertices) | Write loop-induced couplings ($gg\to S$, $S\to\gamma\gamma$, ...) as effective operators with explicit coefficients (normalization: the research-target-finder skill's `references/loop_induced_couplings.md`); apply higher-order K-factors from the literature in Step 4 (cite the source) |
 | The SM part is fixed (FeynRules built-in SM) | Modify SM couplings through added BSM operators, not by editing the SM |
 | Full $SU(2)_L$-covariant model building is error-prone | Give the mass-basis component Lagrangian |
 | Existing public UFO models are not fetched automatically | If a standard model should be used as-is, say so and give its location; otherwise write the Lagrangian. MG5 built-in models (e.g. `sm`, `mssm`) can be used by name, skipping Step 1 |
@@ -43,7 +45,7 @@ Not supported → how to plan around it:
 
 Supported:
 - LO matrix elements for $2\to n$ processes with decay chains; multi-particle labels; several processes added together
-- Colliders: $pp$ at any energy (set beam energies), and lepton colliders ($e^+e^-$, $\mu^+\mu^-$) via beam-type settings; lepton-in-proton initial states with the LUXlep PDF set
+- Colliders: $pp$ at any energy (set beam energies), and lepton colliders ($e^+e^-$, $\mu^+\mu^-$) via beam-type settings; lepton-in-proton initial states with the LUXlep PDF set. Belle II energies ($\sqrt s=10.58$ GeV) are reachable as an $e^+e^-$ collider at parton level — there is no Belle II detector card
 - PDFs: MG5 default (`nn23lo1`), or any LHAPDF set by name + ID (e.g. `NNPDF31_lo_as_0118` = 315000, `NNPDF31_nlo_as_0118` = 303400, `CT18NLO` = 14400, `LUXlep-NNPDF31_nlo_as_0118_luxqed` = 82400)
 - Parton shower and hadronization: Pythia8
 - Fast detector simulation: Delphes with the `cms`, `atlas`, or `default` card. The Delphes **ROOT file** is always kept; **LHCO output** is optional and must be requested. LHCO is the simplest format for Step 4 (one line per reconstructed object, with the card's own $b$-tag and $\tau$-tag decisions) but has no truth information — an analysis that needs truth jet flavour (custom $b$-/$c$-tag working points, mistag studies) must read the ROOT file with `uproot`
@@ -61,8 +63,12 @@ Not supported / not documented → how to plan around it:
 | Jet matching/merging (MLM, CKKW-L) is not part of the documented workflow | Avoid analyses whose signal definition depends on extra hard jets; for mono-jet–type signatures generate the hard jet at matrix-element level with a generator-level $p_T$ cut, and state the approximation |
 | Loop-induced processes | Effective vertices (Section 2). For $gg\to S$ the LO effective-vertex rate is too low by a factor of roughly 2–3: normalize to reference cross sections (LHC Higgs Working Group, arXiv:1610.07922) or to the experiment's reference rate, never to the LO number. The resonance has no $p_T$ at matrix-element level — avoid observables that depend on it |
 | Automatic widths are LO and include only channels present in the model | For narrow states whose branching ratios matter (e.g. light scalars), build $\sigma\times\text{BR}$ in Step 4 from reference branching ratios rescaled by the model's couplings, and say so in the plan; or fix the width explicitly |
-| Long-lived particles / displaced vertices | Delphes cards used here have no displaced-object reconstruction. Restrict to prompt decays, or plan a parton-level study of decay lengths with a stated efficiency assumption |
+| Long-lived particles / displaced vertices | Delphes cards used here have no displaced-object reconstruction. Restrict to prompt decays, or plan a parton-level study of decay lengths with a stated efficiency assumption. Light, weakly coupled states are the typical case: the plan must quote $\beta\gamma c\tau$ at the benchmark points |
 | Custom Delphes cards (e.g. future-collider detectors) | Only if the user provides the card file path; otherwise use `default` and state it |
+| Soft leptons: the stock CMS and ATLAS Delphes cards set the electron and muon efficiency to **zero for $p_T\le10$ GeV** | Light states decaying to leptons at low $p_T$ (e.g. $Z\to\mu\mu Z'$ with $Z'\to\mu\mu$ at a few GeV) need a truth-level or parton-level analysis with an `[assumed]` efficiency taken from the experimental paper, or a custom card supplied by the user — say which, and never quote reconstructed-level yields that silently drop soft leptons |
+| Decays of SM hadrons into new states ($B\to KX$, $K\to\pi X$, $\Upsilon\to\gamma X$, ...) and other non-perturbative production | Not simulable. Give the rate as a closed-form overlay with form factors from a cited source, validated against a published number; simulate the perturbative production of the same state instead ($Z\to\mu\mu X$, $pp\to\mu\mu X$, $e^+e^-\to\gamma X$, $h\to XX$) |
+| Sub-GeV Drell–Yan-like production ($q\bar q\to X$ at $\hat s\sim M_X^2\lesssim1$ GeV$^2$) | At the edge of perturbative QCD and of the PDF grids. Normalize to a measured continuum instead — LHCb's low-mass dimuon search infers the dark-photon rate from the observed $\gamma^*\to\mu\mu$ rate (arXiv:1603.08926, 1910.06926) |
+| EFT contact interactions with signal events at $\sqrt{\hat s}\gtrsim M$ | Use the explicit mediator. If an EFT is kept, apply a generator-level cut on the final-state invariant mass at the cutoff and state the fraction of the signal removed |
 | Pile-up, full detector effects, data-driven backgrounds | Out of scope — use published background estimates for recasts |
 
 Information the plan must give: process in physics notation **and** any subtlety the process string must capture (heavy flavours in the proton, charge-conjugate processes, which resonances are on-shell, interference wanted or not); collider and $\sqrt s$; number of events; PDF; shower / detector / output format; parameter values per run; scan points; width treatment.
@@ -104,3 +110,4 @@ Campaign size: parton-level cross-section campaigns are cheap — a plan may con
 | **Limit reinterpretation** | excluded mass/coupling range | Steps 1–2, 4; published $\sigma\times\text{BR}$ limits | Valid only if the signal kinematics/acceptance match the experiment's benchmark — state the assumption |
 | **Sensitivity projection** (HL-LHC, future colliders) | expected significance / reach | Steps 1–2, 4; signal **and** background samples | Backgrounds with the `sm` model; list each background process; LO + K-factors |
 | **Collider + dark matter complementarity** | collider limits overlaid with relic/direct-detection contours | Steps 1–2, 4 + micrOmegas | Two model outputs (UFO + CalcHEP) from one `.fr` |
+| **Light-mediator collider test** | exclusion in the $(M_X, g)$ plane from a perturbative production mode, with the anomaly's preferred band overlaid | Steps 1–2, 4; explicit light state with fixed widths; truth-level treatment of soft objects; closed-form rate of the anomalous decay as the overlay | The anomalous hadron decay is not simulated — the overlay must be validated against a published rate. Check $\beta\gamma c\tau$ at every benchmark: displaced decays are out of scope |

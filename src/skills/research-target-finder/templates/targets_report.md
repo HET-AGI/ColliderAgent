@@ -46,8 +46,11 @@ Excess in a search (bump, tail, or event count):
 
 ### 1.4 What the data require
 
+**Regime** (guide, Section 1.0): <momentum transfer $q$ of the anomalous process; which regimes the data allow — heavy ($M\gg q$, EFT) / heavy mediator + light new state / light mediator (on shell below ..., off shell) / resonance — and which were dropped, with the reason. Separately: the regime at the planned collider test>
+
 <Model-independent requirements, before any model is chosen:
-- indirect anomaly → effective operator(s), required Wilson coefficient size/sign/chirality, implied scale $\Lambda/g$
+- indirect anomaly, heavy regime → effective operator(s), required Wilson coefficient size/sign/chirality, implied scale $\Lambda/g$
+- light mediator or new light state → kinematic window (mass range, on/off shell, two- vs three-body spectrum), spin and coupling structure, decay modes and lifetime, the required coupling versus mass from a fit with the full propagator or loop function, and the signal shape the experiment's own fit assumed
 - resonance-type excess → allowed spin/CP, width, required $\sigma\times\text{BR}$, a master simplified model with generic couplings, and the distinct generic ways of obtaining the rate
 - direct-detection (recoil) signal → kinematics ($q$, $v_\text{min}$, mass range), what the spectrum excludes (form factor, low-energy recoils), the generic mechanisms and which of them the experiment itself tested, the required cross-section band versus the mechanism's parameter, halo assumptions, target dependence
 - purpose that is not an anomaly (e.g. dark matter) → the quantitative requirement, e.g. $\Omega h^2 = 0.12$>
@@ -58,7 +61,7 @@ Excess in a search (bump, tail, or event count):
 
 <Mode B: the full classified catalogue. Mode A: a brief map of existing explanations, to position the new construction.>
 
-| Class | New state(s): spin, $(SU(3),SU(2),Y)$ | Mechanism (tree / loop / mixing) | Addresses goal via | Status | Characteristic collider signature | Key refs | Variants (by reference) |
+| Class | New state(s): spin, $(SU(3),SU(2),Y)$ | Regime and mechanism (heavy tree / heavy loop / heavy mediator + light state / light on-shell / light off-shell / resonance / mixing) | Addresses goal via | Status | Characteristic collider signature | Key refs | Variants (by reference) |
 |---|---|---|---|---|---|---|---|
 | <class name> | | | | viable / constrained / excluded / not assessed | | [n] | [n], [n] |
 | No new physics | — | — | <fluctuation, SM uncertainty, experimental effect> | open | <what would settle it> | [n] | |
@@ -79,6 +82,7 @@ Excess in a search (bump, tail, or event count):
 
 - **Origin** — structure: <literature [n] | variant of [n]: what changed | new>; application to this goal: <proposed before [n] | new — no prior work found as of <date>; basis: <n citing papers at abstract level, full-text probes, arXiv listing up to <date>>, queries: Appendix #...>
 - **Status**: <viable | constrained | excluded>
+- **Regime**: <anomaly: heavy | heavy mediator + light state | light mediator (on/off shell) | resonance — collider test: explicit mediator | EFT, validity shown below>
 - **One-line idea**: <...>
 
 #### Field content
@@ -91,7 +95,9 @@ Excess in a search (bump, tail, or event count):
      both "2" in the SU(2)_L column), since each component becomes its own field downstream.
      For a mass eigenstate that mixes gauge representations, write "mass basis" in the SU(2)_L and Y
      columns and add a line below the table: "gauge origin: <e.g. singlet (1,1,0) mixing with the
-     doublets (1,2,1/2), mixing angle alpha>". -->
+     doublets (1,2,1/2), mixing angle alpha>".
+     A state below ~2 GeV, or one with invisible channels, gets "yes (width fixed: [n])" instead of
+     "auto width" — automatic widths are unusable there (guide, Section 4). -->
 
 #### Lagrangian (BSM part, pipeline-ready)
 
@@ -137,6 +143,9 @@ where
 - Tree-level UFO possible: <yes / yes with effective vertices: ... / no: ...>
 - Special requirements: <heavy-flavour initial states, LHCO output, LUXlep PDF, CalcHEP + micrOmegas for DM, ...>
 - Not executable with the current pipeline: <none | e.g. displaced vertices, NLO, expert-mode recast>
+- EFT validity at the planned process: <not an EFT — explicit mediator | fraction of signal events with $\sqrt{\hat s}$ above the mediator mass: ... [estimate]>
+- Light or weakly coupled states: <none | width fixed from [n]; $\beta\gamma c\tau$ = ... [estimate] → prompt / displaced; treatment of soft decay products>
+- Anomalous process computed by: <the pipeline | closed-form overlay with form factors from [n], validated against ...>
 
 #### Open issues
 
