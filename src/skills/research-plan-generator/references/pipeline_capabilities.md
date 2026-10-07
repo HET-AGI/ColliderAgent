@@ -2,17 +2,16 @@
 
 What the downstream ColliderAgent pipeline can execute, and what each stage needs from a research plan. A plan that asks for something outside this document will fail or be silently approximated — design within it, and state openly in the plan when the physics would call for more.
 
-This document summarizes the skills `feynrules-model-generator`, `feynrules-model-validator`, `ufo-generator`, `calchep-generator`, `madgraph-simulator`, `madanalysis-analyzer`, `micromegas-calculator`, and the agents that use them. When in doubt, read those skills — they are the source of truth.
+This document summarizes the skills `feynrules-model-generator`, `feynrules-model-validator`, `ufo-generator`, `madgraph-simulator`, `madanalysis-analyzer`, and the agents that use them. When in doubt, read those skills — they are the source of truth.
 
 ## 1. Stage Overview
 
 | Step | Subagent | Tools | Consumes from the plan | Produces |
 |------|----------|-------|------------------------|----------|
-| 1 | model-generator | FeynRules (Mathematica) → UFO / CalcHEP | Section 2 (Model) | `models/<Model>.fr`, `models/<Model>_UFO/` |
+| 1 | model-generator | FeynRules (Mathematica) → UFO | Section 2 (Model) | `models/<Model>.fr`, `models/<Model>_UFO/` |
 | 2 | collider-simulator | MadGraph5_aMC, Pythia8, Delphes, MadSpin | Section 3 (Collider Simulation) | `events/<process_label>/Events/run_XX/` |
 | 3 | event-analyzer (optional) | MadAnalysis5, normal mode | Section 4 (distributions, simple cut-flows) | `analysis/<label>/` |
 | 4 | pheno-analyzer | Python: numpy, scipy, matplotlib, uproot | Section 4 (data, selections, statistics, figures) | `scripts/*.py`, `output/figures/`, `output/data/` |
-| — | (main agent, outside the 4-step pipeline) | micrOmegas via `micromegas-calculator` skill | Section 5 (Dark Matter Observables), if present | `dm/<project_label>/<run_label>/results.json` |
 
 The orchestrator passes information between stages; **subagents see only what is in the plan** plus the previous stage's summary. They do not see the target report, the literature, or the user's original prompt.
 
@@ -21,7 +20,7 @@ The orchestrator passes information between stages; **subagents see only what is
 Supported:
 - BSM extension of the SM from a LaTeX Lagrangian: new scalars, fermions (Dirac/Majorana), vectors, spin-2; new couplings; mixing matrices
 - Automatic validation: hermiticity, diagonal quadratic and mass terms, kinetic-term normalisation
-- Output as UFO (MadGraph5) and/or CalcHEP (micrOmegas) — request CalcHEP explicitly in the plan if Section 5 is used
+- Output as a UFO model for MadGraph5
 - Widths: external parameter or computed automatically by MadGraph (`Auto`)
 - EFT contact interactions (four-fermion, dipole, $hVV$-type operators) as explicit vertices of the UFO — treated at fixed order, without unitarization. Valid only while the simulated events stay well below the mediator mass the operator stands for (research-target-finder guide, Section 7); the plan must state the cutoff and the validity condition, and prefer the explicit mediator when signal events reach $\sqrt{\hat s}\sim M$
 - Light states (MeV–GeV masses) as ordinary fields, with their widths **set explicitly** from a source: automatic widths are partonic (meaningless for a state below ~2 GeV decaying to hadrons, which goes through $\pi\pi$, $KK$, ...) and blind to invisible channels that are not in the model
@@ -75,6 +74,8 @@ Information the plan must give: process in physics notation **and** any subtlety
 
 Statistics guidance: shipped examples use 10k–50k events per parameter point and ~10 scan points per run. High-mass tail analyses with tight cuts need enough events **after** selection — if the selection efficiency is expected to be below 1%, raise statistics or add a generator-level cut (and correct the cross section consistently).
 
+Campaign size: parton-level cross-section campaigns are cheap — a plan may contain a few hundred such points if it says why (a pure cross-section campaign without shower and detector is a perfectly good plan). Showered + Delphes runs are the expensive ones; the shipped examples use of order 10–50 of them.
+
 ## 4. Analysis (Steps 3–4)
 
 **MadAnalysis5 (Step 3, optional)** — normal mode only: histograms of standard observables ($p_T$, $\eta$, $M$, $\Delta R$, $E_T^\text{miss}$, $H_T$, ...) and sequential cuts at parton (LHE), hadron (HepMC), or reco (LHCO/ROOT) level. Use it for kinematic distributions and simple cut-flows. **Expert mode and the Public Analysis Database (automated recasts) are not supported.**
@@ -88,20 +89,9 @@ What a recast here cannot match, and how to handle it:
 - Detector performance the paper does not quote (a mistag rate, a trigger efficiency) has to be `[assumed]`. A **calibration constant** is legitimate only if it is declared in the plan before running, fixed on a stated subset of the validation points, and tested on the remaining ones
 - Use only the signal regions whose signal model the pipeline can reproduce, and state in the plan which published regions are left out and why
 
-Not computed by the pipeline: flavour observables, electroweak precision fits, Higgs signal-strength fits, loop-level matching. If a figure needs them (as bands or constraints), give closed-form expressions with sources in the plan, or quote the literature result to overlay.
+Not computed by the pipeline: flavour observables, electroweak precision fits, Higgs signal-strength fits, loop-level matching, dark-matter relic density and direct- or indirect-detection rates. If a figure needs them (as bands or constraints), give closed-form expressions with sources in the plan, or quote the literature result to overlay. A scan "along the relic line" is defined by an analytic relic-density relation given in the plan with its source.
 
-## 5. Dark Matter Observables (outside the 4-step pipeline)
-
-The `micromegas-calculator` skill computes relic density, spin-independent/dependent direct-detection cross sections, and indirect-detection quantities from a CalcHEP model. It is not an orchestrator step: the main agent runs it after Step 1. A plan that needs it must (a) request CalcHEP output in the Model section, (b) mark all $Z_2$-odd fields, (c) list the observables and scan points in a dedicated section. Relic-density scans cost minutes per point for models with many co-annihilation channels — keep scans coarse.
-
-Limits to plan around:
-- micrOmegas returns **elastic** DM–nucleon cross sections only — no inelastic (endothermic/exothermic) rates and no recoil spectra. For an inelastic model, its elastic cross section computed with the splitting switched off is exactly the $\sigma_p$ that enters the inelastic rate: use it as a cross-check of the closed-form value, and say in the plan how the number is to be interpreted. The event rate itself (velocity integral, form factor, detector efficiency) must be supplied by the plan as a closed-form or scripted calculation for Step 4, validated against the experiment's published band
-- Solar capture, indirect-detection limits beyond $\langle\sigma v\rangle$, and late-decay constraints are not computed — quote the literature or list them as open issues
-- When collider scan points depend on the relic density (e.g. "scan along the relic line"), break the circularity in the plan: give an analytic relic line (with source) to define the points, and use micrOmegas at a few points to verify it
-
-Campaign size: parton-level cross-section campaigns are cheap — a plan may contain a few hundred such points if it says why (a pure cross-section campaign without shower and detector is a perfectly good plan). Showered + Delphes runs are the expensive ones; the shipped examples use of order 10–50 of them.
-
-## 6. Study Strategies That Fit the Pipeline
+## 5. Study Strategies That Fit the Pipeline
 
 | Strategy | Deliverable | Needs | Notes |
 |---|---|---|---|
@@ -109,5 +99,4 @@ Campaign size: parton-level cross-section campaigns are cheap — a plan may con
 | **Recast of an existing search** | exclusion contour in a parameter plane | Steps 1–2, 4; published binned data (HEPData) | Validate first on a benchmark the experiment itself provides (e.g. its $W'$/$Z'$ signal) |
 | **Limit reinterpretation** | excluded mass/coupling range | Steps 1–2, 4; published $\sigma\times\text{BR}$ limits | Valid only if the signal kinematics/acceptance match the experiment's benchmark — state the assumption |
 | **Sensitivity projection** (HL-LHC, future colliders) | expected significance / reach | Steps 1–2, 4; signal **and** background samples | Backgrounds with the `sm` model; list each background process; LO + K-factors |
-| **Collider + dark matter complementarity** | collider limits overlaid with relic/direct-detection contours | Steps 1–2, 4 + micrOmegas | Two model outputs (UFO + CalcHEP) from one `.fr` |
 | **Light-mediator collider test** | exclusion in the $(M_X, g)$ plane from a perturbative production mode, with the anomaly's preferred band overlaid | Steps 1–2, 4; explicit light state with fixed widths; truth-level treatment of soft objects; closed-form rate of the anomalous decay as the overlay | The anomalous hadron decay is not simulated — the overlay must be validated against a published rate. Check $\beta\gamma c\tau$ at every benchmark: displaced decays are out of scope |

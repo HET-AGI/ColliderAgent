@@ -141,7 +141,7 @@ where
 #### Pipeline feasibility
 
 - Tree-level UFO possible: <yes / yes with effective vertices: ... / no: ...>
-- Special requirements: <heavy-flavour initial states, LHCO output, LUXlep PDF, CalcHEP + micrOmegas for DM, ...>
+- Special requirements: <heavy-flavour initial states, LHCO output, LUXlep PDF, ...>
 - Not executable with the current pipeline: <none | e.g. displaced vertices, NLO, expert-mode recast>
 - EFT validity at the planned process: <not an EFT — explicit mediator | fraction of signal events with $\sqrt{\hat s}$ above the mediator mass: ... [estimate]>
 - Light or weakly coupled states: <none | width fixed from [n]; $\beta\gamma c\tau$ = ... [estimate] → prompt / displaced; treatment of soft decay products>
@@ -163,7 +163,7 @@ where
 
 | Plan | Status | Target(s) | Physics question | Deliverable (figure/table) | Strategy | Depends on |
 |---|---|---|---|---|---|---|
-| `plans/plan_01_<slug>.md` | <written / proposed> | T1 <(or T1–T3 via a shared simplified model)> | <e.g. which part of the anomaly-preferred region is excluded by LHC mono-τ data?> | <exclusion contour in (M, g) with anomaly band> | <recast / projection / characterization / DM complementarity> | — |
+| `plans/plan_01_<slug>.md` | <written / proposed> | T1 <(or T1–T3 via a shared simplified model)> | <e.g. which part of the anomaly-preferred region is excluded by LHC mono-τ data?> | <exclusion contour in (M, g) with anomaly band> | <recast / projection / characterization / light-mediator test> | — |
 
 ## 6. Decisions for the User
 

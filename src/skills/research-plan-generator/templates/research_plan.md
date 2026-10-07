@@ -55,8 +55,6 @@ The free (external) parameters are:
 
 <SM-side settings that differ from the pipeline defaults (diagonal CKM, massless light fermions, massive $b$): e.g. "set $m_b=0$: $b$ quarks appear in the initial state". Otherwise: "SM parameters at their defaults.">
 
-<Model outputs required: UFO (default) <and CalcHEP, for the Dark Matter section>.>
-
 ---
 
 # 3. Collider Simulation
@@ -163,21 +161,8 @@ Plot styles:
 
 ---
 
-<!-- OPTIONAL -->
-# 5. Dark Matter Observables
-
-Computed with micrOmegas from the CalcHEP output of the same model (not part of the collider pipeline).
-- $Z_2$-odd particles: <...> (dark matter candidate: <...>)
-- observables: <relic density $\Omega h^2$ | SI/SD direct-detection cross sections | ...>
-- parameter points: <...>
-- use in figures: <e.g. overlay the $\Omega h^2=0.12$ contour in Figure 1>
-- interpretation notes: <e.g. "the model is inelastic: micrOmegas' elastic $\sigma^\text{SI}_p$ (splitting switched off) is the $\sigma_p$ entering the inelastic rate — compare it with the closed-form value of Section 2, do not compare it with elastic limits">
-- analytic or scripted overlays not computed by micrOmegas (e.g. the direct-detection event rate): <formula or script path, its inputs, and its validation against a published result>
-
----
-
 <!-- RECOMMENDED for recasts -->
-# 6. Validation
+# 5. Validation
 
 Before interpreting the results, validate the analysis chain:
 - <e.g. reproduce the experiment's expected signal yield for its own benchmark ($W'_\text{SSM}$ at 3 TeV: n events in bin k, HEPData Table m) within 30%>

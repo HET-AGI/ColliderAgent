@@ -41,7 +41,7 @@ Plan backwards from the result. State the physics question in one sentence, then
 
 ### Step 2: Choose the Strategy
 
-Pick from Section 6 of the capability reference — signal characterization, recast of an existing search, limit reinterpretation, sensitivity projection, collider + dark matter complementarity. For a new model, a cheap characterization plan (cross sections, branching ratios, key distributions) first is usually worth it: it validates the model and informs the scan ranges of the expensive plan.
+Pick from Section 5 of the capability reference — signal characterization, recast of an existing search, limit reinterpretation, sensitivity projection, light-mediator collider test. For a new model, a cheap characterization plan (cross sections, branching ratios, key distributions) first is usually worth it: it validates the model and informs the scan ranges of the expensive plan.
 
 ### Step 3: Write the Model Section
 
